@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #f8faf9;
+  --color-card: #ffffff;
+  --color-primary: #10b981;
+  --color-secondary: #f59e0b;
+  --color-accent: #84cc16;
+  --color-text-main: #064e3b;
+  --color-text-secondary: #475569;
+}
+
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: light;
+  background-color: #f8faf9;
+  color: #064e3b;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background-color: #f8faf9;
+}
+
+#root {
+  width: 100%;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 185, 129, 0.08);
+}
+
+.glass-bright {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8faf9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1fae5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.3)); }
+  50% { filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.6)); }
+}
+
+.animate-glow {
+  animation: glow 4s ease-in-out infinite;
+}
+
+.bg-mesh {
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(160,84%,95%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(142,76%,90%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(45,100%,92%,1) 0, transparent 50%);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, #10b981, #84cc16);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
