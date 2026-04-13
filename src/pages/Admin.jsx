@@ -9,7 +9,6 @@ const Admin = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
-    price: '',
     category: '',
     image: '',
     images: ['', '', '', ''], // 4 slots for gallery
@@ -25,8 +24,20 @@ const Admin = () => {
     gallery3: false
   });
   const [error, setError] = useState('');
+  const [selectedMainCategory, setSelectedMainCategory] = useState('');
 
-  const categories = ['Lampu Jalan', 'Lampu Taman', 'Solar Panel', 'Baterai', 'Aksesori'];
+  const categoryStructure = {
+    'PJU Tenaga Surya': ['All in one', 'Two in one', 'Konvensional'],
+    'PJU PLN (50-200 watt)': [],
+    'Pompa Air Tenaga Surya': [],
+    'Traffic Light': [],
+    'Warning Light': [],
+    'Lampu Taman': [],
+    'Solar Home System': [],
+    'Aksesori': ['Solar Panel', 'Controller', 'Inverter', 'Baterai']
+  };
+
+  const mainCategories = Object.keys(categoryStructure);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -123,6 +134,12 @@ const Admin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const isAnyUploading = Object.values(uploading).some(Boolean);
+    if (isAnyUploading) {
+      setError('Upload gambar masih berjalan. Tunggu sampai selesai, lalu simpan lagi.');
+      return;
+    }
     
     // Check if any image is still uploading or is a blob (not yet saved to server)
     const isAnyBlob = formData.image.startsWith('blob:') || 
@@ -135,9 +152,11 @@ const Admin = () => {
 
     const payload = {
       ...formData,
-      price: parseFloat(formData.price),
+      price: 0,
       specs: formData.specs.split('\n').filter(s => s.trim()),
-      images: formData.images.filter(img => img && img.trim() !== '') 
+      images: formData.images.filter(
+        (img) => typeof img === 'string' && img.trim() !== '' && !img.startsWith('blob:')
+      ) 
     };
 
     console.log('Final payload before save:', payload);
@@ -159,7 +178,8 @@ const Admin = () => {
       if (res.ok) {
         fetchProducts();
         setEditingProduct(null);
-        setFormData({ name: '', price: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
+        setSelectedMainCategory('');
+        setFormData({ name: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
       }
     } catch (err) {
       setError('Gagal menyimpan produk');
@@ -169,13 +189,14 @@ const Admin = () => {
   const handleEdit = (product) => {
     setEditingProduct(product);
 
-    // Ensure gallery has exactly 4 slots
     const gallery = [...(product.images || [])];
     while (gallery.length < 4) gallery.push('');
 
+    const mainCat = product.category.includes(' - ') ? product.category.split(' - ')[0] : product.category;
+    setSelectedMainCategory(mainCat);
+
     setFormData({
       name: product.name,
-      price: product.price.toString(),
       category: product.category,
       image: product.image,
       images: gallery.slice(0, 4),
@@ -253,6 +274,11 @@ const Admin = () => {
             className="glass p-8 rounded-[32px] border-black/5 sticky top-32"
           >
             <h2 className="text-2xl font-black mb-6">{editingProduct ? 'Edit Produk' : 'Tambah Produk Baru'}</h2>
+            {error && (
+              <p className="mb-4 rounded-xl bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm font-bold text-red-600">
+                {error}
+              </p>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Nama Produk</label>
@@ -265,27 +291,38 @@ const Admin = () => {
                 />
               </div>
               <div>
-                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Harga (IDR)</label>
-                <input 
-                  type="number" 
-                  required
-                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none"
-                  value={formData.price}
-                  onChange={(e) => setFormData({...formData, price: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Kategori</label>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Kategori Utama</label>
                 <select 
                   className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none appearance-none"
-                  value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  value={selectedMainCategory}
+                  onChange={(e) => {
+                    setSelectedMainCategory(e.target.value);
+                    setFormData({...formData, category: e.target.value});
+                  }}
                   required
                 >
-                  <option value="">Pilih Kategori</option>
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                  <option value="">Pilih Kategori Utama</option>
+                  {mainCategories.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
+
+              {selectedMainCategory && categoryStructure[selectedMainCategory]?.length > 0 && (
+                <div>
+                  <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Sub-Kategori</label>
+                  <select 
+                    className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none appearance-none"
+                    value={formData.category.includes(' - ') ? formData.category.split(' - ')[1] : ''}
+                    onChange={(e) => {
+                      const fullCategory = `${selectedMainCategory} - ${e.target.value}`;
+                      setFormData({...formData, category: fullCategory});
+                    }}
+                    required
+                  >
+                    <option value="">Pilih Sub-Kategori</option>
+                    {categoryStructure[selectedMainCategory].map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                  </select>
+                </div>
+              )}
               <div>
                 <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Gambar Utama</label>
                 <div className="space-y-3">
@@ -363,7 +400,8 @@ const Admin = () => {
                     type="button"
                     onClick={() => {
                       setEditingProduct(null);
-                      setFormData({ name: '', price: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
+                      setSelectedMainCategory('');
+                      setFormData({ name: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
                     }}
                     className="px-6 py-4 bg-black/5 rounded-2xl font-bold"
                   >
@@ -403,7 +441,6 @@ const Admin = () => {
                       </span>
                     </div>
                     <h3 className="font-bold truncate">{product.name}</h3>
-                    <p className="text-sm font-medium text-text-secondary">Rp {product.price.toLocaleString()}</p>
                   </div>
                   <div className="flex gap-2">
                     <button 

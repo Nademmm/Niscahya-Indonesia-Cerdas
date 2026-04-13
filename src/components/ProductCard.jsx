@@ -2,6 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
+  // Extract category display text (show subcategory if available, else main category)
+  const getCategoryDisplay = (fullCategory) => {
+    if (fullCategory.includes(' - ')) {
+      return fullCategory.split(' - ')[1];
+    }
+    return fullCategory;
+  };
   return (
     <div className="group relative glass rounded-[32px] overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-primary/10 border-black/5 hover:border-primary/20">
       <div className="relative aspect-[4/5] overflow-hidden">
@@ -15,7 +22,7 @@ const ProductCard = ({ product }) => {
         {/* Category Badge */}
         <div className="absolute top-6 left-6">
           <span className="px-4 py-1.5 bg-white/20 backdrop-blur-xl border border-white/20 text-[10px] font-black uppercase tracking-[0.2em] text-white rounded-full">
-            {product.category}
+            {getCategoryDisplay(product.category)}
           </span>
         </div>
 
@@ -32,9 +39,6 @@ const ProductCard = ({ product }) => {
             <h3 className="text-2xl font-black tracking-tighter text-white uppercase leading-none line-clamp-2 group-hover:text-primary transition-colors">
               {product.name}
             </h3>
-            <p className="text-primary font-black text-xl tracking-tighter">
-              Rp {product.price.toLocaleString('id-ID')}
-            </p>
           </div>
           
           <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">

@@ -3,6 +3,30 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 
+const normalizeImageList = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== 'string') return [];
+
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (_err) {
+    // Fallback for comma-separated legacy values.
+  }
+
+  return trimmed.split(',');
+};
+
+const getCategoryDisplay = (fullCategory) => {
+  if (fullCategory.includes(' - ')) {
+    return fullCategory.split(' - ')[1];
+  }
+  return fullCategory;
+};
+
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,7 +43,6 @@ const ProductDetail = () => {
   Saya ingin melakukan pembelian produk berikut:
   ${product?.name || 'Produk'}
   Jumlah: ${quantity} unit
-  Total: Rp ${((product?.price || 0) * quantity).toLocaleString('id-ID')}
   Silakan diproses ya. Terima kasih`;
   const encodedMessage = encodeURIComponent(message);
   window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
@@ -35,8 +58,18 @@ const ProductDetail = () => {
 
         if (prodRes.ok) {
           const prodData = await prodRes.json();
+          const normalizedExtras = [
+            ...normalizeImageList(prodData.images),
+            prodData.image2,
+            prodData.image3,
+            prodData.image4,
+            prodData.image5
+          ].filter(Boolean);
+
+          const firstAvailableImage = prodData.image || normalizedExtras[0] || null;
+
           setProduct(prodData);
-          setSelectedImage(prodData.image);
+          setSelectedImage(firstAvailableImage);
         } else {
           setProduct(null);
         }
@@ -73,13 +106,29 @@ const ProductDetail = () => {
     );
   }
 
-  const allImages = [product.image, ...(product.images || [])].filter((img, index, self) => 
+  const normalizedGalleryImages = [
+    ...normalizeImageList(product.images),
+    product.image2,
+    product.image3,
+    product.image4,
+    product.image5
+  ].filter(Boolean);
+
+  const allImages = [product.image, ...normalizedGalleryImages].filter((img, index, self) => 
     img && typeof img === 'string' && img.trim() !== '' && self.indexOf(img) === index
   );
 
-  const galleryImages = (product.images || []).filter((img, index, self) => 
+  const galleryImages = normalizedGalleryImages.filter((img, index, self) => 
     img && typeof img === 'string' && img.trim() !== '' && self.indexOf(img) === index
   );
+
+  const firstImage = allImages[0] || null;
+  const thumbnailSlots = [
+    firstImage,
+    ...Array.from({ length: 4 }, (_, idx) => galleryImages[idx] || null)
+  ];
+
+  const displayedImage = selectedImage || allImages[0] || '';
 
   return (
     <div className="space-y-24">
@@ -94,38 +143,44 @@ const ProductDetail = () => {
           <div className="relative aspect-[4/5] glass rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5">
             <AnimatePresence mode="wait">
               <motion.img 
-                key={selectedImage}
+                key={displayedImage}
                 initial={{ opacity: 0, scale: 1.1 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
-                src={selectedImage} 
+                src={displayedImage} 
                 alt={product.name} 
                 className="w-full h-full object-cover" 
               />
             </AnimatePresence>
             <div className="absolute top-8 left-8">
               <span className="px-6 py-2 glass-bright rounded-full text-xs font-black uppercase tracking-[0.2em] border border-black/10">
-                {product.category}
+                {getCategoryDisplay(product.category)}
               </span>
             </div>
           </div>
           
           {/* Thumbnail Selector */}
           <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-            {allImages.map((img, i) => (
+            {thumbnailSlots.map((img, i) => (
               <motion.div 
                 key={i} 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedImage(img)}
+                onClick={() => img && setSelectedImage(img)}
                 className={`flex-shrink-0 w-24 h-24 glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 border-2 ${
-                  selectedImage === img 
+                  displayedImage === img && img
                     ? 'border-primary opacity-100 ring-4 ring-primary/10' 
                     : 'border-transparent opacity-40 hover:opacity-70'
                 }`}
               >
-                <img src={img} className="w-full h-full object-cover" />
+                {img ? (
+                  <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-text-secondary/30">
+                    Slot {i + 1}
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
@@ -150,14 +205,9 @@ const ProductDetail = () => {
               {(product.name || '').split(' ').slice(0, -1).join(' ')} <br />
               <span className="text-gradient">{(product.name || '').split(' ').slice(-1)}</span>
             </motion.h1>
-            <div className="flex items-center gap-6">
-              <p className="text-5xl font-black tracking-tighter text-text-main">
-                Rp {(product.price || 0).toLocaleString('id-ID')}
-              </p>
-              <span className="px-4 py-2 bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-xl">
-                Tersedia
-              </span>
-            </div>
+            <span className="inline-flex px-4 py-2 bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-xl">
+              Tersedia
+            </span>
           </div>
 
           <div className="space-y-6">
@@ -177,9 +227,6 @@ const ProductDetail = () => {
                   <i className="bx bx-plus font-bold"></i>
                 </button>
               </div>
-              <p className="text-sm font-black text-text-secondary uppercase tracking-widest">
-                Total: <span className="text-primary ml-2 text-lg">Rp {(product.price * quantity).toLocaleString('id-ID')}</span>
-              </p>
             </div>
 
             <div className="flex gap-4">
@@ -205,35 +252,8 @@ const ProductDetail = () => {
         </motion.div>
       </section>
 
-      {/* Galeri Detail & Deskripsi */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-        <div className="space-y-12">
-          <div className="space-y-6">
-            <h2 className="text-4xl font-black uppercase tracking-tighter">Galeri <br /><span className="text-primary">Produk</span></h2>
-            <p className="text-xl text-text-secondary font-medium leading-relaxed">
-              Tampilan mendetail dari berbagai sudut untuk memastikan kualitas sistem Niscahya yang Anda pilih.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {galleryImages.map((img, i) => (
-              <motion.div 
-                key={i}
-                whileInView={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ delay: i * 0.1 }}
-                className="aspect-square glass rounded-[32px] overflow-hidden border-black/5 shadow-xl shadow-black/5"
-              >
-                <img src={img} alt={`Detail ${i}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" />
-              </motion.div>
-            ))}
-            {galleryImages.length === 0 && (
-              <div className="col-span-2 aspect-video glass rounded-[32px] flex items-center justify-center border-dashed border-2 border-black/10">
-                <p className="text-text-secondary/40 font-black uppercase text-xs tracking-widest">Gambar Detail Belum Tersedia</p>
-              </div>
-            )}
-          </div>
-        </div>
-
+      {/* Deskripsi */}
+      <section className="space-y-12">
         <div className="space-y-12">
           <div className="space-y-6">
             <h2 className="text-4xl font-black uppercase tracking-tighter">Deskripsi <br /><span className="text-secondary">Sistem</span></h2>
@@ -305,7 +325,6 @@ const ProductDetail = () => {
               </div>
               <div className="p-6 space-y-2">
                 <h4 className="text-sm font-black uppercase tracking-tight line-clamp-1">{p.name}</h4>
-                <p className="text-lg font-black text-primary tracking-tighter">Rp {p.price.toLocaleString('id-ID')}</p>
               </div>
             </motion.div>
           ))}

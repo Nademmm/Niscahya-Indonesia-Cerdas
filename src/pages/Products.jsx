@@ -26,6 +26,17 @@ const Products = () => {
     fetchProducts();
   }, []);
 
+  const categoryStructure = {
+    'PJU Tenaga Surya': ['All in one', 'Two in one', 'Konvensional'],
+    'PJU PLN (50-200 watt)': [],
+    'Pompa Air Tenaga Surya': [],
+    'Traffic Light': [],
+    'Warning Light': [],
+    'Lampu Taman': [],
+    'Solar Home System': [],
+    'Aksesori': ['Solar Panel', 'Controller', 'Inverter', 'Baterai']
+  };
+
   const handleReset = () => {
     setSelectedCategory('Semua');
     setSearchQuery('');
@@ -41,11 +52,13 @@ const Products = () => {
     }
   }, [location.search]);
 
-  const categories = ['Semua', 'Lampu Jalan', 'Lampu Taman', 'Solar Panel', 'Baterai', 'Aksesori'];
+  const categories = ['Semua', ...Object.keys(categoryStructure)];
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      const matchesCategory = selectedCategory === 'Semua' || product.category === selectedCategory;
+      const matchesCategory = selectedCategory === 'Semua' || 
+                             product.category === selectedCategory ||
+                             product.category.startsWith(selectedCategory + ' -');
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            product.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
