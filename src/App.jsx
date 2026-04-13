@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
+import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 import { 
   Solutions, 
@@ -29,6 +30,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

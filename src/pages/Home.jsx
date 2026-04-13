@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
 
 const Home = () => {
-  const featuredProducts = products.slice(0, 4);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        setFeaturedProducts(data.slice(0, 4));
+      } catch (err) {
+        console.error('Failed to fetch products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const stats = [
     { label: 'CO2 Offset', value: '42.5k', unit: 'Tons', icon: 'bx bx-leaf', color: 'text-primary' },
@@ -165,25 +180,38 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products Showcase */}
+      {/* Featured Products */}
       <section className="space-y-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
           <div className="space-y-4">
-            <span className="text-xs font-black tracking-[0.3em] text-secondary uppercase">The Collection</span>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none">
-              Prime <span className="text-primary">Selection.</span>
-            </h2>
+            <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">New Tech Arrivals</span>
+            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">Featured.</h2>
           </div>
-          <Link to="/products" className="group flex items-center gap-3 text-lg font-black uppercase tracking-tighter hover:text-primary transition-colors">
-            Explore All Products <i className="bx bx-right-arrow-alt text-2xl group-hover:translate-x-2 transition-transform"></i>
+          <Link to="/products" className="px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all">
+            See All Products <i className="bx bx-right-arrow-alt text-lg align-middle ml-2"></i>
           </Link>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="h-[400px] glass animate-pulse rounded-[48px]"></div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map((product, i) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Big CTA Section */}

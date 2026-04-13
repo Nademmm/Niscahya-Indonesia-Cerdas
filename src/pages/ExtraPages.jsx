@@ -234,7 +234,7 @@ export const Contact = () => (
           <div className="space-y-4">
             <div className="flex items-center gap-6">
               <div className="w-12 h-12 glass rounded-xl flex items-center justify-center text-accent text-2xl"><i className="bx bx-phone"></i></div>
-              <span className="text-xl font-bold">+62 800 1234 5678</span>
+              <span className="text-xl font-bold">+62 878 5353 6124</span>
             </div>
             <div className="flex items-center gap-6">
               <div className="w-12 h-12 glass rounded-xl flex items-center justify-center text-accent text-2xl"><i className="bx bx-envelope"></i></div>

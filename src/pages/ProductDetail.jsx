@@ -1,14 +1,65 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { products } from '../data/products';
 import { useApp } from '../context/AppContext';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useApp();
-  const product = products.find((p) => p.id === parseInt(id));
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+
+  // Chat ke WhatsApp
+  const handleBuyNow = () => {
+  const phoneNumber = "6287853536124";
+  const message = `Halo Admin Niscaya Indonesia Cerdas
+  Saya ingin melakukan pembelian produk berikut:
+  ${product.name}
+  Jumlah: ${quantity} unit
+  Total: Rp ${(product.price * quantity).toLocaleString('id-ID')}
+  Silakan diproses ya. Terima kasih`;
+  const encodedMessage = encodeURIComponent(message);
+  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [prodRes, allRes] = await Promise.all([
+          fetch(`/api/products/${id}`),
+          fetch('/api/products')
+        ]);
+
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          setProduct(prodData);
+        } else {
+          setProduct(null);
+        }
+
+        if (allRes.ok) {
+          const allData = await allRes.json();
+          setRelatedProducts(allData.filter(p => p.id !== parseInt(id)));
+        }
+      } catch (err) {
+        console.error('Failed to fetch product data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-40 glass rounded-[64px] space-y-4">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Accessing System Core...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -89,16 +140,34 @@ const ProductDetail = () => {
           </div>
 
           <div className="space-y-6">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center glass border border-black/10 rounded-2xl overflow-hidden h-14">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-4 hover:bg-black/5 transition-colors h-full"
+                >
+                  <i className="bx bx-minus font-bold"></i>
+                </button>
+                <span className="w-12 text-center font-black text-xl">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="px-4 hover:bg-black/5 transition-colors h-full"
+                >
+                  <i className="bx bx-plus font-bold"></i>
+                </button>
+              </div>
+              <p className="text-sm font-black text-text-secondary uppercase tracking-widest">
+                Total: <span className="text-primary ml-2 text-lg">Rp {(product.price * quantity).toLocaleString('id-ID')}</span>
+              </p>
+            </div>
+
             <div className="flex gap-4">
               <button 
-                onClick={() => addToCart(product)}
+                onClick={handleBuyNow}
                 className="flex-1 py-6 bg-primary text-background font-black text-2xl rounded-[32px] hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20 flex items-center justify-center gap-4 group"
               >
-                <i className="bx bx-shopping-bag text-3xl"></i>
-                <span>Add to System</span>
-              </button>
-              <button className="w-24 glass border border-black/10 rounded-[32px] flex items-center justify-center hover:bg-black/5 transition-all">
-                <i className="bx bx-heart text-4xl"></i>
+                <i className="bx bxl-whatsapp text-4xl"></i>
+                <span>Buy Now via WhatsApp</span>
               </button>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -150,7 +219,7 @@ const ProductDetail = () => {
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {products.slice(0, 4).map(p => (
+          {relatedProducts.slice(0, 4).map(p => (
             <motion.div 
               key={p.id} 
               whileHover={{ y: -10 }}

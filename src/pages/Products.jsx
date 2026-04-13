@@ -2,13 +2,29 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
 import { useApp } from '../context/AppContext';
 
 const Products = () => {
   const { searchQuery, setSearchQuery } = useApp();
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error('Failed to fetch products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const handleReset = () => {
     setSelectedCategory('All');
@@ -34,7 +50,7 @@ const Products = () => {
                            product.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [products, selectedCategory, searchQuery]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -115,49 +131,56 @@ const Products = () => {
       </section>
 
       {/* Dynamic Grid */}
-      <motion.section 
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-      >
-        <AnimatePresence mode='popLayout'>
-          {filteredProducts.map((product) => (
-            <motion.div
-              key={product.id}
-              layout
-              variants={item}
-              initial="hidden"
-              animate="show"
-              exit={{ opacity: 0, scale: 0.9 }}
-            >
-              <ProductCard product={product} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      {loading ? (
+        <div className="py-40 text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Initializing Database...</p>
+        </div>
+      ) : (
+        <motion.section 
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+        >
+          <AnimatePresence mode='popLayout'>
+            {filteredProducts.map((product) => (
+              <motion.div
+                key={product.id}
+                layout
+                variants={item}
+                initial="hidden"
+                animate="show"
+                exit={{ opacity: 0, scale: 0.9 }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
-        {filteredProducts.length === 0 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5"
-          >
-            <div className="w-24 h-24 bg-black/5 rounded-[32px] flex items-center justify-center border border-black/5 animate-bounce-slow">
-              <i className="bx bx-ghost text-5xl text-text-secondary"></i>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-4xl font-black uppercase tracking-tighter">System Error: Empty</h3>
-              <p className="text-text-secondary font-medium tracking-tight">Tidak ada produk ditemukan untuk "{searchQuery}"</p>
-            </div>
-            <button 
-              onClick={handleReset}
-              className="px-10 py-4 bg-primary text-background font-black rounded-2xl hover:scale-105 transition-all"
+          {filteredProducts.length === 0 && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5"
             >
-              Reset Filter
-            </button>
-          </motion.div>
-        )}
-      </motion.section>
+              <div className="w-24 h-24 bg-black/5 rounded-[32px] flex items-center justify-center border border-black/5 animate-bounce-slow">
+                <i className="bx bx-ghost text-5xl text-text-secondary"></i>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-4xl font-black uppercase tracking-tighter">System Error: Empty</h3>
+                <p className="text-text-secondary font-medium tracking-tight">Tidak ada produk ditemukan untuk "{searchQuery}"</p>
+              </div>
+              <button 
+                onClick={handleReset}
+                className="px-10 py-4 bg-primary text-background font-black rounded-2xl hover:scale-105 transition-all"
+              >
+                Reset Filter
+              </button>
+            </motion.div>
+          )}
+        </motion.section>
+      )}
     </div>
   );
 };

@@ -20,10 +20,10 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Floating Action */}
-        <div className="absolute top-6 right-6 translate-y-[-20px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-          <button className="w-12 h-12 glass-bright rounded-2xl flex items-center justify-center text-text-main hover:bg-primary hover:text-background transition-all">
-            <i className="bx bx-plus text-2xl"></i>
-          </button>
+        <div className="absolute top-6 right-6 translate-y-[-20px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20">
+          <div className="w-12 h-12 glass-bright rounded-2xl flex items-center justify-center text-text-main hover:bg-primary hover:text-background transition-all">
+            <i className="bx bx-show text-2xl"></i>
+          </div>
         </div>
 
         {/* Product Info Overlay */}
