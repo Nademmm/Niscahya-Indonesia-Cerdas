@@ -27,7 +27,7 @@ const Products = () => {
   }, []);
 
   const handleReset = () => {
-    setSelectedCategory('All');
+    setSelectedCategory('Semua');
     setSearchQuery('');
   };
 
@@ -37,15 +37,15 @@ const Products = () => {
     if (cat) {
       setSelectedCategory(cat);
     } else {
-      setSelectedCategory('All');
+      setSelectedCategory('Semua');
     }
   }, [location.search]);
 
-  const categories = ['All', 'Lampu Jalan', 'Lampu Taman', 'Solar Panel', 'Baterai', 'Aksesori'];
+  const categories = ['Semua', 'Lampu Jalan', 'Lampu Taman', 'Solar Panel', 'Baterai', 'Aksesori'];
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+      const matchesCategory = selectedCategory === 'Semua' || product.category === selectedCategory;
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            product.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
@@ -84,7 +84,7 @@ const Products = () => {
             animate={{ x: 0, opacity: 1 }}
             className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-2xl"
           >
-            <span className="text-[10px] font-black tracking-[0.4em] text-secondary uppercase">Marketplace / Catalog</span>
+            <span className="text-[10px] font-black tracking-[0.4em] text-secondary uppercase">Pasar / Katalog</span>
           </motion.div>
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
@@ -92,8 +92,8 @@ const Products = () => {
             transition={{ delay: 0.1 }}
             className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8]"
           >
-            Advanced <br />
-            <span className="text-gradient">Solutions.</span>
+            Solusi <br />
+            <span className="text-gradient">Terdepan.</span>
           </motion.h1>
           <motion.p 
             initial={{ y: 20, opacity: 0 }}
@@ -117,7 +117,7 @@ const Products = () => {
           {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => cat === 'All' ? handleReset() : setSelectedCategory(cat)}
+              onClick={() => cat === 'Semua' ? handleReset() : setSelectedCategory(cat)}
               className={`px-8 py-3.5 rounded-[22px] text-xs font-black tracking-[0.2em] uppercase transition-all duration-500 ${
                 selectedCategory === cat
                   ? 'bg-primary text-background shadow-xl shadow-primary/20'
@@ -134,7 +134,7 @@ const Products = () => {
       {loading ? (
         <div className="py-40 text-center space-y-4">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Initializing Database...</p>
+          <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Menyiapkan Database...</p>
         </div>
       ) : (
         <motion.section 
@@ -168,14 +168,14 @@ const Products = () => {
                 <i className="bx bx-ghost text-5xl text-text-secondary"></i>
               </div>
               <div className="space-y-2">
-                <h3 className="text-4xl font-black uppercase tracking-tighter">System Error: Empty</h3>
+                <h3 className="text-4xl font-black uppercase tracking-tighter">Sistem Kosong</h3>
                 <p className="text-text-secondary font-medium tracking-tight">Tidak ada produk ditemukan untuk "{searchQuery}"</p>
               </div>
               <button 
                 onClick={handleReset}
                 className="px-10 py-4 bg-primary text-background font-black rounded-2xl hover:scale-105 transition-all"
               >
-                Reset Filter
+                Atur Ulang Filter
               </button>
             </motion.div>
           )}

@@ -14,10 +14,18 @@ db.exec(`
     price INTEGER NOT NULL,
     category TEXT NOT NULL,
     image TEXT,
+    images TEXT,
     description TEXT,
     specs TEXT
   )
 `);
+
+// Add images column if it doesn't exist (migration)
+try {
+  db.exec("ALTER TABLE products ADD COLUMN images TEXT DEFAULT '[]'");
+} catch (e) {
+  // Column already exists
+}
 
 // Function to seed initial data
 export const seedDatabase = (initialProducts) => {
@@ -26,8 +34,8 @@ export const seedDatabase = (initialProducts) => {
 
   if (count === 0) {
     const insertStmt = db.prepare(`
-      INSERT INTO products (name, price, category, image, description, specs)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO products (name, price, category, image, images, description, specs)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
 
     const insertMany = db.transaction((products) => {
@@ -37,6 +45,7 @@ export const seedDatabase = (initialProducts) => {
           product.price,
           product.category,
           product.image,
+          JSON.stringify(product.images || []),
           product.description,
           JSON.stringify(product.specs)
         );

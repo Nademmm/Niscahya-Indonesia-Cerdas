@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 
 const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'Products', path: '/products' },
-  { name: 'Solutions', path: '/solutions' },
-  { name: 'Impact', path: '/impact' },
+  { name: 'Beranda', path: '/' },
+  { name: 'Produk', path: '/products' },
+  { name: 'Solusi', path: '/solutions' },
+  { name: 'Dampak', path: '/impact' },
 ];
 
 const Navbar = () => {
@@ -66,7 +66,7 @@ const Navbar = () => {
             <i className="bx bx-search text-xl text-text-secondary group-focus-within:text-primary"></i>
             <input 
               type="text" 
-              placeholder="Search units..."
+              placeholder="Cari unit..."
               value={searchQuery}
               onChange={handleSearch}
               className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-32 md:w-48"
@@ -166,7 +166,7 @@ const Layout = ({ children }) => {
             </p>
           </div>
           <div className="space-y-6">
-            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">Navigation</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">Navigasi</h4>
             <ul className="space-y-4">
               {navLinks.map(link => (
                 <li key={link.name}>
@@ -176,15 +176,15 @@ const Layout = ({ children }) => {
             </ul>
           </div>
           <div className="space-y-6">
-            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">System</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">Sistem</h4>
             <ul className="space-y-4">
-              <li><Link to="/admin" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Admin Panel</Link></li>
-              <li><Link to="/contact" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Support</Link></li>
+              <li><Link to="/admin" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Panel Admin</Link></li>
+              <li><Link to="/contact" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Bantuan</Link></li>
             </ul>
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 border-t border-black/5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">© 2026 NISCAHYA INDONESIA CERDAS. ALL SYSTEMS OPERATIONAL.</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">© 2026 NISCAHYA INDONESIA CERDAS. SEMUA SISTEM BEROPERASI.</p>
           <div className="flex gap-6 text-xl text-text-secondary">
             <i className="bx bxl-instagram hover:text-primary cursor-pointer transition-colors"></i>
             <i className="bx bxl-linkedin hover:text-primary cursor-pointer transition-colors"></i>

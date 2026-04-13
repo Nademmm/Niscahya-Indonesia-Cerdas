@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 
 const ProductDetail = () => {
@@ -10,15 +10,16 @@ const ProductDetail = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Chat ke WhatsApp
   const handleBuyNow = () => {
   const phoneNumber = "6287853536124";
   const message = `Halo Admin Niscaya Indonesia Cerdas
   Saya ingin melakukan pembelian produk berikut:
-  ${product.name}
+  ${product?.name || 'Produk'}
   Jumlah: ${quantity} unit
-  Total: Rp ${(product.price * quantity).toLocaleString('id-ID')}
+  Total: Rp ${((product?.price || 0) * quantity).toLocaleString('id-ID')}
   Silakan diproses ya. Terima kasih`;
   const encodedMessage = encodeURIComponent(message);
   window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
@@ -35,6 +36,7 @@ const ProductDetail = () => {
         if (prodRes.ok) {
           const prodData = await prodRes.json();
           setProduct(prodData);
+          setSelectedImage(prodData.image);
         } else {
           setProduct(null);
         }
@@ -56,7 +58,7 @@ const ProductDetail = () => {
     return (
       <div className="flex flex-col items-center justify-center py-40 glass rounded-[64px] space-y-4">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Accessing System Core...</p>
+        <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Mengakses Inti Sistem...</p>
       </div>
     );
   }
@@ -65,43 +67,65 @@ const ProductDetail = () => {
     return (
       <div className="flex flex-col items-center justify-center py-40 glass rounded-[64px] space-y-8">
         <i className="bx bx-error text-8xl text-primary animate-pulse"></i>
-        <h1 className="text-4xl font-black uppercase tracking-tighter">Product Not Found</h1>
-        <Link to="/products" className="px-10 py-5 bg-primary text-background font-black rounded-2xl">Return to Catalog</Link>
+        <h1 className="text-4xl font-black uppercase tracking-tighter">Produk Tidak Ditemukan</h1>
+        <Link to="/products" className="px-10 py-5 bg-primary text-background font-black rounded-2xl">Kembali ke Katalog</Link>
       </div>
     );
   }
 
+  const allImages = [product.image, ...(product.images || [])].filter((img, index, self) => 
+    img && typeof img === 'string' && img.trim() !== '' && self.indexOf(img) === index
+  );
+
+  const galleryImages = (product.images || []).filter((img, index, self) => 
+    img && typeof img === 'string' && img.trim() !== '' && self.indexOf(img) === index
+  );
+
   return (
-    <div className="space-y-20">
+    <div className="space-y-24">
       {/* Detail Header */}
       <section className="flex flex-col lg:flex-row gap-16">
-        {/* Gallery */}
+        {/* Gallery Utama */}
         <motion.div 
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           className="flex-1 space-y-6"
         >
-          <div className="relative aspect-[4/5] glass rounded-[48px] overflow-hidden group">
-            <motion.img 
-              layoutId={`product-image-${product.id}`}
-              src={product.image} 
-              alt={product.name} 
-              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
-            />
+          <div className="relative aspect-[4/5] glass rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5">
+            <AnimatePresence mode="wait">
+              <motion.img 
+                key={selectedImage}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4 }}
+                src={selectedImage} 
+                alt={product.name} 
+                className="w-full h-full object-cover" 
+              />
+            </AnimatePresence>
             <div className="absolute top-8 left-8">
               <span className="px-6 py-2 glass-bright rounded-full text-xs font-black uppercase tracking-[0.2em] border border-black/10">
                 {product.category}
               </span>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => (
+          
+          {/* Thumbnail Selector */}
+          <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+            {allImages.map((img, i) => (
               <motion.div 
                 key={i} 
                 whileHover={{ scale: 1.05 }}
-                className="aspect-square glass rounded-3xl overflow-hidden cursor-pointer hover:border-primary/50 transition-all opacity-50 hover:opacity-100 border-black/5 shadow-lg shadow-black/5"
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedImage(img)}
+                className={`flex-shrink-0 w-24 h-24 glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 border-2 ${
+                  selectedImage === img 
+                    ? 'border-primary opacity-100 ring-4 ring-primary/10' 
+                    : 'border-transparent opacity-40 hover:opacity-70'
+                }`}
               >
-                <img src={product.image} className="w-full h-full object-cover" />
+                <img src={img} className="w-full h-full object-cover" />
               </motion.div>
             ))}
           </div>
@@ -115,7 +139,7 @@ const ProductDetail = () => {
         >
           <div className="space-y-6">
             <div className="flex items-center gap-4 text-xs font-black tracking-[0.3em] text-text-secondary uppercase">
-              <Link to="/products" className="hover:text-primary transition-colors">Catalog</Link>
+              <Link to="/products" className="hover:text-primary transition-colors">Katalog</Link>
               <i className="bx bx-chevron-right text-lg"></i>
               <span className="text-primary">{product.name}</span>
             </div>
@@ -123,20 +147,17 @@ const ProductDetail = () => {
               layoutId={`product-name-${product.id}`}
               className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8]"
             >
-              {product.name.split(' ').slice(0, -1).join(' ')} <br />
-              <span className="text-gradient">{product.name.split(' ').slice(-1)}</span>
+              {(product.name || '').split(' ').slice(0, -1).join(' ')} <br />
+              <span className="text-gradient">{(product.name || '').split(' ').slice(-1)}</span>
             </motion.h1>
             <div className="flex items-center gap-6">
               <p className="text-5xl font-black tracking-tighter text-text-main">
-                Rp {product.price.toLocaleString('id-ID')}
+                Rp {(product.price || 0).toLocaleString('id-ID')}
               </p>
               <span className="px-4 py-2 bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-xl">
-                In Stock
+                Tersedia
               </span>
             </div>
-            <p className="text-xl text-text-secondary font-medium leading-relaxed max-w-xl">
-              {product.description}
-            </p>
           </div>
 
           <div className="space-y-6">
@@ -167,21 +188,74 @@ const ProductDetail = () => {
                 className="flex-1 py-6 bg-primary text-background font-black text-2xl rounded-[32px] hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20 flex items-center justify-center gap-4 group"
               >
                 <i className="bx bxl-whatsapp text-4xl"></i>
-                <span>Buy Now via WhatsApp</span>
+                <span>Beli Sekarang via WhatsApp</span>
               </button>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="glass p-6 rounded-[32px] flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
                 <i className="bx bx-shield-alt-2 text-3xl text-primary"></i>
-                <span className="text-xs font-black uppercase tracking-widest text-text-secondary">2 Year Warranty</span>
+                <span className="text-xs font-black uppercase tracking-widest text-text-secondary">Garansi 2 Tahun</span>
               </div>
               <div className="glass p-6 rounded-[32px] flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
                 <i className="bx bx-trending-up text-3xl text-secondary"></i>
-                <span className="text-xs font-black uppercase tracking-widest text-text-secondary">Certified Eco</span>
+                <span className="text-xs font-black uppercase tracking-widest text-text-secondary">Sertifikasi Eco</span>
               </div>
             </div>
           </div>
         </motion.div>
+      </section>
+
+      {/* Galeri Detail & Deskripsi */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div className="space-y-12">
+          <div className="space-y-6">
+            <h2 className="text-4xl font-black uppercase tracking-tighter">Galeri <br /><span className="text-primary">Produk</span></h2>
+            <p className="text-xl text-text-secondary font-medium leading-relaxed">
+              Tampilan mendetail dari berbagai sudut untuk memastikan kualitas sistem Niscahya yang Anda pilih.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {galleryImages.map((img, i) => (
+              <motion.div 
+                key={i}
+                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                transition={{ delay: i * 0.1 }}
+                className="aspect-square glass rounded-[32px] overflow-hidden border-black/5 shadow-xl shadow-black/5"
+              >
+                <img src={img} alt={`Detail ${i}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" />
+              </motion.div>
+            ))}
+            {galleryImages.length === 0 && (
+              <div className="col-span-2 aspect-video glass rounded-[32px] flex items-center justify-center border-dashed border-2 border-black/10">
+                <p className="text-text-secondary/40 font-black uppercase text-xs tracking-widest">Gambar Detail Belum Tersedia</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-12">
+          <div className="space-y-6">
+            <h2 className="text-4xl font-black uppercase tracking-tighter">Deskripsi <br /><span className="text-secondary">Sistem</span></h2>
+            <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-gradient-to-br from-white to-black/5">
+              <p className="text-xl text-text-secondary font-medium leading-relaxed whitespace-pre-line">
+                {product.description}
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-4">
+            <div className="glass p-8 rounded-[32px] border-black/5 flex items-center gap-6 group hover:border-primary/30 transition-all">
+              <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                <i className="bx bx-check-shield"></i>
+              </div>
+              <div>
+                <h4 className="font-black uppercase tracking-tighter">Kualitas Terjamin</h4>
+                <p className="text-xs text-text-secondary font-bold uppercase tracking-widest">Sertifikasi Standar Nasional</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Bento Specs Section */}
@@ -191,7 +265,7 @@ const ProductDetail = () => {
           initial={{ opacity: 0, y: 20 }}
           className="glass p-12 rounded-[56px] space-y-6 border-black/5 shadow-xl shadow-black/5"
         >
-          <h3 className="text-2xl font-black uppercase tracking-tighter">Technical <br /><span className="text-primary">Specifications</span></h3>
+          <h3 className="text-2xl font-black uppercase tracking-tighter">Spesifikasi <br /><span className="text-primary">Teknis</span></h3>
           <p className="text-text-secondary font-medium">Informasi mendetail mengenai kemampuan perangkat.</p>
         </motion.div>
         <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -213,9 +287,9 @@ const ProductDetail = () => {
       {/* Similar Selection */}
       <section className="space-y-12">
         <div className="flex items-end justify-between">
-          <h2 className="text-4xl font-black uppercase tracking-tighter">Related <br /><span className="text-secondary">Units</span></h2>
+          <h2 className="text-4xl font-black uppercase tracking-tighter">Unit <br /><span className="text-secondary">Terkait</span></h2>
           <Link to="/products" className="text-lg font-black uppercase tracking-tighter hover:text-primary transition-colors flex items-center gap-2">
-            Catalog <i className="bx bx-right-arrow-alt text-2xl"></i>
+            Katalog <i className="bx bx-right-arrow-alt text-2xl"></i>
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

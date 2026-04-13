@@ -23,12 +23,12 @@ const Home = () => {
   }, []);
 
   const stats = [
-    { label: 'CO2 Offset', value: '42.5k', unit: 'Tons', icon: 'bx bx-leaf', color: 'text-primary' },
-    { label: 'Energy Saved', value: '850M', unit: 'Wh', icon: 'bx bx-bolt', color: 'text-secondary' },
-    { label: 'Global Reach', value: '120+', unit: 'Cities', icon: 'bx bx-globe', color: 'text-accent' },
+    { label: 'Offset CO2', value: '42.5rb', unit: 'Ton', icon: 'bx bx-leaf', color: 'text-primary' },
+    { label: 'Energi Hemat', value: '850jt', unit: 'Wh', icon: 'bx bx-bolt', color: 'text-secondary' },
+    { label: 'Jangkauan', value: '120+', unit: 'Kota', icon: 'bx bx-globe', color: 'text-accent' },
   ];
 
-  const partners = ['Vercel', 'Stripe', 'Tesla', 'NASA', 'SpaceX'];
+  const partners = ['NISCAHYA', 'INDONESIA', 'CERDAS'];
 
   return (
     <div className="space-y-32">
@@ -60,8 +60,8 @@ const Home = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] uppercase"
           >
-            Solar <br />
-            <span className="text-gradient">Evolution.</span>
+            Evolusi <br />
+            <span className="text-gradient">Surya.</span>
           </motion.h1>
           <motion.p 
             initial={{ y: 20, opacity: 0 }}
@@ -83,14 +83,14 @@ const Home = () => {
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
               <span className="relative z-10 flex items-center gap-3">
-                Start Journey <i className="bx bx-right-arrow-alt text-2xl"></i>
+                Mulai Perjalanan <i className="bx bx-right-arrow-alt text-2xl"></i>
               </span>
             </Link>
             <Link
               to="/about"
               className="px-10 py-5 glass border border-black/10 rounded-2xl font-black text-xl hover:bg-black/5 transition-all text-center"
             >
-              Learn More
+              Pelajari Lebih Lanjut
             </Link>
           </motion.div>
         </div>
@@ -132,7 +132,7 @@ const Home = () => {
               <i className="bx bx-bolt text-3xl"></i>
             </span>
             <div className="space-y-4">
-              <h3 className="text-5xl font-black tracking-tighter uppercase leading-none">High Efficiency <br />Photovoltaic</h3>
+              <h3 className="text-5xl font-black tracking-tighter uppercase leading-none">Fotovoltaik <br />Efisiensi Tinggi</h3>
               <p className="text-xl text-text-secondary font-medium max-w-lg leading-relaxed">
                 Panel surya generasi terbaru dengan efisiensi konversi hingga 24.5%. Maksimalkan setiap sinar matahari untuk energi rumah Anda.
               </p>
@@ -141,7 +141,7 @@ const Home = () => {
               to="/solutions"
               className="flex items-center gap-3 font-black uppercase tracking-widest text-primary group-hover:gap-5 transition-all"
             >
-              Read Whitepaper <i className="bx bx-right-arrow-alt text-2xl"></i>
+              Baca Whitepaper <i className="bx bx-right-arrow-alt text-2xl"></i>
             </Link>
           </div>
         </motion.div>
@@ -155,7 +155,7 @@ const Home = () => {
               <i className="bx bx-chip text-3xl"></i>
             </span>
             <div className="space-y-4">
-              <h3 className="text-5xl font-black tracking-tighter uppercase leading-none">Smart AI <br />Control</h3>
+              <h3 className="text-5xl font-black tracking-tighter uppercase leading-none">Kontrol <br />AI Cerdas</h3>
               <p className="text-xl text-text-secondary font-medium leading-relaxed">
                 Sistem manajemen energi berbasis AI yang mengoptimalkan penggunaan daya secara otomatis berdasarkan pola hidup Anda.
               </p>
@@ -184,11 +184,11 @@ const Home = () => {
       <section className="space-y-16">
         <div className="flex flex-col md:flex-row justify-between items-end gap-6">
           <div className="space-y-4">
-            <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">New Tech Arrivals</span>
-            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">Featured.</h2>
+            <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Teknologi Terbaru</span>
+            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">Unggulan.</h2>
           </div>
           <Link to="/products" className="px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all">
-            See All Products <i className="bx bx-right-arrow-alt text-lg align-middle ml-2"></i>
+            Lihat Semua Produk <i className="bx bx-right-arrow-alt text-lg align-middle ml-2"></i>
           </Link>
         </div>
         
@@ -214,30 +214,34 @@ const Home = () => {
         )}
       </section>
 
-      {/* Big CTA Section */}
+      {/* Map Section */}
       <motion.section 
         whileInView={{ scale: 0.95, opacity: 1 }}
         initial={{ scale: 1, opacity: 0 }}
-        className="relative py-32 rounded-[64px] overflow-hidden bg-primary group mx-4 lg:mx-0 shadow-2xl shadow-primary/20"
+        className="relative rounded-[64px] overflow-hidden glass border-black/5 mx-4 lg:mx-0 shadow-2xl shadow-black/5 group"
       >
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2000')] bg-cover bg-center mix-blend-overlay opacity-30 group-hover:scale-110 transition-transform duration-1000"></div>
-        <div className="relative z-10 text-center space-y-12 px-6">
-          <h2 className="text-6xl md:text-8xl font-black text-white tracking-tighter uppercase leading-[0.8]">
-            Ready for <br />the Green?
-          </h2>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link
-              to="/products"
-              className="px-12 py-6 bg-white text-primary font-black text-2xl rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl"
-            >
-              Join Movement
-            </Link>
-            <Link
-              to="/contact"
-              className="px-12 py-6 border-4 border-white text-white font-black text-2xl rounded-2xl hover:bg-white hover:text-primary transition-all text-center"
-            >
-              Get Quote
-            </Link>
+        <div className="p-12 space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+            <div className="space-y-4">
+              <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Lokasi Kami</span>
+              <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">Kunjungi Kami.</h2>
+            </div>
+            <p className="text-text-secondary font-medium max-w-sm text-right">
+              Temukan unit terbaik kami secara langsung di showroom SinarSurya EnergiKu.
+            </p>
+          </div>
+          
+          <div className="w-full h-[500px] rounded-[48px] overflow-hidden border-4 border-black/5 shadow-inner relative">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen="" 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              className="grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
+            ></iframe>
           </div>
         </div>
       </motion.section>

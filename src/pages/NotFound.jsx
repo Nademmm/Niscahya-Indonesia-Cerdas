@@ -21,12 +21,12 @@ const NotFound = () => {
           >
             <i className="bx bx-error-alt text-5xl text-primary"></i>
           </motion.div>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">System Offline.</h2>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">Sistem Offline.</h2>
         </div>
       </div>
       
       <p className="text-xl text-text-secondary max-w-md mx-auto font-medium">
-        Halaman yang Anda cari tidak ditemukan atau telah didekomposisi dari jaringan.
+        Halaman yang Anda cari tidak ditemukan atau telah terputus dari jaringan.
       </p>
 
       <Link
@@ -35,7 +35,7 @@ const NotFound = () => {
       >
         <span className="flex items-center gap-3">
           <i className="bx bx-left-arrow-alt text-3xl group-hover:-translate-x-2 transition-transform"></i>
-          Re-Initialize Home
+          Kembali ke Beranda
         </span>
       </Link>
     </div>

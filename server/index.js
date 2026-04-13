@@ -62,14 +62,33 @@ app.post('/api/upload', (req, res) => {
   });
 });
 
+// Route for multiple file uploads
+app.post('/api/upload-multiple', (req, res) => {
+  upload.array('images', 5)(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json({ error: `Multer error: ${err.message}` });
+    } else if (err) {
+      return res.status(500).json({ error: `Unknown error: ${err.message}` });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
+    res.json({ imageUrls });
+  });
+});
+
 // Routes for products
 app.get('/api/products', (req, res) => {
   try {
     const products = db.prepare('SELECT * FROM products').all();
-    // Parse specs from JSON string back to array
+    // Parse specs and images from JSON string back to array
     const parsedProducts = products.map(p => ({
       ...p,
-      specs: JSON.parse(p.specs || '[]')
+      specs: JSON.parse(p.specs || '[]'),
+      images: JSON.parse(p.images || '[]')
     }));
     res.json(parsedProducts);
   } catch (error) {
@@ -82,6 +101,7 @@ app.get('/api/products/:id', (req, res) => {
     const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
     if (product) {
       product.specs = JSON.parse(product.specs || '[]');
+      product.images = JSON.parse(product.images || '[]');
       res.json(product);
     } else {
       res.status(404).json({ message: 'Product not found' });
@@ -92,13 +112,21 @@ app.get('/api/products/:id', (req, res) => {
 });
 
 app.post('/api/products', (req, res) => {
-  const { name, price, category, image, description, specs } = req.body;
+  const { name, price, category, image, images, description, specs } = req.body;
   try {
     const insertStmt = db.prepare(`
-      INSERT INTO products (name, price, category, image, description, specs)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO products (name, price, category, image, images, description, specs)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
-    const result = insertStmt.run(name, price, category, image, description, JSON.stringify(specs));
+    const result = insertStmt.run(
+      name, 
+      price, 
+      category, 
+      image, 
+      JSON.stringify(images || []), 
+      description, 
+      JSON.stringify(specs)
+    );
     res.status(201).json({ id: result.lastInsertRowid, ...req.body });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -106,14 +134,23 @@ app.post('/api/products', (req, res) => {
 });
 
 app.put('/api/products/:id', (req, res) => {
-  const { name, price, category, image, description, specs } = req.body;
+  const { name, price, category, image, images, description, specs } = req.body;
   try {
     const updateStmt = db.prepare(`
       UPDATE products 
-      SET name = ?, price = ?, category = ?, image = ?, description = ?, specs = ?
+      SET name = ?, price = ?, category = ?, image = ?, images = ?, description = ?, specs = ?
       WHERE id = ?
     `);
-    const result = updateStmt.run(name, price, category, image, description, JSON.stringify(specs), req.params.id);
+    const result = updateStmt.run(
+      name, 
+      price, 
+      category, 
+      image, 
+      JSON.stringify(images || []), 
+      description, 
+      JSON.stringify(specs), 
+      req.params.id
+    );
     if (result.changes > 0) {
       res.json({ id: req.params.id, ...req.body });
     } else {

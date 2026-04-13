@@ -45,16 +45,16 @@ const PageHero = ({ title, subtitle, icon, color = 'primary' }) => (
 export const Solutions = () => (
   <div className="space-y-32">
     <PageHero 
-      title="Eco Solutions" 
+      title="Solusi Eco" 
       subtitle="Integrasi energi surya tercanggih untuk kebutuhan domestik dan industri."
       icon="bx-chip"
       color="primary"
     />
     <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {[
-        { title: 'Home Ecosystem', desc: 'Sistem mandiri untuk rumah tangga dengan penyimpanan baterai cerdas.', icon: 'bx-home-alt-2' },
-        { title: 'Industrial Power', desc: 'Skala besar untuk pabrik dan gudang dengan efisiensi tinggi.', icon: 'bx-factory' },
-        { title: 'Smart City Grid', desc: 'Infrastruktur publik terintegrasi untuk penerangan jalan otomatis.', icon: 'bx-buildings' }
+        { title: 'Ekosistem Rumah', desc: 'Sistem mandiri untuk rumah tangga dengan penyimpanan baterai cerdas.', icon: 'bx-home-alt-2' },
+        { title: 'Daya Industri', desc: 'Skala besar untuk pabrik dan gudang dengan efisiensi tinggi.', icon: 'bx-factory' },
+        { title: 'Jaringan Kota Cerdas', desc: 'Infrastruktur publik terintegrasi untuk penerangan jalan otomatis.', icon: 'bx-buildings' }
       ].map((item, i) => (
         <motion.div key={i} whileHover={{ y: -10 }} className="glass p-10 rounded-[48px] space-y-6 border-black/5 shadow-xl shadow-black/5">
           <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center text-3xl">
@@ -71,7 +71,7 @@ export const Solutions = () => (
 export const Impact = () => (
   <div className="space-y-32">
     <PageHero 
-      title="Global Impact" 
+      title="Dampak Global" 
       subtitle="Melacak kontribusi nyata Niscahya dalam menjaga ekosistem bumi."
       icon="bx-globe"
       color="primary"
@@ -80,12 +80,12 @@ export const Impact = () => (
       <div className="absolute inset-0 bg-primary/5 -z-10 animate-pulse"></div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
-          <h2 className="text-5xl font-black uppercase tracking-tighter leading-none">Saving the <br /><span className="text-primary">Atmosphere.</span></h2>
+          <h2 className="text-5xl font-black uppercase tracking-tighter leading-none">Menyelamatkan <br /><span className="text-primary">Atmosfer.</span></h2>
           <p className="text-xl text-text-secondary font-medium leading-relaxed">
             Setiap unit yang dideploy adalah satu langkah menuju udara yang lebih bersih. Kami tidak hanya menjual produk, kami menginstal masa depan.
           </p>
           <div className="space-y-4">
-            {['1.2M Trees Planted Equivalent', '500+ MegaWatts Generated', 'Zero Waste Packaging'].map(text => (
+            {['Setara 1.2jt Pohon Ditanam', '500+ MegaWatts Dihasilkan', 'Kemasan Tanpa Limbah'].map(text => (
               <div key={text} className="flex items-center gap-4">
                 <i className="bx bx-check-circle text-primary text-2xl"></i>
                 <span className="font-black uppercase tracking-widest text-sm">{text}</span>
@@ -96,11 +96,11 @@ export const Impact = () => (
         <div className="grid grid-cols-2 gap-4">
           <div className="glass p-8 rounded-3xl text-center border-secondary/20">
             <h4 className="text-4xl font-black text-secondary">-45%</h4>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary">Carbon Footprint</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary">Jejak Karbon</p>
           </div>
           <div className="glass p-8 rounded-3xl text-center border-primary/20">
             <h4 className="text-4xl font-black text-primary">100%</h4>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary">Renewable</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary">Terbarukan</p>
           </div>
         </div>
       </div>
@@ -111,25 +111,25 @@ export const Impact = () => (
 export const About = () => (
   <div className="space-y-32">
     <PageHero 
-      title="Our Story" 
+      title="Cerita Kami" 
       subtitle="Membangun kedaulatan energi melalui inovasi teknologi tanpa batas."
       icon="bx-user-voice"
       color="accent"
     />
     <section className="grid grid-cols-1 md:grid-cols-2 gap-12">
       <div className="space-y-8">
-        <h3 className="text-4xl font-black uppercase tracking-tighter">The Visionary Tim.</h3>
+        <h3 className="text-4xl font-black uppercase tracking-tighter">Tim Visioner.</h3>
         <p className="text-xl text-text-secondary font-medium leading-relaxed">
           Niscahya lahir dari keinginan untuk membuat energi matahari dapat diakses oleh semua orang di Indonesia. Dari Sabang sampai Merauke, kami menerangi malam dengan teknologi yang ramah lingkungan.
         </p>
       </div>
       <div className="grid grid-cols-2 gap-6">
         <div className="glass p-6 rounded-[32px] border-accent/20">
-          <h4 className="text-xl font-black uppercase">Innovation</h4>
+          <h4 className="text-xl font-black uppercase">Inovasi</h4>
           <p className="text-sm text-text-secondary">Selalu di depan dalam riset R&D.</p>
         </div>
         <div className="glass p-6 rounded-[32px] border-primary/20">
-          <h4 className="text-xl font-black uppercase">Integrity</h4>
+          <h4 className="text-xl font-black uppercase">Integritas</h4>
           <p className="text-sm text-text-secondary">Transparansi dalam setiap efisiensi.</p>
         </div>
       </div>
@@ -140,16 +140,16 @@ export const About = () => (
 export const Sustainability = () => (
   <div className="space-y-32">
     <PageHero 
-      title="Sustainable Path" 
+      title="Jalur Berkelanjutan" 
       subtitle="Roadmap menuju emisi nol bersih pada tahun 2030."
       icon="bx-leaf"
       color="primary"
     />
     <div className="relative space-y-12">
       {[
-        { year: '2024', goal: '100% Recyclable Components', status: 'Active' },
-        { year: '2026', goal: 'AI Energy Optimization Standard', status: 'Upcoming' },
-        { year: '2030', goal: 'Net Zero Operational Carbon', status: 'Vision' }
+        { year: '2024', goal: '100% Komponen Dapat Didaur Ulang', status: 'Aktif' },
+        { year: '2026', goal: 'Standar Optimasi Energi AI', status: 'Mendatang' },
+        { year: '2030', goal: 'Visi Emisi Karbon Operasional Nol', status: 'Visi' }
       ].map((item, i) => (
         <motion.div key={i} whileInView={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -50 }} className="flex gap-12 items-center group">
           <h3 className="text-6xl font-black text-black/5 group-hover:text-primary transition-colors">{item.year}</h3>
@@ -166,15 +166,15 @@ export const Sustainability = () => (
 export const Projects = () => (
   <div className="space-y-32">
     <PageHero 
-      title="Great Projects" 
+      title="Proyek Besar" 
       subtitle="Implementasi nyata yang mengubah wajah energi di berbagai sektor."
       icon="bx-briefcase-alt-2"
       color="secondary"
     />
     <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {[
-        { title: 'Jakarta Smart Lighting', area: 'Urban Area', img: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop' },
-        { title: 'Bali Eco-Resort Grid', area: 'Hospitality', img: 'https://images.unsplash.com/photo-1563298723-dcfebaa392e3?q=80&w=1000&auto=format&fit=crop' }
+        { title: 'Penerangan Cerdas Jakarta', area: 'Area Urban', img: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop' },
+        { title: 'Grid Eco-Resort Bali', area: 'Perhotelan', img: 'https://images.unsplash.com/photo-1563298723-dcfebaa392e3?q=80&w=1000&auto=format&fit=crop' }
       ].map((proj, i) => (
         <motion.div key={i} className="group relative aspect-video glass rounded-[48px] overflow-hidden">
           <img src={proj.img} className="w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-1000" />
@@ -222,7 +222,7 @@ export const Careers = () => (
 export const Contact = () => (
   <div className="space-y-32">
     <PageHero 
-      title="Contact Us" 
+      title="Hubungi Kami" 
       subtitle="Mulai konsultasi energi Anda hari ini bersama tim ahli Niscahya."
       icon="bx-message-square-detail"
       color="accent"
@@ -230,7 +230,7 @@ export const Contact = () => (
     <section className="grid grid-cols-1 md:grid-cols-2 gap-16">
       <div className="space-y-12">
         <div className="space-y-6">
-          <h3 className="text-4xl font-black uppercase tracking-tighter">Direct Lines.</h3>
+          <h3 className="text-4xl font-black uppercase tracking-tighter">Kontak Langsung.</h3>
           <div className="space-y-4">
             <div className="flex items-center gap-6">
               <div className="w-12 h-12 glass rounded-xl flex items-center justify-center text-accent text-2xl"><i className="bx bx-phone"></i></div>
@@ -243,26 +243,26 @@ export const Contact = () => (
           </div>
         </div>
         <div className="glass p-8 rounded-[40px] border-black/5 shadow-xl shadow-black/5">
-          <h4 className="text-sm font-black uppercase tracking-widest text-text-secondary mb-4">Headquarters</h4>
-          <p className="text-lg font-bold">Cyber Tower 12, Floor 24 <br />Kuningan, Jakarta Selatan, Indonesia</p>
+          <h4 className="text-sm font-black uppercase tracking-widest text-text-secondary mb-4">Kantor Pusat</h4>
+          <p className="text-lg font-bold">Cyber Tower 12, Lantai 24 <br />Kuningan, Jakarta Selatan, Indonesia</p>
         </div>
       </div>
       <div className="glass p-12 rounded-[56px] space-y-8 border-black/5 shadow-xl shadow-black/5">
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Name</label>
-            <input type="text" className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold" placeholder="Unit Name" />
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Nama</label>
+            <input type="text" className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold" placeholder="Nama Anda" />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Email</label>
-            <input type="email" className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold" placeholder="address@system.com" />
+            <input type="email" className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold" placeholder="alamat@sistem.com" />
           </div>
         </div>
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Message</label>
-          <textarea className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold h-40 resize-none" placeholder="Deployment details..."></textarea>
+          <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Pesan</label>
+          <textarea className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold h-40 resize-none" placeholder="Detail kebutuhan Anda..."></textarea>
         </div>
-        <button className="w-full py-6 bg-accent text-background font-black text-xl rounded-3xl hover:scale-105 transition-all shadow-2xl shadow-accent/20 uppercase tracking-tighter">Initialize Contact</button>
+        <button className="w-full py-6 bg-accent text-background font-black text-xl rounded-3xl hover:scale-105 transition-all shadow-2xl shadow-accent/20 uppercase tracking-tighter">Kirim Pesan</button>
       </div>
     </section>
   </div>

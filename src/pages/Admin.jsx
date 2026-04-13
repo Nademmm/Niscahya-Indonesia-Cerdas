@@ -12,11 +12,18 @@ const Admin = () => {
     price: '',
     category: '',
     image: '',
+    images: ['', '', '', ''], // 4 slots for gallery
     description: '',
     specs: ''
   });
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState({
+    primary: false,
+    gallery0: false,
+    gallery1: false,
+    gallery2: false,
+    gallery3: false
+  });
   const [error, setError] = useState('');
 
   const categories = ['Lampu Jalan', 'Lampu Taman', 'Solar Panel', 'Baterai', 'Aksesori'];
@@ -27,15 +34,24 @@ const Admin = () => {
     }
   }, [isLoggedIn]);
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e, type, index = null) => {
     const file = e.target.files[0];
     if (!file) return;
 
     // Show immediate local preview
     const localPreview = URL.createObjectURL(file);
-    setFormData(prev => ({ ...prev, image: localPreview }));
+    if (type === 'primary') {
+      setFormData(prev => ({ ...prev, image: localPreview }));
+      setUploading(prev => ({ ...prev, primary: true }));
+    } else {
+      setFormData(prev => {
+        const updatedImages = [...prev.images];
+        updatedImages[index] = localPreview;
+        return { ...prev, images: updatedImages };
+      });
+      setUploading(prev => ({ ...prev, [`gallery${index}`]: true }));
+    }
 
-    setUploading(true);
     setError('');
 
     const formDataUpload = new FormData();
@@ -49,17 +65,26 @@ const Admin = () => {
       const data = await res.json();
       if (res.ok && data.imageUrl) {
         // Update with actual server URL
-        setFormData(prev => ({ ...prev, image: data.imageUrl }));
-        console.log('Upload success:', data.imageUrl);
+        if (type === 'primary') {
+          setFormData(prev => ({ ...prev, image: data.imageUrl }));
+        } else {
+          setFormData(prev => {
+            const updatedImages = [...prev.images];
+            updatedImages[index] = data.imageUrl;
+            return { ...prev, images: updatedImages };
+          });
+        }
       } else {
         setError(data.error || 'Gagal mengunggah gambar ke server');
-        console.error('Upload failed:', data);
       }
     } catch (err) {
-      setError('Error koneksi: Pastikan server (npm run server) sedang berjalan');
-      console.error('Connection error:', err);
+      setError('Error koneksi: Pastikan server sedang berjalan');
     } finally {
-      setUploading(false);
+      if (type === 'primary') {
+        setUploading(prev => ({ ...prev, primary: false }));
+      } else {
+        setUploading(prev => ({ ...prev, [`gallery${index}`]: false }));
+      }
     }
   };
 
@@ -98,11 +123,29 @@ const Admin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check if any image is still uploading or is a blob (not yet saved to server)
+    const isAnyBlob = formData.image.startsWith('blob:') || 
+                      formData.images.some(img => img && img.startsWith('blob:'));
+    
+    if (isAnyBlob) {
+      setError('Harap tunggu sampai semua proses upload selesai sebelum menyimpan.');
+      return;
+    }
+
     const payload = {
       ...formData,
-      price: parseInt(formData.price),
-      specs: formData.specs.split('\n').filter(s => s.trim() !== '')
+      price: parseFloat(formData.price),
+      specs: formData.specs.split('\n').filter(s => s.trim()),
+      images: formData.images.filter(img => img && img.trim() !== '') 
     };
+
+    console.log('Final payload before save:', payload);
+
+    if (!payload.image) {
+      setError('Gambar utama wajib diunggah.');
+      return;
+    }
 
     const method = editingProduct ? 'PUT' : 'POST';
     const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products';
@@ -116,7 +159,7 @@ const Admin = () => {
       if (res.ok) {
         fetchProducts();
         setEditingProduct(null);
-        setFormData({ name: '', price: '', category: '', image: '', description: '', specs: '' });
+        setFormData({ name: '', price: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
       }
     } catch (err) {
       setError('Gagal menyimpan produk');
@@ -125,11 +168,17 @@ const Admin = () => {
 
   const handleEdit = (product) => {
     setEditingProduct(product);
+
+    // Ensure gallery has exactly 4 slots
+    const gallery = [...(product.images || [])];
+    while (gallery.length < 4) gallery.push('');
+
     setFormData({
       name: product.name,
       price: product.price.toString(),
       category: product.category,
       image: product.image,
+      images: gallery.slice(0, 4),
       description: product.description,
       specs: product.specs.join('\n')
     });
@@ -154,28 +203,28 @@ const Admin = () => {
           animate={{ opacity: 1, y: 0 }}
           className="glass p-8 rounded-[32px] w-full max-w-md border-black/5"
         >
-          <h2 className="text-3xl font-black mb-6">Admin Login</h2>
+          <h2 className="text-3xl font-black mb-6">Login Admin</h2>
           {error && <p className="text-red-500 mb-4 font-medium">{error}</p>}
           <form onSubmit={handleLogin} className="space-y-4">
             <input 
               type="text" 
-              placeholder="Username" 
+              placeholder="Nama Pengguna" 
               className="w-full p-4 rounded-2xl bg-black/5 border border-black/5 focus:border-secondary outline-none transition-all"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <input 
               type="password" 
-              placeholder="Password" 
+              placeholder="Kata Sandi" 
               className="w-full p-4 rounded-2xl bg-black/5 border border-black/5 focus:border-secondary outline-none transition-all"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <button className="w-full py-4 bg-secondary text-white rounded-2xl font-bold shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all">
-              Login
+              Masuk
             </button>
           </form>
-          <p className="mt-4 text-center text-sm text-text-secondary">Default: admin / admin123</p>
+          <p className="mt-4 text-center text-sm text-text-secondary">Bawaan: admin / admin123</p>
         </motion.div>
       </div>
     );
@@ -185,14 +234,14 @@ const Admin = () => {
     <div className="pt-20 pb-40 space-y-12">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-5xl font-black tracking-tighter uppercase">Admin Panel</h1>
+          <h1 className="text-5xl font-black tracking-tighter uppercase">Panel Admin</h1>
           <p className="text-text-secondary font-medium">Kelola katalog produk Anda</p>
         </div>
         <button 
           onClick={() => setIsLoggedIn(false)}
           className="px-6 py-2 bg-black/5 rounded-xl font-bold hover:bg-black/10 transition-colors"
         >
-          Logout
+          Keluar
         </button>
       </header>
 
@@ -238,23 +287,50 @@ const Admin = () => {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Gambar Produk</label>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Gambar Utama</label>
                 <div className="space-y-3">
                   <input 
                     type="file" 
                     accept="image/*"
                     className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-black file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20 cursor-pointer"
-                    onChange={handleFileUpload}
+                    onChange={(e) => handleFileUpload(e, 'primary')}
                   />
-                  {uploading && <p className="text-xs font-bold text-secondary animate-pulse ml-1">Mengunggah...</p>}
+                  {uploading.primary && <p className="text-xs font-bold text-secondary animate-pulse ml-1">Mengunggah Utama...</p>}
                   {formData.image && (
                     <div className="relative group aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5">
                       <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <p className="text-[10px] text-white font-black uppercase tracking-widest">Gambar Terpilih</p>
-                      </div>
                     </div>
                   )}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Gambar Galeri (4 Slot Terpisah)</label>
+                <div className="grid grid-cols-2 gap-4">
+                  {[0, 1, 2, 3].map((idx) => (
+                    <div key={idx} className="space-y-2">
+                      <div className="relative aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5">
+                        {formData.images[idx] ? (
+                          <img src={formData.images[idx]} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[10px] font-black uppercase text-text-secondary/30">
+                            Slot {idx + 1}
+                          </div>
+                        )}
+                        {uploading[`gallery${idx}`] && (
+                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                            <i className="bx bx-loader-alt animate-spin text-white text-xl"></i>
+                          </div>
+                        )}
+                      </div>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        className="w-full text-[10px] file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-black/5 file:text-text-secondary hover:file:bg-black/10 cursor-pointer"
+                        onChange={(e) => handleFileUpload(e, 'gallery', idx)}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
               <div>
@@ -287,7 +363,7 @@ const Admin = () => {
                     type="button"
                     onClick={() => {
                       setEditingProduct(null);
-                      setFormData({ name: '', price: '', category: '', image: '', description: '', specs: '' });
+                      setFormData({ name: '', price: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
                     }}
                     className="px-6 py-4 bg-black/5 rounded-2xl font-bold"
                   >
@@ -301,7 +377,10 @@ const Admin = () => {
 
         {/* List Section */}
         <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-2xl font-black">Daftar Produk ({products.length})</h2>
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-2xl font-black uppercase tracking-tighter">Daftar Produk</h2>
+            <span className="text-xs font-black uppercase tracking-widest text-text-secondary">{products.length} Unit Terdaftar</span>
+          </div>
           {loading ? (
             <div className="py-20 text-center text-text-secondary font-medium animate-pulse">Memuat produk...</div>
           ) : (
