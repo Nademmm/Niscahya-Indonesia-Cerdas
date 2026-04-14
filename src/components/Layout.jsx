@@ -51,10 +51,8 @@ const Navbar = () => {
         scrolled ? 'shadow-2xl shadow-primary/10 border-black/5' : 'bg-transparent border-transparent'
       }`}>
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 shadow-lg shadow-primary/20">
-            <i className="bx bxs-bolt text-background text-2xl"></i>
-          </div>
-          <span className="text-2xl font-black tracking-tighter text-text-main uppercase">niscahya</span>
+          <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
+          <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -169,10 +167,8 @@ const Layout = ({ children }) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
           <div className="col-span-2 space-y-6">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 shadow-lg shadow-primary/20">
-                <i className="bx bxs-bolt text-background text-2xl"></i>
-              </div>
-              <span className="text-2xl font-black tracking-tighter text-text-main uppercase">niscahya</span>
+              <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
+              <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya Indonesia Cerdas</span>
             </Link>
             <p className="text-text-secondary font-medium max-w-sm">
               Membangun masa depan yang berkelanjutan melalui inovasi teknologi energi surya yang cerdas dan terjangkau.

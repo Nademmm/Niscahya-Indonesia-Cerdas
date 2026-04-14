@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, memo } from 'react';
+import React, { useState, useMemo, useEffect, memo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
@@ -90,6 +90,15 @@ const Products = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState('Semua');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 200 : scrollLeft + 200;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -197,37 +206,48 @@ const Products = () => {
       </section>
 
       {/* Filter Navigation */}
-      <section className="sticky top-28 z-40 space-y-6">
-        <motion.div 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="glass p-3 rounded-[32px] border-black/5 flex flex-wrap items-center justify-center gap-2 shadow-2xl shadow-black/5"
-        >
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                setSelectedCategory(cat);
-                setSelectedSubCategory('Semua');
-              }}
-              className={`px-8 py-4 rounded-2xl text-[11px] font-black tracking-[0.15em] uppercase transition-all duration-500 relative group ${
-                selectedCategory === cat
-                  ? 'bg-primary text-white shadow-xl shadow-primary/30 scale-105'
-                  : 'text-text-secondary hover:text-primary hover:bg-black/5'
-              }`}
-            >
-              {cat}
-              {selectedCategory === cat && (
-                <motion.div 
-                  layoutId="active-pill"
-                  className="absolute inset-0 bg-primary rounded-2xl -z-10"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
-            </button>
-          ))}
-        </motion.div>
+      <section className="sticky top-28 z-40 space-y-6 mx-[-1.5rem] lg:mx-[-2.5rem] px-6 lg:px-10">
+        <div className="relative group/nav">
+          {/* Scroll Buttons */}
+          <button 
+            onClick={() => scroll('left')}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-black/5 flex items-center justify-center text-primary z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-white"
+          >
+            <i className="bx bx-chevron-left text-2xl"></i>
+          </button>
+          
+          <motion.div 
+            ref={scrollRef}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="glass p-2 rounded-[24px] border-black/5 flex flex-nowrap items-center justify-start gap-2 shadow-2xl shadow-black/5 overflow-x-auto scrollbar-hide no-scrollbar scroll-smooth"
+          >
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setSelectedSubCategory('Semua');
+                }}
+                className={`px-6 py-3 rounded-xl text-[10px] font-black tracking-widest uppercase transition-all duration-300 relative whitespace-nowrap shrink-0 ${
+                  selectedCategory === cat
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                    : 'bg-black/5 text-text-secondary hover:bg-black/10'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </motion.div>
+
+          <button 
+            onClick={() => scroll('right')}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-black/5 flex items-center justify-center text-primary z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-white"
+          >
+            <i className="bx bx-chevron-right text-2xl"></i>
+          </button>
+        </div>
 
         {/* Sub-Category Navigation */}
         <AnimatePresence>
@@ -236,28 +256,28 @@ const Products = () => {
               initial={{ height: 0, opacity: 0, y: -10 }}
               animate={{ height: 'auto', opacity: 1, y: 0 }}
               exit={{ height: 0, opacity: 0, y: -10 }}
-              className="overflow-hidden flex justify-center"
+              className="overflow-hidden flex justify-start"
             >
-              <div className="inline-flex flex-wrap items-center justify-center gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[24px] border border-black/5 shadow-inner">
+              <div className="flex flex-nowrap items-center justify-start gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[20px] border border-black/5 shadow-inner overflow-x-auto scrollbar-hide no-scrollbar w-full">
                 <button
                   onClick={() => setSelectedSubCategory('Semua')}
-                  className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  className={`px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${
                     selectedSubCategory === 'Semua'
-                      ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-105'
-                      : 'text-text-secondary hover:text-primary'
+                      ? 'bg-secondary text-white shadow-md shadow-secondary/20'
+                      : 'text-text-secondary hover:text-primary bg-white/50'
                   }`}
                 >
                   Semua Tipe
                 </button>
-                <div className="w-px h-4 bg-black/10 mx-1" />
+                <div className="w-px h-3 bg-black/10 shrink-0" />
                 {currentSubCategories.map((sub) => (
                   <button
                     key={sub}
                     onClick={() => setSelectedSubCategory(sub)}
-                    className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                    className={`px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${
                       selectedSubCategory === sub
-                        ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-105'
-                        : 'text-text-secondary hover:text-primary'
+                        ? 'bg-secondary text-white shadow-md shadow-secondary/20'
+                        : 'text-text-secondary hover:text-primary bg-white/50'
                     }`}
                   >
                     {sub}

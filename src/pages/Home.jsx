@@ -1,7 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
+
+const HeroSlider = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    {
+      id: 1,
+      image: "/hero-1.png",
+      title: "Penerangan Jalan Umum Tenaga Surya"
+    },
+    {
+      id: 2,
+      image: "/hero-2.png",
+      title: "Slide 2"
+    },
+    {
+      id: 3,
+      image: "/hero-3.png",
+      title: "Slide 3"
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  return (
+    <section className="relative w-full h-[600px] md:h-[80vh] rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={currentSlide}
+          src={slides[currentSlide].image}
+          alt={slides[currentSlide].title}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </AnimatePresence>
+      
+      {/* Overlay gradient if you want to put text later */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
+
+      {/* Navigation Dots */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              currentSlide === index ? "bg-primary w-8" : "bg-white/50 hover:bg-white"
+            }`}
+          />
+        ))}
+      </div>
+      
+      {/* Prev/Next buttons */}
+      <button 
+        onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+        className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
+      >
+        <i className="bx bx-chevron-left text-3xl"></i>
+      </button>
+      <button 
+        onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+        className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
+      >
+        <i className="bx bx-chevron-right text-3xl"></i>
+      </button>
+    </section>
+  );
+};
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -32,68 +108,75 @@ const Home = () => {
 
   return (
     <div className="space-y-32">
-      {/* Experimental Hero Section */}
-      <section className="relative min-h-[70vh] flex flex-col items-center justify-center text-center">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent animate-pulse"></div>
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-black/5 rounded-full"
-          >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-primary rounded-full shadow-[0_0_20px_#10b981]"></div>
-          </motion.div>
-          <motion.div 
-            animate={{ rotate: -360 }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-black/5 rounded-full"
-          >
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 bg-secondary rounded-full shadow-[0_0_20px_#f59e0b]"></div>
-          </motion.div>
-        </div>
+      <HeroSlider />
 
-        <div className="max-w-4xl space-y-8 relative">
-          
-          <motion.h1 
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] uppercase"
-          >
-            Evolusi <br />
-            <span className="text-gradient">Surya.</span>
-          </motion.h1>
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto font-medium leading-relaxed"
-          >
-            Mendefinisikan ulang cara kita berinteraksi dengan energi. Cerdas, efisien, dan sepenuhnya berkelanjutan.
-          </motion.p>
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8"
-          >
-            <Link
-              to="/products"
-              className="group relative px-10 py-5 bg-primary text-background font-black text-xl rounded-2xl overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/20"
-            >
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-              <span className="relative z-10 flex items-center gap-3">
-                Mulai Perjalanan <i className="bx bx-right-arrow-alt text-2xl"></i>
-              </span>
+      {/* About Industry Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <motion.div 
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="space-y-8"
+        >
+          <div className="space-y-4">
+            <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Tentang Niscahya</span>
+            <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+              Menerangi Masa Depan <br /> <span className="text-gradient">Indonesia.</span>
+            </h2>
+          </div>
+          <p className="text-lg text-text-secondary font-medium leading-relaxed">
+            CV Niscahya Indonesia Cerdas hadir sebagai solusi terdepan dalam industri penerangan jalan umum dan energi surya. Kami berdedikasi untuk memberikan pencahayaan yang optimal, hemat energi, dan ramah lingkungan bagi seluruh pelosok negeri.
+          </p>
+          <p className="text-lg text-text-secondary font-medium leading-relaxed">
+            Dengan teknologi cerdas terkini dan standar kualitas tertinggi, produk kami dirancang untuk tangguh di berbagai kondisi cuaca, memastikan keamanan dan kenyamanan di jalan raya maupun area publik lainnya tanpa membebani biaya listrik berkelanjutan.
+          </p>
+          <div className="pt-4 flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-2xl">
+                <i className="bx bx-check-shield"></i>
+              </div>
+              <span className="font-bold uppercase tracking-widest text-xs">Kualitas Teruji</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary text-2xl">
+                <i className="bx bx-leaf"></i>
+              </div>
+              <span className="font-bold uppercase tracking-widest text-xs">Ramah Lingkungan</span>
+            </div>
+          </div>
+          <div className="pt-4">
+            <Link to="/about" className="inline-flex items-center gap-3 px-8 py-4 bg-black/5 hover:bg-primary hover:text-background transition-all rounded-xl font-bold uppercase tracking-widest text-xs group">
+              Selengkapnya <i className="bx bx-right-arrow-alt text-xl group-hover:translate-x-1 transition-transform"></i>
             </Link>
-            <Link
-              to="/about"
-              className="px-10 py-5 glass border border-black/10 rounded-2xl font-black text-xl hover:bg-black/5 transition-all text-center"
-            >
-              Pelajari Lebih Lanjut
-            </Link>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative h-[500px] rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
+        >
+          <img 
+            src="/public/panel.jpg" 
+            alt="Industri Energi Surya" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          <div className="absolute bottom-8 left-8 right-8 p-6 glass-bright rounded-3xl border border-white/20">
+            <div className="flex justify-around items-center">
+              <div className="text-center">
+                <h4 className="text-3xl font-black text-primary">10+</h4>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mt-1">Tahun Pengalaman</p>
+              </div>
+              <div className="w-px h-12 bg-black/10"></div>
+              <div className="text-center">
+                <h4 className="text-3xl font-black text-secondary">500+</h4>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mt-1">Proyek Selesai</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Energy Impact Stats */}
@@ -117,62 +200,10 @@ const Home = () => {
         ))}
       </section>
 
-      {/* Bento Grid Features */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div 
-          whileInView={{ opacity: 1, x: 0 }}
-          initial={{ opacity: 0, x: -50 }}
-          className="md:col-span-2 glass p-12 rounded-[56px] relative overflow-hidden group"
-        >
-          <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
-            <i className="bx bx-sun text-[250px] text-primary"></i>
-          </div>
-          <div className="relative z-10 space-y-8">
-            <span className="w-16 h-16 bg-primary/20 text-primary rounded-3xl flex items-center justify-center border border-primary/20">
-              <i className="bx bx-bolt text-3xl"></i>
-            </span>
-            <div className="space-y-4">
-              <h3 className="text-5xl font-black tracking-tighter uppercase leading-none">Fotovoltaik <br />Efisiensi Tinggi</h3>
-              <p className="text-xl text-text-secondary font-medium max-w-lg leading-relaxed">
-                Panel surya generasi terbaru dengan efisiensi konversi hingga 24.5%. Maksimalkan setiap sinar matahari untuk energi rumah Anda.
-              </p>
-            </div>
-            <Link 
-              to="/solutions"
-              className="flex items-center gap-3 font-black uppercase tracking-widest text-primary group-hover:gap-5 transition-all"
-            >
-              Baca Whitepaper <i className="bx bx-right-arrow-alt text-2xl"></i>
-            </Link>
-          </div>
-        </motion.div>
-        <motion.div 
-          whileInView={{ opacity: 1, x: 0 }}
-          initial={{ opacity: 0, x: 50 }}
-          className="glass p-12 rounded-[56px] bg-gradient-to-br from-secondary/20 to-transparent border-secondary/20 flex flex-col justify-between"
-        >
-          <div className="space-y-8">
-            <span className="w-16 h-16 bg-secondary/20 text-secondary rounded-3xl flex items-center justify-center border border-secondary/20">
-              <i className="bx bx-chip text-3xl"></i>
-            </span>
-            <div className="space-y-4">
-              <h3 className="text-5xl font-black tracking-tighter uppercase leading-none">Kontrol <br />AI Cerdas</h3>
-              <p className="text-xl text-text-secondary font-medium leading-relaxed">
-                Sistem manajemen energi berbasis AI yang mengoptimalkan penggunaan daya secara otomatis berdasarkan pola hidup Anda.
-              </p>
-            </div>
-          </div>
-          <div className="pt-10 flex gap-2">
-            <div className="w-2 h-2 bg-secondary rounded-full"></div>
-            <div className="w-2 h-2 bg-secondary/30 rounded-full"></div>
-            <div className="w-2 h-2 bg-secondary/30 rounded-full"></div>
-          </div>
-        </motion.div>
-      </section>
-
       {/* Partners Scroll */}
-      <section className="overflow-hidden py-10 border-y border-black/5">
+      <section className="overflow-hidden py-10 border-y border-black/5 mx-[-1.5rem] lg:mx-[-2.5rem]">
         <div className="flex items-center gap-20 animate-marquee whitespace-nowrap">
-          {[...partners, ...partners].map((partner, i) => (
+          {[...partners, ...partners, ...partners, ...partners].map((partner, i) => (
             <span key={i} className="text-4xl md:text-6xl font-black text-black/5 uppercase tracking-tighter hover:text-primary transition-colors cursor-default">
               {partner}
             </span>

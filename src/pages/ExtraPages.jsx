@@ -120,7 +120,7 @@ export const About = () => (
       <div className="space-y-8">
         <h3 className="text-4xl font-black uppercase tracking-tighter">Tim Visioner.</h3>
         <p className="text-xl text-text-secondary font-medium leading-relaxed">
-          Niscahya lahir dari keinginan untuk membuat energi matahari dapat diakses oleh semua orang di Indonesia. Dari Sabang sampai Merauke, kami menerangi malam dengan teknologi yang ramah lingkungan.
+          Niscahya Indonesia Cerdas lahir dari keinginan untuk membuat energi matahari dapat diakses oleh semua orang di Indonesia. Dari Sabang sampai Merauke, kami menerangi malam dengan teknologi yang ramah lingkungan.
         </p>
       </div>
       <div className="grid grid-cols-2 gap-6">
@@ -223,7 +223,7 @@ export const Contact = () => (
   <div className="space-y-32">
     <PageHero 
       title="Hubungi Kami" 
-      subtitle="Mulai konsultasi energi Anda hari ini bersama tim ahli Niscahya."
+      subtitle="Mulai konsultasi energi Anda hari ini bersama tim ahli Niscahya Indonesia Cerdas."
       icon="bx-message-square-detail"
       color="accent"
     />
