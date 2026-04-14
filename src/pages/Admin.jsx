@@ -29,7 +29,7 @@ const Admin = () => {
   const [selectedMainCategory, setSelectedMainCategory] = useState('');
 
   const categoryStructure = {
-    'PJU Tenaga Surya': ['All in one', 'Two in one', 'Konvensional'],
+    'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
     'PJU PLN (50-200 watt)': [],
     'Pompa Air Tenaga Surya': [],
     'Traffic Light': [],

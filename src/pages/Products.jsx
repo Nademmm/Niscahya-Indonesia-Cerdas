@@ -7,7 +7,8 @@ import { useApp } from '../context/AppContext';
 const Products = () => {
   const { searchQuery, setSearchQuery } = useApp();
   const location = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('Semua');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +28,7 @@ const Products = () => {
   }, []);
 
   const categoryStructure = {
-    'PJU Tenaga Surya': ['All in one', 'Two in one', 'Konvensional'],
+    'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
     'PJU PLN (50-200 watt)': [],
     'Pompa Air Tenaga Surya': [],
     'Traffic Light': [],
@@ -39,6 +40,7 @@ const Products = () => {
 
   const handleReset = () => {
     setSelectedCategory('Semua');
+    setSelectedSubCategory('Semua');
     setSearchQuery('');
   };
 
@@ -47,23 +49,31 @@ const Products = () => {
     const cat = params.get('category');
     if (cat) {
       setSelectedCategory(cat);
+      setSelectedSubCategory('Semua');
     } else {
       setSelectedCategory('Semua');
+      setSelectedSubCategory('Semua');
     }
   }, [location.search]);
 
   const categories = ['Semua', ...Object.keys(categoryStructure)];
+  const currentSubCategories = selectedCategory !== 'Semua' ? categoryStructure[selectedCategory] : [];
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
       const matchesCategory = selectedCategory === 'Semua' || 
                              product.category === selectedCategory ||
                              product.category.startsWith(selectedCategory + ' -');
+      
+      const matchesSubCategory = selectedSubCategory === 'Semua' || 
+                                product.category.includes(selectedSubCategory);
+
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            product.category.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      
+      return matchesCategory && matchesSubCategory && matchesSearch;
     });
-  }, [products, selectedCategory, searchQuery]);
+  }, [products, selectedCategory, selectedSubCategory, searchQuery]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -120,27 +130,76 @@ const Products = () => {
       </section>
 
       {/* Filter Navigation */}
-      <section className="sticky top-28 z-40">
+      <section className="sticky top-28 z-40 space-y-6">
         <motion.div 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="glass p-2 rounded-[28px] border-black/5 inline-flex flex-wrap gap-1 shadow-2xl shadow-black/5"
+          className="glass p-3 rounded-[32px] border-black/5 flex flex-wrap items-center justify-center gap-2 shadow-2xl shadow-black/5"
         >
           {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => cat === 'Semua' ? handleReset() : setSelectedCategory(cat)}
-              className={`px-8 py-3.5 rounded-[22px] text-xs font-black tracking-[0.2em] uppercase transition-all duration-500 ${
+              onClick={() => {
+                setSelectedCategory(cat);
+                setSelectedSubCategory('Semua');
+              }}
+              className={`px-8 py-4 rounded-2xl text-[11px] font-black tracking-[0.15em] uppercase transition-all duration-500 relative group ${
                 selectedCategory === cat
-                  ? 'bg-primary text-background shadow-xl shadow-primary/20'
+                  ? 'bg-primary text-white shadow-xl shadow-primary/30 scale-105'
                   : 'text-text-secondary hover:text-primary hover:bg-black/5'
               }`}
             >
               {cat}
+              {selectedCategory === cat && (
+                <motion.div 
+                  layoutId="active-pill"
+                  className="absolute inset-0 bg-primary rounded-2xl -z-10"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
             </button>
           ))}
         </motion.div>
+
+        {/* Sub-Category Navigation */}
+        <AnimatePresence>
+          {currentSubCategories.length > 0 && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0, y: -10 }}
+              animate={{ height: 'auto', opacity: 1, y: 0 }}
+              exit={{ height: 0, opacity: 0, y: -10 }}
+              className="overflow-hidden flex justify-center"
+            >
+              <div className="inline-flex flex-wrap items-center justify-center gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[24px] border border-black/5 shadow-inner">
+                <button
+                  onClick={() => setSelectedSubCategory('Semua')}
+                  className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                    selectedSubCategory === 'Semua'
+                      ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-105'
+                      : 'text-text-secondary hover:text-primary'
+                  }`}
+                >
+                  Semua Tipe
+                </button>
+                <div className="w-px h-4 bg-black/10 mx-1" />
+                {currentSubCategories.map((sub) => (
+                  <button
+                    key={sub}
+                    onClick={() => setSelectedSubCategory(sub)}
+                    className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                      selectedSubCategory === sub
+                        ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-105'
+                        : 'text-text-secondary hover:text-primary'
+                    }`}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       {/* Dynamic Grid */}
