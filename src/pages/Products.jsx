@@ -1,8 +1,87 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { useApp } from '../context/AppContext';
+
+const categoryStructure = {
+  'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
+  'PJU PLN (50-200 watt)': [],
+  'Pompa Air Tenaga Surya': [],
+  'Traffic Light': [],
+  'Warning Light': [],
+  'Lampu Taman': [],
+  'Solar Home System': [],
+  'Aksesori': ['Solar Panel', 'Controller', 'Inverter', 'Baterai']
+};
+
+const categories = ['Semua', ...Object.keys(categoryStructure)];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0 }
+};
+
+const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
+  if (loading) {
+    return (
+      <div className="py-40 text-center space-y-4">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Menyiapkan Database...</p>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+    >
+      {products.map((product) => (
+        <motion.div
+          key={product.id}
+          variants={itemVariants}
+        >
+          <ProductCard product={product} />
+        </motion.div>
+      ))}
+
+      {products.length === 0 && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5"
+        >
+          <div className="w-24 h-24 bg-black/5 rounded-[32px] flex items-center justify-center border border-black/5 animate-bounce-slow">
+            <i className="bx bx-ghost text-5xl text-text-secondary"></i>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-4xl font-black uppercase tracking-tighter">Sistem Kosong</h3>
+            <p className="text-text-secondary font-medium tracking-tight">Tidak ada produk ditemukan untuk "{searchQuery}"</p>
+          </div>
+          <button 
+            onClick={handleReset}
+            className="px-10 py-4 bg-primary text-background font-black rounded-2xl hover:scale-105 transition-all"
+          >
+            Atur Ulang Filter
+          </button>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+});
 
 const Products = () => {
   const { searchQuery, setSearchQuery } = useApp();
@@ -27,17 +106,6 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  const categoryStructure = {
-    'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
-    'PJU PLN (50-200 watt)': [],
-    'Pompa Air Tenaga Surya': [],
-    'Traffic Light': [],
-    'Warning Light': [],
-    'Lampu Taman': [],
-    'Solar Home System': [],
-    'Aksesori': ['Solar Panel', 'Controller', 'Inverter', 'Baterai']
-  };
-
   const handleReset = () => {
     setSelectedCategory('Semua');
     setSelectedSubCategory('Semua');
@@ -56,39 +124,38 @@ const Products = () => {
     }
   }, [location.search]);
 
-  const categories = ['Semua', ...Object.keys(categoryStructure)];
   const currentSubCategories = selectedCategory !== 'Semua' ? categoryStructure[selectedCategory] : [];
 
   const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      const matchesCategory = selectedCategory === 'Semua' || 
-                             product.category === selectedCategory ||
-                             product.category.startsWith(selectedCategory + ' -');
-      
-      const matchesSubCategory = selectedSubCategory === 'Semua' || 
-                                product.category.includes(selectedSubCategory);
+    if (!products.length) return [];
+    
+    const query = searchQuery.trim().toLowerCase();
+    const cat = selectedCategory;
+    const subCat = selectedSubCategory;
 
-      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return products.filter(product => {
+      // Category filter first (usually more selective)
+      if (cat !== 'Semua') {
+        const productCat = product.category;
+        if (productCat !== cat && !productCat.startsWith(cat + ' -')) {
+          return false;
+        }
+      }
       
-      return matchesCategory && matchesSubCategory && matchesSearch;
+      // Sub-category filter
+      if (subCat !== 'Semua' && !product.category.includes(subCat)) {
+        return false;
+      }
+
+      // Search filter last (more expensive)
+      if (query) {
+        return product.name.toLowerCase().includes(query) || 
+               product.category.toLowerCase().includes(query);
+      }
+      
+      return true;
     });
   }, [products, selectedCategory, selectedSubCategory, searchQuery]);
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
 
   return (
     <div className="space-y-20">
@@ -202,57 +269,12 @@ const Products = () => {
         </AnimatePresence>
       </section>
 
-      {/* Dynamic Grid */}
-      {loading ? (
-        <div className="py-40 text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-text-secondary font-black uppercase tracking-widest text-xs">Menyiapkan Database...</p>
-        </div>
-      ) : (
-        <motion.section 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-        >
-          <AnimatePresence mode='popLayout'>
-            {filteredProducts.map((product) => (
-              <motion.div
-                key={product.id}
-                layout
-                variants={item}
-                initial="hidden"
-                animate="show"
-                exit={{ opacity: 0, scale: 0.9 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {filteredProducts.length === 0 && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5"
-            >
-              <div className="w-24 h-24 bg-black/5 rounded-[32px] flex items-center justify-center border border-black/5 animate-bounce-slow">
-                <i className="bx bx-ghost text-5xl text-text-secondary"></i>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-4xl font-black uppercase tracking-tighter">Sistem Kosong</h3>
-                <p className="text-text-secondary font-medium tracking-tight">Tidak ada produk ditemukan untuk "{searchQuery}"</p>
-              </div>
-              <button 
-                onClick={handleReset}
-                className="px-10 py-4 bg-primary text-background font-black rounded-2xl hover:scale-105 transition-all"
-              >
-                Atur Ulang Filter
-              </button>
-            </motion.div>
-          )}
-        </motion.section>
-      )}
+      <ProductGrid 
+        products={filteredProducts} 
+        loading={loading} 
+        searchQuery={searchQuery} 
+        handleReset={handleReset} 
+      />
     </div>
   );
 };

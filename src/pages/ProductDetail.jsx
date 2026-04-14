@@ -278,32 +278,6 @@ const ProductDetail = () => {
         </div>
       </section>
 
-      {/* Bento Specs Section */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <motion.div 
-          whileInView={{ opacity: 1, y: 0 }}
-          initial={{ opacity: 0, y: 20 }}
-          className="glass p-12 rounded-[56px] space-y-6 border-black/5 shadow-xl shadow-black/5"
-        >
-          <h3 className="text-2xl font-black uppercase tracking-tighter">Spesifikasi <br /><span className="text-primary">Teknis</span></h3>
-          <p className="text-text-secondary font-medium">Informasi mendetail mengenai kemampuan perangkat.</p>
-        </motion.div>
-        <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {product.specs?.map((spec, i) => (
-            <motion.div 
-              key={i} 
-              whileInView={{ opacity: 1, scale: 1 }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              transition={{ delay: i * 0.1 }}
-              className="glass p-8 rounded-[32px] border-black/5 hover:border-primary/20 transition-all flex justify-between items-center group shadow-lg shadow-black/5"
-            >
-              <span className="text-xs font-black uppercase tracking-widest text-text-secondary group-hover:text-primary transition-colors">{spec.split(':')[0]}</span>
-              <span className="text-lg font-black tracking-tight text-text-main">{spec.split(':')[1]}</span>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       {/* Similar Selection */}
       <section className="space-y-12">
         <div className="flex items-end justify-between">

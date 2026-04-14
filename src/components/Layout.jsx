@@ -14,8 +14,13 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { searchQuery, setSearchQuery } = useApp();
+  const [localSearch, setLocalSearch] = useState(searchQuery);
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -23,8 +28,16 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(localSearch);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [localSearch, setSearchQuery]);
+
   const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+    setLocalSearch(e.target.value);
     if (location.pathname !== '/products' && location.pathname !== '/admin') {
       navigate('/products');
     }
@@ -67,7 +80,7 @@ const Navbar = () => {
             <input 
               type="text" 
               placeholder="Cari unit..."
-              value={searchQuery}
+              value={localSearch}
               onChange={handleSearch}
               className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-32 md:w-48"
             />
@@ -137,8 +150,8 @@ const Layout = ({ children }) => {
 
       {/* Dynamic Background */}
       <div className="fixed inset-0 bg-mesh -z-10 opacity-70"></div>
-      <div className="fixed top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
-      <div className="fixed bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/20 rounded-full blur-[120px] -z-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="fixed top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[120px] -z-10"></div>
+      <div className="fixed bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[120px] -z-10"></div>
 
       <Navbar />
       

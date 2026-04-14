@@ -14,8 +14,7 @@ const Admin = () => {
     category: '',
     image: '',
     images: ['', '', '', ''], // 4 slots for gallery
-    description: '',
-    specs: ''
+    description: ''
   });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState({
@@ -155,7 +154,6 @@ const Admin = () => {
     const payload = {
       ...formData,
       price: 0,
-      specs: formData.specs.split('\n').filter(s => s.trim()),
       images: formData.images.filter(
         (img) => typeof img === 'string' && img.trim() !== '' && !img.startsWith('blob:')
       ) 
@@ -181,7 +179,7 @@ const Admin = () => {
         fetchProducts();
         setEditingProduct(null);
         setSelectedMainCategory('');
-        setFormData({ name: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
+        setFormData({ name: '', category: '', image: '', images: ['', '', '', ''], description: '' });
       }
     } catch (err) {
       setError('Gagal menyimpan produk');
@@ -202,8 +200,7 @@ const Admin = () => {
       category: product.category,
       image: product.image,
       images: gallery.slice(0, 4),
-      description: product.description,
-      specs: product.specs.join('\n')
+      description: product.description
     });
   };
 
@@ -226,8 +223,7 @@ const Admin = () => {
     }
 
     return products.filter((product) => {
-      const specText = Array.isArray(product.specs) ? product.specs.join(' ') : '';
-      return [product.name, product.category, product.description, specText]
+      return [product.name, product.category, product.description]
         .filter(Boolean)
         .some((field) => String(field).toLowerCase().includes(normalizedSearch));
     });
@@ -396,15 +392,6 @@ const Admin = () => {
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                 ></textarea>
               </div>
-              <div>
-                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Spesifikasi (Satu per baris)</label>
-                <textarea 
-                  rows="4"
-                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm"
-                  value={formData.specs}
-                  onChange={(e) => setFormData({...formData, specs: e.target.value})}
-                ></textarea>
-              </div>
               <div className="flex gap-3 pt-2">
                 <button 
                   type="submit"
@@ -418,7 +405,7 @@ const Admin = () => {
                     onClick={() => {
                       setEditingProduct(null);
                       setSelectedMainCategory('');
-                      setFormData({ name: '', category: '', image: '', images: ['', '', '', ''], description: '', specs: '' });
+                      setFormData({ name: '', category: '', image: '', images: ['', '', '', ''], description: '' });
                     }}
                     className="px-6 py-4 bg-black/5 rounded-2xl font-bold"
                   >
