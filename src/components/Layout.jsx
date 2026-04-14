@@ -25,7 +25,7 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    if (location.pathname !== '/products') {
+    if (location.pathname !== '/products' && location.pathname !== '/admin') {
       navigate('/products');
     }
   };

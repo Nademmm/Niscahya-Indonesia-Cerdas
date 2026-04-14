@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '../context/AppContext';
 
 const Admin = () => {
+  const { searchQuery } = useApp();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -216,6 +218,21 @@ const Admin = () => {
     }
   };
 
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return products;
+    }
+
+    return products.filter((product) => {
+      const specText = Array.isArray(product.specs) ? product.specs.join(' ') : '';
+      return [product.name, product.category, product.description, specText]
+        .filter(Boolean)
+        .some((field) => String(field).toLowerCase().includes(normalizedSearch));
+    });
+  }, [products, searchQuery]);
+
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20">
@@ -417,13 +434,21 @@ const Admin = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between px-2">
             <h2 className="text-2xl font-black uppercase tracking-tighter">Daftar Produk</h2>
-            <span className="text-xs font-black uppercase tracking-widest text-text-secondary">{products.length} Unit Terdaftar</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-secondary">
+              {filteredProducts.length}
+              {searchQuery.trim() ? ` / ${products.length}` : ''} Unit Terdaftar
+            </span>
           </div>
+          {searchQuery.trim() && (
+            <p className="px-2 text-xs font-bold tracking-wide text-text-secondary">
+              Hasil pencarian admin untuk "{searchQuery}".
+            </p>
+          )}
           {loading ? (
             <div className="py-20 text-center text-text-secondary font-medium animate-pulse">Memuat produk...</div>
           ) : (
             <div className="grid gap-4">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <motion.div 
                   key={product.id}
                   layout
@@ -458,6 +483,13 @@ const Admin = () => {
                   </div>
                 </motion.div>
               ))}
+              {filteredProducts.length === 0 && (
+                <div className="glass p-8 rounded-[24px] border-black/5 text-center">
+                  <p className="font-bold text-text-secondary">
+                    Produk tidak ditemukan. Coba kata kunci lain untuk edit produk.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
