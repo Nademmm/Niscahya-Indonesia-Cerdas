@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 
@@ -215,6 +215,37 @@ const Admin = () => {
     }
   };
 
+  const descriptionRef = useRef(null);
+
+  const applyBold = () => {
+    const textarea = descriptionRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = formData.description.substring(start, end);
+    
+    if (!selectedText) {
+      alert('Pilih teks terlebih dahulu untuk di-bold');
+      return;
+    }
+
+    const newText = formData.description.substring(0, start) + `**${selectedText}**` + formData.description.substring(end);
+    setFormData({ ...formData, description: newText });
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + 2, end + 2);
+    }, 0);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.ctrlKey && e.key === 'b') {
+      e.preventDefault();
+      applyBold();
+    }
+  };
+
   const filteredProducts = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
 
@@ -384,12 +415,28 @@ const Admin = () => {
                 </div>
               </div>
               <div>
-                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Deskripsi</label>
+                <div className="flex items-center justify-between ml-1 mb-1">
+                  <label className="text-xs font-black uppercase tracking-widest text-text-secondary">Deskripsi</label>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[9px] text-text-secondary/50">Ctrl+B bold</span>
+                    <button
+                      type="button"
+                      onClick={applyBold}
+                      className="w-7 h-7 rounded-lg bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors"
+                      title="Bold (Ctrl+B)"
+                    >
+                      <i className="bx bx-bold text-xs"></i>
+                    </button>
+                  </div>
+                </div>
                 <textarea 
+                  ref={descriptionRef}
                   rows="3"
+                  onKeyDown={handleKeyDown}
                   className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none"
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  placeholder="Gunakan Ctrl+B untuk memilih teks dan membuat judul/sub-judul bold. Contoh: **Nama Produk**"
                 ></textarea>
               </div>
               <div className="flex gap-3 pt-2">

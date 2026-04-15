@@ -6,7 +6,7 @@ import { useApp } from '../context/AppContext';
 
 const categoryStructure = {
   'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
-  'PJU PLN (50-200 watt)': [],
+  'PJU PLN': [],
   'Pompa Air Tenaga Surya': [],
   'Traffic Light': [],
   'Warning Light': [],

@@ -36,6 +36,22 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
 
+  // Render deskripsi dengan support bold markdown (**teks**)
+  const renderDescription = (text) => {
+    if (!text) return null;
+    
+    // Pecah teks berdasarkan pattern **...**
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        // Hapus tanda bintang dan jadikan bold
+        return <strong key={index} className="font-black text-text-main">{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+  };
+
   // Chat ke WhatsApp
   const handleBuyNow = () => {
   const phoneNumber = "6287853536124";
@@ -259,7 +275,7 @@ const ProductDetail = () => {
             <h2 className="text-4xl font-black uppercase tracking-tighter">Deskripsi <br /><span className="text-secondary">Sistem</span></h2>
             <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-gradient-to-br from-white to-black/5">
               <p className="text-xl text-text-secondary font-medium leading-relaxed whitespace-pre-line">
-                {product.description}
+                {renderDescription(product.description)}
               </p>
             </div>
           </div>
