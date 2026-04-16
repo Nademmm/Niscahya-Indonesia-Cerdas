@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { blogPosts } from '../data/blog';
@@ -109,7 +109,7 @@ const Blog = () => {
               </div>
             </Link>
             
-            <div className="p-10 flex flex-col flex-grow space-y-4">
+            <div className="p-10 flex flex-col grow space-y-4">
               <div className="flex items-center gap-3 text-[10px] font-black text-text-secondary uppercase tracking-widest">
                 <span>{post.date}</span>
                 <div className="w-1 h-1 bg-primary rounded-full"></div>

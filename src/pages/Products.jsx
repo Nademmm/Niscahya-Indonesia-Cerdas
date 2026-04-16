@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, memo, useRef } from 'react';
+import { useState, useMemo, useEffect, memo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
@@ -41,10 +41,9 @@ const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
       ))}
 
       {products.length === 0 && (
-        <div 
-          className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5 animate-in fade-in duration-500"
+        <div className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5 animate-in fade-in duration-500"
         >
-          <div className="w-24 h-24 bg-black/5 rounded-[32px] flex items-center justify-center border border-black/5 animate-bounce-slow">
+          <div className="w-24 h-24 bg-black/5 rounded-4xl flex items-center justify-center border border-black/5 animate-bounce-slow">
             <i className="bx bx-ghost text-5xl text-text-secondary"></i>
           </div>
           <div className="space-y-2">
@@ -133,7 +132,7 @@ const Products = () => {
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
+      const { scrollLeft } = scrollRef.current;
       const scrollTo = direction === 'left' ? scrollLeft - 200 : scrollLeft + 200;
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
@@ -251,7 +250,7 @@ const Products = () => {
       </section>
 
       {/* Filter Navigation */}
-      <section className="sticky top-28 z-40 space-y-6 mx-[-1.5rem] lg:mx-[-2.5rem] px-6 lg:px-10">
+      <section className="sticky top-28 z-40 space-y-6 -mx-6 lg:-mx-10 px-6 lg:px-10">
         <div className="relative group/nav">
           {/* Scroll Buttons */}
           <button 
@@ -263,7 +262,7 @@ const Products = () => {
           
           <div 
             ref={scrollRef}
-            className="glass p-2 rounded-[24px] border-black/5 flex flex-nowrap items-center justify-start gap-2 shadow-2xl shadow-black/5 overflow-x-auto scrollbar-hide no-scrollbar scroll-smooth"
+            className="glass p-2 rounded-3xl border-black/5 flex flex-nowrap items-center justify-start gap-2 shadow-2xl shadow-black/5 overflow-x-auto scrollbar-hide no-scrollbar scroll-smooth"
           >
             {categories.map((cat) => (
               <button
@@ -335,11 +334,11 @@ const Products = () => {
       <AnimatePresence>
         {searchQuery && (
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8 glass rounded-[32px] border-primary/10 shadow-2xl shadow-primary/5"
-          >
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8 glass rounded-4xl border-primary/10 shadow-2xl shadow-primary/5"
+            >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                 <i className="bx bx-search-alt text-2xl text-primary animate-pulse"></i>

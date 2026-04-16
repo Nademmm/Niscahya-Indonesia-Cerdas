@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
@@ -57,7 +57,7 @@ const HeroSlider = () => {
   };
 
   return (
-    <section className="relative w-full h-[600px] md:h-[80vh] rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
+    <section className="relative w-full h-150 md:h-[80vh] rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
       <AnimatePresence initial={false} custom={direction}>
         <motion.img
           key={currentSlide}
@@ -77,7 +77,7 @@ const HeroSlider = () => {
       </AnimatePresence>
       
       {/* Overlay gradient if you want to put text later */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
       {/* Navigation Dots */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
@@ -210,14 +210,14 @@ const Home = () => {
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative h-[500px] rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
+          className="relative h-125 rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
         >
           <img 
             src="/PJU TENAGA SURYA.jpeg" 
             alt="Industri Energi Surya" 
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
           <div className="absolute bottom-8 left-8 right-8 p-6 glass-bright rounded-3xl border border-white/20">
             <div className="flex justify-around items-center">
               <div className="text-center">
@@ -244,7 +244,7 @@ const Home = () => {
             transition={{ delay: i * 0.1 }}
             className="glass p-10 rounded-[48px] text-center space-y-4 border-black/5 hover:border-primary/20 transition-all group shadow-xl shadow-black/5"
           >
-            <div className={`w-16 h-16 mx-auto bg-black/5 rounded-[24px] flex items-center justify-center text-3xl ${stat.color} group-hover:scale-110 transition-transform`}>
+            <div className={`w-16 h-16 mx-auto bg-black/5 rounded-3xl flex items-center justify-center text-3xl ${stat.color} group-hover:scale-110 transition-transform`}>
               <i className={stat.icon}></i>
             </div>
             <div className="space-y-1">
@@ -256,7 +256,7 @@ const Home = () => {
       </section>
 
       {/* Partners Scroll */}
-      <section className="overflow-hidden py-10 border-y border-black/5 mx-[-1.5rem] lg:mx-[-2.5rem]">
+      <section className="overflow-hidden py-10 border-y border-black/5 -mx-6 lg:-mx-10">
         <div className="flex items-center gap-20 animate-marquee whitespace-nowrap">
           {[...partners, ...partners, ...partners, ...partners].map((partner, i) => (
             <span key={i} className="text-4xl md:text-6xl font-black text-black/5 uppercase tracking-tighter hover:text-primary transition-colors cursor-default">
@@ -281,7 +281,7 @@ const Home = () => {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[1,2,3,4].map(i => (
-              <div key={i} className="h-[400px] glass animate-pulse rounded-[48px]"></div>
+              <div key={i} className="h-100 glass animate-pulse rounded-[48px]"></div>
             ))}
           </div>
         ) : (
@@ -333,14 +333,14 @@ const Home = () => {
                   </span>
                 </div>
               </Link>
-              <div className="p-8 space-y-4 flex-grow flex flex-col">
+              <div className="p-8 space-y-4 grow flex flex-col">
                 <p className="text-[9px] font-black text-text-secondary uppercase tracking-widest">{post.date}</p>
                 <Link to={`/blog/${post.id}`}>
                   <h3 className="text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
                 </Link>
-                <p className="text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed flex-grow">
+                <p className="text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed grow">
                   {post.excerpt}
                 </p>
                 <div className="pt-4">
@@ -408,7 +408,7 @@ const Home = () => {
         </div>
 
         {/* Lokasi Kami (Map) */}
-        <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[500px] lg:h-auto">
+        <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-125 lg:h-auto">
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
             width="100%" 

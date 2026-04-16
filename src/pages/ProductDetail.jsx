@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useApp } from '../context/AppContext';
 
 const normalizeImageList = (value) => {
   if (Array.isArray(value)) return value;
@@ -20,16 +19,8 @@ const normalizeImageList = (value) => {
   return trimmed.split(',');
 };
 
-const getCategoryDisplay = (fullCategory) => {
-  if (fullCategory.includes(' - ')) {
-    return fullCategory.split(' - ')[1];
-  }
-  return fullCategory;
-};
-
 const ProductDetail = () => {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -193,7 +184,7 @@ const ProductDetail = () => {
           animate={{ x: 0, opacity: 1 }}
           className="flex-1 space-y-6"
         >
-          <div className="relative aspect-[4/5] glass rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5">
+          <div className="relative aspect-4/5 glass rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5">
             <AnimatePresence mode="wait">
               <motion.img 
                 key={displayedImage}
@@ -274,18 +265,18 @@ const ProductDetail = () => {
             <div className="flex gap-4">
               <button 
                 onClick={handleBuyNow}
-                className="flex-1 py-6 bg-primary text-background font-black text-2xl rounded-[32px] hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20 flex items-center justify-center gap-4 group"
+                className="flex-1 py-6 bg-primary text-background font-black text-2xl rounded-4xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20 flex items-center justify-center gap-4 group"
               >
                 <i className="bx bxl-whatsapp text-4xl"></i>
                 <span>Beli Sekarang via WhatsApp</span>
               </button>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="glass p-6 rounded-[32px] flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
+              <div className="glass p-6 rounded-4xl flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
                 <i className="bx bx-shield-alt-2 text-3xl text-primary"></i>
                 <span className="text-xs font-black uppercase tracking-widest text-text-secondary">Garansi 2 Tahun</span>
               </div>
-              <div className="glass p-6 rounded-[32px] flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
+              <div className="glass p-6 rounded-4xl flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
                 <i className="bx bx-trending-up text-3xl text-secondary"></i>
                 <span className="text-xs font-black uppercase tracking-widest text-text-secondary">Sertifikasi Eco</span>
               </div>
@@ -297,14 +288,14 @@ const ProductDetail = () => {
       {/* Deskripsi */}
       <section className="space-y-12">
         <div className="space-y-12">
-          <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-gradient-to-br from-white to-black/5">
+          <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-linear-to-br from-white to-black/5">
             <p className="text-base md:text-lg text-text-secondary font-medium leading-relaxed whitespace-pre-line">
               {renderDescription(product.description)}
             </p>
           </div>
           
           <div className="grid grid-cols-1 gap-4">
-            <div className="glass p-8 rounded-[32px] border-black/5 flex items-center gap-6 group hover:border-primary/30 transition-all">
+            <div className="glass p-8 rounded-4xl border-black/5 flex items-center gap-6 group hover:border-primary/30 transition-all">
               <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
                 <i className="bx bx-check-shield"></i>
               </div>
@@ -330,7 +321,7 @@ const ProductDetail = () => {
             <motion.div 
               key={p.id} 
               whileHover={{ y: -10 }}
-              className="group glass rounded-[32px] overflow-hidden hover:border-primary/30 transition-all border-black/5 shadow-xl shadow-black/5"
+              className="group glass rounded-4xl overflow-hidden hover:border-primary/30 transition-all border-black/5 shadow-xl shadow-black/5"
             >
               <div className="aspect-square relative overflow-hidden">
                 <img src={p.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -395,7 +386,7 @@ const ProductDetail = () => {
         </div>
 
         {/* Lokasi Kami (Map) */}
-        <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[500px] lg:h-auto">
+        <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-125 lg:h-auto">
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
             width="100%" 

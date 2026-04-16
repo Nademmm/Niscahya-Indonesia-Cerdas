@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
@@ -49,7 +49,7 @@ const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4 ${
       scrolled ? 'lg:py-4' : 'lg:py-8'
     }`}>
-      <div className={`max-w-7xl mx-auto glass rounded-[32px] px-6 py-3 flex items-center justify-between transition-all duration-500 ${
+      <div className={`max-w-7xl mx-auto glass rounded-4xl px-6 py-3 flex items-center justify-between transition-all duration-500 ${
         scrolled ? 'shadow-2xl shadow-primary/10 border-black/5' : 'bg-transparent border-transparent'
       }`}>
         <Link to="/" className="flex items-center gap-3 group">
@@ -138,7 +138,7 @@ const Layout = ({ children }) => {
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className="fixed bottom-10 left-1/2 z-[100] glass-bright px-8 py-4 rounded-2xl border border-primary/30 shadow-2xl shadow-primary/10 flex items-center gap-4"
+            className="fixed bottom-10 left-1/2 z-100 glass-bright px-8 py-4 rounded-2xl border border-primary/30 shadow-2xl shadow-primary/10 flex items-center gap-4"
           >
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <i className="bx bx-check text-background text-xl"></i>
@@ -193,7 +193,7 @@ const Layout = ({ children }) => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 border-t border-black/5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">© 2026 NISCAHYA INDONESIA CERDAS. SEMUA SISTEM BEROPERASI.</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Copyright © 2026 CV Niscahya Indonesia Cerdas. All Rights Reserved.</p>
           <div className="flex gap-6 text-xl text-text-secondary">
             <a href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
               <i className="bx bxl-instagram"></i>

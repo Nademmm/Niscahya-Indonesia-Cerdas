@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 const ProductCard = memo(({ product }) => {
@@ -11,7 +11,7 @@ const ProductCard = memo(({ product }) => {
   };
   return (
     <div className="group relative rounded-[40px] overflow-hidden transition-all duration-500 hover:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] border border-black/5 hover:border-primary/30 bg-white will-change-transform">
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative aspect-4/5 overflow-hidden">
         {/* Image with hardware acceleration */}
         <img
           src={product.image}
@@ -21,7 +21,7 @@ const ProductCard = memo(({ product }) => {
         />
         
         {/* Improved Overlay Gradient - Optimized for performance */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-80 transition-opacity duration-300"></div>
         
         {/* Category Badge - Optimized for performance (removed blur) */}
         <div className="absolute top-6 left-6 z-20">
@@ -31,7 +31,7 @@ const ProductCard = memo(({ product }) => {
         </div>
 
         {/* Floating Action Icon - Simplified animation */}
-        <div className="absolute top-6 right-6 translate-y-[-10px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
+        <div className="absolute top-6 right-6 -translate-y-2.5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
           <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/40">
             <i className="bx bx-arrow-to-right text-2xl"></i>
           </div>
@@ -44,7 +44,7 @@ const ProductCard = memo(({ product }) => {
               {product.name}
             </h3>
             <div className="flex items-center gap-2 pt-2">
-              <div className="h-[2px] w-8 bg-primary rounded-full"></div>
+              <div className="h-0.5 w-8 bg-primary rounded-full"></div>
               <span className="text-[10px] font-black text-primary uppercase tracking-widest">Detail Sistem</span>
             </div>
           </div>

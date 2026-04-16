@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { blogPosts } from '../data/blog';
@@ -70,7 +70,7 @@ const BlogDetail = () => {
             </span>
           </div>
           
-          <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-[1] text-text-main drop-shadow-sm">
+          <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none text-text-main drop-shadow-sm">
             {post.title}
           </h1>
           
@@ -89,7 +89,7 @@ const BlogDetail = () => {
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="aspect-video md:aspect-[21/9] rounded-[64px] overflow-hidden shadow-2xl shadow-black/10 border-8 border-white/50"
+          className="aspect-video md:aspect-21/9 rounded-[64px] overflow-hidden shadow-2xl shadow-black/10 border-8 border-white/50"
         >
           <img 
             src={post.image} 
@@ -115,19 +115,23 @@ const BlogDetail = () => {
             
             <div className="pt-12 border-t border-black/5 flex flex-wrap gap-4 items-center justify-between">
               <div className="flex gap-4">
-                <button className="w-12 h-12 bg-black/5 hover:bg-black/10 rounded-2xl flex items-center justify-center text-xl transition-all">
-                  <i className="bx bxl-facebook"></i>
-                </button>
-                <button className="w-12 h-12 bg-black/5 hover:bg-black/10 rounded-2xl flex items-center justify-center text-xl transition-all">
-                  <i className="bx bxl-twitter"></i>
-                </button>
-                <button className="w-12 h-12 bg-black/5 hover:bg-black/10 rounded-2xl flex items-center justify-center text-xl transition-all">
-                  <i className="bx bxl-linkedin"></i>
-                </button>
+                <a 
+                  href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-12 h-12 bg-black/5 hover:bg-black/10 rounded-2xl flex items-center justify-center text-xl transition-all hover:text-primary"
+                >
+                  <i className="bx bxl-instagram"></i>
+                </a>
+                <a 
+                  href="https://www.facebook.com/pjutenagasuryasurabaya" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-12 h-12 bg-black/5 hover:bg-black/10 rounded-2xl flex items-center justify-center text-xl transition-all hover:text-primary"
+                >
+                  <i className="bx bxl-facebook-circle"></i>
+                </a>
               </div>
-              <button className="px-8 py-3 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-lg shadow-primary/20">
-                Bagikan Artikel
-              </button>
             </div>
           </div>
         </div>
@@ -163,7 +167,7 @@ const BlogDetail = () => {
             </div>
             
             <div className="pt-8 border-t border-black/5">
-              <div className="bg-primary/5 p-8 rounded-[32px] border border-primary/10 space-y-4">
+              <div className="bg-primary/5 p-8 rounded-4xl border border-primary/10 space-y-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Newsletter</p>
                 <h4 className="text-lg font-black tracking-tight uppercase leading-tight">Dapatkan Update Terbaru</h4>
                 <p className="text-xs text-text-secondary font-medium">Berlangganan untuk info teknologi energi terbarukan.</p>
