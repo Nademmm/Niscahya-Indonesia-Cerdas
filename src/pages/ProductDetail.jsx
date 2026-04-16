@@ -216,10 +216,9 @@ const ProductDetail = () => {
             </div>
             <motion.h1 
               layoutId={`product-name-${product.id}`}
-              className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8]"
+              className="text-3xl md:text-5xl font-black tracking-tighter uppercase leading-[1.1]"
             >
-              {(product.name || '').split(' ').slice(0, -1).join(' ')} <br />
-              <span className="text-gradient">{(product.name || '').split(' ').slice(-1)}</span>
+              {product.name}
             </motion.h1>
             <span className="inline-flex px-4 py-2 bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-xl">
               Tersedia
@@ -271,13 +270,10 @@ const ProductDetail = () => {
       {/* Deskripsi */}
       <section className="space-y-12">
         <div className="space-y-12">
-          <div className="space-y-6">
-            <h2 className="text-4xl font-black uppercase tracking-tighter">Deskripsi <br /><span className="text-secondary">Sistem</span></h2>
-            <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-gradient-to-br from-white to-black/5">
-              <p className="text-xl text-text-secondary font-medium leading-relaxed whitespace-pre-line">
-                {renderDescription(product.description)}
-              </p>
-            </div>
+          <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-gradient-to-br from-white to-black/5">
+            <p className="text-base md:text-lg text-text-secondary font-medium leading-relaxed whitespace-pre-line">
+              {renderDescription(product.description)}
+            </p>
           </div>
           
           <div className="grid grid-cols-1 gap-4">
@@ -297,7 +293,7 @@ const ProductDetail = () => {
       {/* Similar Selection */}
       <section className="space-y-12">
         <div className="flex items-end justify-between">
-          <h2 className="text-4xl font-black uppercase tracking-tighter">Unit <br /><span className="text-secondary">Terkait</span></h2>
+          <h2 className="text-4xl font-black uppercase tracking-tighter">Unit Terkait</h2>
           <Link to="/products" className="text-lg font-black uppercase tracking-tighter hover:text-primary transition-colors flex items-center gap-2">
             Katalog <i className="bx bx-right-arrow-alt text-2xl"></i>
           </Link>
@@ -318,6 +314,74 @@ const ProductDetail = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* Hubungi & Lokasi Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-12 border-t border-black/5">
+        {/* Kontak Kami */}
+        <div className="glass p-10 rounded-[48px] space-y-8 flex flex-col justify-between border-black/5 shadow-xl shadow-black/5">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Hubungi Kami</span>
+              <h3 className="text-4xl font-black uppercase tracking-tighter">Siap Melayani <br />Kebutuhan Anda.</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-6">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl">
+                  <i className="bx bxs-phone-call"></i>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Telepon / WA</span>
+                  <div className="flex flex-col gap-0.5">
+                    <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 878 5353 6124</a>
+                    <a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 821 4370 7398</a>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-6">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary text-2xl">
+                  <i className="bx bxs-envelope"></i>
+                </div>
+                <div className="flex flex-col min-w-0 overflow-hidden">
+                  <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Email</span>
+                  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=cvniscahyaindonesiacerdas@gmail.com" target="_blank" rel="noopener noreferrer" className="text-sm md:text-base font-black tracking-tight break-all hover:text-secondary transition-colors">cvniscahyaindonesiacerdas@gmail.com</a>
+                </div>
+              </div>
+              <div className="flex items-start gap-6">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl">
+                  <i className="bx bxs-map"></i>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Marketing Office</span>
+                  <span className="text-lg font-black leading-tight tracking-tight">Wisma Juanda Permai Jl. Bouraq Blok B1 No. 15, Sedati Gede, <br />Kec. Sedati, Kabupaten Sidoarjo, Jawa Timur</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button 
+            onClick={handleBuyNow}
+            className="w-full py-5 bg-black/5 hover:bg-black/10 transition-colors rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3"
+          >
+            Konsultasi Sekarang <i className="bx bx-right-arrow-alt text-xl"></i>
+          </button>
+        </div>
+
+        {/* Lokasi Kami (Map) */}
+        <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[500px] lg:h-auto">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
+            width="100%" 
+            height="100%" 
+            style={{ border: 0 }} 
+            allowFullScreen="" 
+            loading="lazy" 
+            referrerPolicy="no-referrer-when-downgrade"
+            className="rounded-[36px] shadow-inner"
+          ></iframe>
+          <div className="absolute top-8 right-8 pointer-events-none">
+            <span className="px-4 py-2 glass-bright rounded-full text-[10px] font-black uppercase tracking-widest border border-black/10 shadow-lg">Showroom Kami</span>
+          </div>
         </div>
       </section>
     </div>

@@ -112,15 +112,15 @@ export const About = () => (
   <div className="space-y-32">
     <PageHero 
       title="Cerita Kami" 
-      subtitle="Membangun kedaulatan energi melalui inovasi teknologi tanpa batas."
+      subtitle="Menghadirkan solusi energi berkelanjutan untuk masa depan Indonesia yang lebih terang."
       icon="bx-user-voice"
       color="accent"
     />
     <section className="grid grid-cols-1 md:grid-cols-2 gap-12">
       <div className="space-y-8">
-        <h3 className="text-4xl font-black uppercase tracking-tighter">Tim Visioner.</h3>
+        <h3 className="text-4xl font-black uppercase tracking-tighter">Visi Kami.</h3>
         <p className="text-xl text-text-secondary font-medium leading-relaxed">
-          Niscahya Indonesia Cerdas lahir dari keinginan untuk membuat energi matahari dapat diakses oleh semua orang di Indonesia. Dari Sabang sampai Merauke, kami menerangi malam dengan teknologi yang ramah lingkungan.
+          CV Niscahya Indonesia Cerdas berdedikasi dalam penyediaan dan distribusi lampu PJU Tenaga Surya serta PLN yang efisien. Kami percaya bahwa setiap wilayah di Indonesia, dari perkotaan hingga daerah terpencil, berhak mendapatkan akses penerangan yang aman, andal, dan ramah lingkungan.
         </p>
       </div>
       <div className="grid grid-cols-2 gap-6">
@@ -232,19 +232,28 @@ export const Contact = () => (
         <div className="space-y-6">
           <h3 className="text-4xl font-black uppercase tracking-tighter">Kontak Langsung.</h3>
           <div className="space-y-4">
-            <div className="flex items-center gap-6">
-              <div className="w-12 h-12 glass rounded-xl flex items-center justify-center text-accent text-2xl"><i className="bx bx-phone"></i></div>
-              <span className="text-xl font-bold">+62 878 5353 6124</span>
+            <div className="flex items-start gap-6">
+              <div className="w-12 h-12 shrink-0 glass rounded-xl flex items-center justify-center text-accent text-2xl shadow-lg shadow-accent/5"><i className="bx bxs-phone-call"></i></div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Telepon / WA</span>
+                <div className="flex flex-col">
+                  <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="text-xl font-bold tracking-tight hover:text-accent transition-colors">+62 878 5353 6124</a>
+                  <a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="text-xl font-bold tracking-tight hover:text-accent transition-colors">+62 821 4370 7398</a>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-6">
-              <div className="w-12 h-12 glass rounded-xl flex items-center justify-center text-accent text-2xl"><i className="bx bx-envelope"></i></div>
-              <span className="text-xl font-bold">hello@niscahya.com</span>
+            <div className="flex items-start gap-6">
+              <div className="w-12 h-12 shrink-0 glass rounded-xl flex items-center justify-center text-accent text-2xl shadow-lg shadow-accent/5"><i className="bx bxs-envelope"></i></div>
+              <div className="flex flex-col min-w-0 overflow-hidden">
+                <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Email</span>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=cvniscahyaindonesiacerdas@gmail.com" target="_blank" rel="noopener noreferrer" className="text-base md:text-xl font-bold tracking-tight break-all hover:text-accent transition-colors">cvniscahyaindonesiacerdas@gmail.com</a>
+              </div>
             </div>
           </div>
         </div>
         <div className="glass p-8 rounded-[40px] border-black/5 shadow-xl shadow-black/5">
-          <h4 className="text-sm font-black uppercase tracking-widest text-text-secondary mb-4">Kantor Pusat</h4>
-          <p className="text-lg font-bold">Cyber Tower 12, Lantai 24 <br />Kuningan, Jakarta Selatan, Indonesia</p>
+          <h4 className="text-sm font-black uppercase tracking-widest text-text-secondary mb-4">Marketing Office</h4>
+          <p className="text-lg font-bold">Wisma Juanda Permai Jl. Bouraq Blok B1 No. 15, Sedati Gede, <br />Kec. Sedati, Kabupaten Sidoarjo, Jawa Timur</p>
         </div>
       </div>
       <div className="glass p-12 rounded-[56px] space-y-8 border-black/5 shadow-xl shadow-black/5">
@@ -262,7 +271,7 @@ export const Contact = () => (
           <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Pesan</label>
           <textarea className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold h-40 resize-none" placeholder="Detail kebutuhan Anda..."></textarea>
         </div>
-        <button className="w-full py-6 bg-accent text-background font-black text-xl rounded-3xl hover:scale-105 transition-all shadow-2xl shadow-accent/20 uppercase tracking-tighter">Kirim Pesan</button>
+        <button className="w-full py-6 bg-accent text-background font-black text-xl rounded-3xl hover:bg-accent/90 transition-colors shadow-2xl shadow-accent/20 uppercase tracking-tighter">Kirim Pesan</button>
       </div>
     </section>
   </div>

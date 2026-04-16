@@ -146,7 +146,10 @@ const Products = () => {
       // Category filter first (usually more selective)
       if (cat !== 'Semua') {
         const productCat = product.category;
-        if (productCat !== cat && !productCat.startsWith(cat + ' -')) {
+        // Fallback: match 'PJU PLN' with old name 'PJU PLN (50-200 watt)'
+        const isOldPJUPLN = cat === 'PJU PLN' && productCat === 'PJU PLN (50-200 watt)';
+        
+        if (productCat !== cat && !productCat.startsWith(cat + ' -') && !isOldPJUPLN) {
           return false;
         }
       }
@@ -189,10 +192,9 @@ const Products = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8]"
+            className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
           >
-            Solusi <br />
-            <span className="text-gradient">Terdepan.</span>
+            Solusi Terdepan.
           </motion.h1>
           <motion.p 
             initial={{ y: 20, opacity: 0 }}

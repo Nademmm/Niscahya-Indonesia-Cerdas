@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 for right, -1 for left
 
   const slides = [
     {
@@ -15,33 +16,61 @@ const HeroSlider = () => {
     {
       id: 2,
       image: "/hero-2.png",
-      title: "Slide 2"
+      title: "Our best seller"
     },
     {
       id: 3,
       image: "/hero-3.png",
-      title: "Slide 3"
+      title: "PJU Solar Panel"
     }
   ];
 
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
+      setDirection(1);
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 8000); // Diperlama menjadi 8 detik
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  const paginate = (newDirection) => {
+    setDirection(newDirection);
+    setCurrentSlide((prev) => (prev + newDirection + slides.length) % slides.length);
+  };
+
   return (
     <section className="relative w-full h-[600px] md:h-[80vh] rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false} custom={direction}>
         <motion.img
           key={currentSlide}
           src={slides[currentSlide].image}
           alt={slides[currentSlide].title}
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
+          custom={direction}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{
+            x: { type: "spring", stiffness: 300, damping: 30 },
+            opacity: { duration: 0.5 }
+          }}
           className="absolute inset-0 w-full h-full object-cover"
         />
       </AnimatePresence>
@@ -54,7 +83,10 @@ const HeroSlider = () => {
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => setCurrentSlide(index)}
+            onClick={() => {
+              setDirection(index > currentSlide ? 1 : -1);
+              setCurrentSlide(index);
+            }}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
               currentSlide === index ? "bg-primary w-8" : "bg-white/50 hover:bg-white"
             }`}
@@ -64,13 +96,13 @@ const HeroSlider = () => {
       
       {/* Prev/Next buttons */}
       <button 
-        onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+        onClick={() => paginate(-1)}
         className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
       >
         <i className="bx bx-chevron-left text-3xl"></i>
       </button>
       <button 
-        onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+        onClick={() => paginate(1)}
         className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
       >
         <i className="bx bx-chevron-right text-3xl"></i>
@@ -120,15 +152,15 @@ const Home = () => {
         >
           <div className="space-y-4">
             <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Tentang Niscahya</span>
-            <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none">
-              Menerangi Masa Depan <br /> <span className="text-gradient">Indonesia.</span>
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+              Menerangi Masa Depan Indonesia.
             </h2>
           </div>
           <p className="text-lg text-text-secondary font-medium leading-relaxed">
-            CV Niscahya Indonesia Cerdas hadir sebagai solusi terdepan dalam industri penerangan jalan umum dan energi surya. Kami berdedikasi untuk memberikan pencahayaan yang optimal, hemat energi, dan ramah lingkungan bagi seluruh pelosok negeri.
+            CV Niscahya Indonesia Cerdas adalah mitra strategis Anda dalam distribusi lampu PJU Tenaga Surya dan PLN berkualitas tinggi. Kami menghadirkan solusi penerangan jalan umum yang mengedepankan efisiensi maksimal, penghematan energi, serta konsep ramah lingkungan yang berkelanjutan.
           </p>
           <p className="text-lg text-text-secondary font-medium leading-relaxed">
-            Dengan teknologi cerdas terkini dan standar kualitas tertinggi, produk kami dirancang untuk tangguh di berbagai kondisi cuaca, memastikan keamanan dan kenyamanan di jalan raya maupun area publik lainnya tanpa membebani biaya listrik berkelanjutan.
+            Didukung oleh tim profesional dan produk berstandar industri, kami siap melayani kebutuhan pencahayaan proyek di seluruh skala wilayah Indonesia dari pusat perkotaan hingga pelosok daerah terpencil. Komitmen utama kami adalah memberikan akses cahaya yang aman, andal, dan inovatif bagi masyarakat Indonesia.
           </p>
           <div className="pt-4 flex items-center gap-6">
             <div className="flex items-center gap-4">
@@ -158,7 +190,7 @@ const Home = () => {
           className="relative h-[500px] rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
         >
           <img 
-            src="/public/panel.jpg" 
+            src="/public/PJU TENAGA SURYA.jpeg" 
             alt="Industri Energi Surya" 
             className="w-full h-full object-cover"
           />
@@ -215,8 +247,8 @@ const Home = () => {
       <section className="space-y-16">
         <div className="flex flex-col md:flex-row justify-between items-end gap-6">
           <div className="space-y-4">
-            <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Teknologi Terbaru</span>
-            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">Unggulan.</h2>
+            <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Produk Kami</span>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">Unggulan.</h2>
           </div>
           <Link to="/products" className="px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all">
             Lihat Semua Produk <i className="bx bx-right-arrow-alt text-lg align-middle ml-2"></i>
@@ -245,37 +277,73 @@ const Home = () => {
         )}
       </section>
 
-      {/* Map Section */}
-      <motion.section 
-        whileInView={{ scale: 0.95, opacity: 1 }}
-        initial={{ scale: 1, opacity: 0 }}
-        className="relative rounded-[64px] overflow-hidden glass border-black/5 mx-4 lg:mx-0 shadow-2xl shadow-black/5 group"
-      >
-        <div className="p-12 space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div className="space-y-4">
-              <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Lokasi Kami</span>
-              <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">Kunjungi Kami.</h2>
+      {/* Hubungi & Lokasi Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-12 border-t border-black/5">
+        {/* Kontak Kami */}
+        <div className="glass p-10 rounded-[48px] space-y-8 flex flex-col justify-between border-black/5 shadow-xl shadow-black/5">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Hubungi Kami</span>
+              <h3 className="text-4xl font-black uppercase tracking-tighter">Siap Melayani <br />Kebutuhan Anda.</h3>
             </div>
-            <p className="text-text-secondary font-medium max-w-sm text-right">
-              Temukan unit terbaik kami secara langsung di showroom SinarSurya EnergiKu.
-            </p>
+            <div className="space-y-4">
+              <div className="flex items-start gap-6">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl">
+                  <i className="bx bxs-phone-call"></i>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Telepon / WA</span>
+                  <div className="flex flex-col gap-0.5">
+                    <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 878 5353 6124</a>
+                    <a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 821 4370 7398</a>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-6">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary text-2xl">
+                  <i className="bx bxs-envelope"></i>
+                </div>
+                <div className="flex flex-col min-w-0 overflow-hidden">
+                  <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Email</span>
+                  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=cvniscahyaindonesiacerdas@gmail.com" target="_blank" rel="noopener noreferrer" className="text-sm md:text-base font-black tracking-tight break-all hover:text-secondary transition-colors">cvniscahyaindonesiacerdas@gmail.com</a>
+                </div>
+              </div>
+              <div className="flex items-start gap-6">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl">
+                  <i className="bx bxs-map"></i>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Marketing Office</span>
+                  <span className="text-lg font-black leading-tight tracking-tight">Wisma Juanda Permai Jl. Bouraq Blok B1 No. 15, Sedati Gede, <br />Kec. Sedati, Kabupaten Sidoarjo, Jawa Timur</span>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="w-full h-[500px] rounded-[48px] overflow-hidden border-4 border-black/5 shadow-inner relative">
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen="" 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-              className="grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
-            ></iframe>
+          <Link 
+            to="/contact"
+            className="w-full py-5 bg-black/5 hover:bg-black/10 transition-colors rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3"
+          >
+            Konsultasi Sekarang <i className="bx bx-right-arrow-alt text-xl"></i>
+          </Link>
+        </div>
+
+        {/* Lokasi Kami (Map) */}
+        <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[500px] lg:h-auto">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
+            width="100%" 
+            height="100%" 
+            style={{ border: 0 }} 
+            allowFullScreen="" 
+            loading="lazy" 
+            referrerPolicy="no-referrer-when-downgrade"
+            className="rounded-[36px] shadow-inner"
+          ></iframe>
+          <div className="absolute top-8 right-8 pointer-events-none">
+            <span className="px-4 py-2 glass-bright rounded-full text-[10px] font-black uppercase tracking-widest border border-black/10 shadow-lg">Showroom Kami</span>
           </div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 };

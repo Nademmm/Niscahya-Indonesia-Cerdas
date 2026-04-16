@@ -195,9 +195,12 @@ const Layout = ({ children }) => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 border-t border-black/5">
           <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">© 2026 NISCAHYA INDONESIA CERDAS. SEMUA SISTEM BEROPERASI.</p>
           <div className="flex gap-6 text-xl text-text-secondary">
-            <i className="bx bxl-instagram hover:text-primary cursor-pointer transition-colors"></i>
-            <i className="bx bxl-linkedin hover:text-primary cursor-pointer transition-colors"></i>
-            <i className="bx bxl-twitter hover:text-primary cursor-pointer transition-colors"></i>
+            <a href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <i className="bx bxl-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/pjutenagasuryasurabaya" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <i className="bx bxl-facebook-circle"></i>
+            </a>
           </div>
         </div>
       </footer>

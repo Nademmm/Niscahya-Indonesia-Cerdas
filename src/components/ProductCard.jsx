@@ -40,7 +40,7 @@ const ProductCard = memo(({ product }) => {
         {/* Product Info - Better spacing and contrast */}
         <div className="absolute bottom-0 left-0 right-0 p-8 space-y-3 z-20">
           <div className="space-y-1">
-            <h3 className="text-2xl md:text-3xl font-black tracking-tighter text-white uppercase leading-[0.9] line-clamp-2 drop-shadow-lg">
+            <h3 className="text-lg md:text-xl font-black tracking-tighter text-white uppercase leading-[1.1] line-clamp-2 drop-shadow-lg">
               {product.name}
             </h3>
             <div className="flex items-center gap-2 pt-2">
