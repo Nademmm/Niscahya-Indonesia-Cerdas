@@ -83,6 +83,43 @@ const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
   );
 });
 
+const normalizeText = (text) => {
+  if (!text) return '';
+  return text
+    .toLowerCase()
+    .replace(/watts?/g, 'w')
+    .replace(/kilowatts?/g, 'kw')
+    .replace(/(\d+)\s*(w|kw|ah|v|a|wp)\b/g, '$1$2') // 100 watt -> 100w, 100 w -> 100w
+    .replace(/[^a-z0-9\s]/g, ' ') // replace special chars with space
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
+const fuzzyMatch = (text, query) => {
+  const nText = normalizeText(text);
+  const nQuery = normalizeText(query);
+  
+  if (nText.includes(nQuery)) return true;
+  
+  // Split query into words for "all words must match" logic
+  const queryWords = nQuery.split(' ').filter(w => w.length > 0);
+  if (queryWords.length === 0) return true;
+
+  return queryWords.every(word => {
+    // Exact word match after normalization
+    if (nText.includes(word)) return true;
+    
+    // Simple anti-typo: check if word is almost a match (Levenshtein distance 1 for short words, 2 for long)
+    // For simplicity, we'll use a basic character-subset check for anti-typo
+    if (word.length > 3) {
+      const regex = new RegExp(word.split('').join('.?'), 'i');
+      if (regex.test(nText)) return true;
+    }
+    
+    return false;
+  });
+};
+
 const Products = () => {
   const { searchQuery, setSearchQuery } = useApp();
   const location = useLocation();
@@ -161,8 +198,8 @@ const Products = () => {
 
       // Search filter last (more expensive)
       if (query) {
-        return product.name.toLowerCase().includes(query) || 
-               product.category.toLowerCase().includes(query);
+        const searchableText = `${product.name} ${product.category} ${product.description} ${(product.specs || []).join(' ')}`;
+        return fuzzyMatch(searchableText, query);
       }
       
       return true;
@@ -173,13 +210,6 @@ const Products = () => {
     <div className="space-y-20">
       {/* Experimental Header */}
       <section className="relative pt-10">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.05, scale: 1 }}
-          className="absolute top-0 right-0 p-20 -z-10 animate-pulse"
-        >
-          <i className="bx bx-package text-[300px]"></i>
-        </motion.div>
         <div className="max-w-3xl space-y-6">
           <motion.div 
             initial={{ x: -20, opacity: 0 }}
