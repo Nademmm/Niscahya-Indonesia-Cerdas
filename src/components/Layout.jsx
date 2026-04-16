@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
+import { BubbleChat } from 'flowise-embed-react';
 
 const navLinks = [
   { name: 'Beranda', path: '/' },
@@ -204,6 +205,47 @@ const Layout = ({ children }) => {
           </div>
         </div>
       </footer>
+
+      <BubbleChat 
+        chatflowid="6adfdb52-f0cd-4aad-98ab-9a241a19ee3d" 
+        apiHost="http://192.168.1.7:3000"
+        theme={{
+            button: {
+                backgroundColor: "#10b981",
+                right: 25,
+                bottom: 25,
+                size: 60,
+                iconColor: "white",
+                customIconSrc: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/png/flowise.png",
+            },
+            chatWindow: {
+                welcomeMessage: "Halo! Saya asisten AI Niscahya Indonesia Cerdas. Ada yang bisa saya bantu terkait produk PJU Tenaga Surya atau solusi energi kami? ☀️",
+                backgroundColor: "#ffffff",
+                height: 600,
+                width: 400,
+                fontSize: 16,
+                poweredByTextColor: "#303235",
+                botMessage: {
+                    backgroundColor: "#f0fdf4",
+                    textColor: "#064e3b",
+                    showAvatar: true,
+                    avatarSrc: "/logo.png",
+                },
+                userMessage: {
+                    backgroundColor: "#10b981",
+                    textColor: "#ffffff",
+                    showAvatar: true,
+                    avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png",
+                },
+                textInput: {
+                    placeholder: "Tanya sesuatu...",
+                    backgroundColor: "#ffffff",
+                    textColor: "#303235",
+                    sendButtonColor: "#10b981",
+                }
+            }
+        }}
+      />
     </div>
   );
 };
