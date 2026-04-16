@@ -7,6 +7,7 @@ import { BubbleChat } from 'flowise-embed-react';
 const navLinks = [
   { name: 'Beranda', path: '/' },
   { name: 'Produk', path: '/products' },
+  { name: 'Blog', path: '/blog' },
   { name: 'Solusi', path: '/solutions' },
   { name: 'Dampak', path: '/impact' },
 ];
@@ -176,13 +177,11 @@ const Layout = ({ children }) => {
             </p>
           </div>
           <div className="space-y-6">
-            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">Navigasi</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">Wawasan</h4>
             <ul className="space-y-4">
-              {navLinks.map(link => (
-                <li key={link.name}>
-                  <Link to={link.path} className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">{link.name}</Link>
-                </li>
-              ))}
+              <li><Link to="/blog" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Blog & Artikel</Link></li>
+              <li><Link to="/solutions" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Studi Kasus</Link></li>
+              <li><Link to="/impact" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Laporan Dampak</Link></li>
             </ul>
           </div>
           <div className="space-y-6">

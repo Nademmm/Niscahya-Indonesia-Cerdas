@@ -16,9 +16,58 @@ db.exec(`
     image TEXT,
     images TEXT,
     description TEXT,
-    specs TEXT
+    specs TEXT,
+    slug TEXT UNIQUE
   )
 `);
+
+// Add slug column if it doesn't exist (migration)
+try {
+  db.exec("ALTER TABLE products ADD COLUMN slug TEXT");
+  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_products_slug ON products (slug)");
+} catch (e) {
+  // Column might already exist
+}
+
+// Data Migration: Clean image paths and fill missing slugs
+const migrateData = () => {
+  const generateSlug = (name) => {
+    return name.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
+  // 1. Fix missing slugs
+  const productsWithoutSlugs = db.prepare("SELECT id, name FROM products WHERE slug IS NULL OR slug = ''").all();
+  if (productsWithoutSlugs.length > 0) {
+    const updateSlugStmt = db.prepare('UPDATE products SET slug = ? WHERE id = ?');
+    const updateSlugs = db.transaction((items) => {
+      for (const item of items) {
+        // Append ID to ensure uniqueness during migration
+        const baseSlug = generateSlug(item.name);
+        updateSlugStmt.run(`${baseSlug}-${item.id}`, item.id);
+      }
+    });
+    updateSlugs(productsWithoutSlugs);
+    console.log(`[DB] Migrated ${productsWithoutSlugs.length} products with new unique slugs.`);
+  }
+
+  // 2. Clean /public/ from image paths
+  const productsWithPublicPaths = db.prepare("SELECT id, image FROM products WHERE image LIKE '/public/%'").all();
+  if (productsWithPublicPaths.length > 0) {
+    const updatePathStmt = db.prepare('UPDATE products SET image = ? WHERE id = ?');
+    const updatePaths = db.transaction((items) => {
+      for (const item of items) {
+        const newPath = item.image.replace('/public/', '/');
+        updatePathStmt.run(newPath, item.id);
+      }
+    });
+    updatePaths(productsWithPublicPaths);
+    console.log(`[DB] Cleaned /public/ from ${productsWithPublicPaths.length} image paths.`);
+  }
+};
+
+migrateData();
 
 // Add images column if it doesn't exist (migration)
 try {
@@ -32,10 +81,16 @@ export const seedDatabase = (initialProducts) => {
   const checkStmt = db.prepare('SELECT COUNT(*) as count FROM products');
   const { count } = checkStmt.get();
 
+  const generateSlug = (name) => {
+    return name.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
   if (count === 0) {
     const insertStmt = db.prepare(`
-      INSERT INTO products (name, price, category, image, images, description, specs)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO products (name, price, category, image, images, description, specs, slug)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const insertMany = db.transaction((products) => {
@@ -47,7 +102,8 @@ export const seedDatabase = (initialProducts) => {
           product.image,
           JSON.stringify(product.images || []),
           product.description,
-          JSON.stringify(product.specs)
+          JSON.stringify(product.specs),
+          generateSlug(product.name)
         );
       }
     });

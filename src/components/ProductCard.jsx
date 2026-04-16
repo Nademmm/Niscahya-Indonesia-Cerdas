@@ -52,7 +52,7 @@ const ProductCard = memo(({ product }) => {
       </div>
 
       {/* Link Overlay */}
-      <Link to={`/products/${product.id}`} className="absolute inset-0 z-30" aria-label={`Lihat detail ${product.name}`}></Link>
+      <Link to={`/products/${product.slug || product.id}`} className="absolute inset-0 z-30" aria-label={`Lihat detail ${product.name}`}></Link>
     </div>
   );
 });

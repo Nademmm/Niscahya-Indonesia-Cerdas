@@ -101,6 +101,28 @@ const fuzzyMatch = (text, query) => {
 };
 
 const Products = () => {
+  useEffect(() => {
+    document.title = 'Katalog Produk Lampu PJU & Solar Panel | Niscahya';
+    
+    // SEO Meta Update
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', 'Jelajahi katalog lengkap lampu PJU tenaga surya, solar panel, baterai lithium, dan aksesori energi terbarukan di Niscahya Indonesia Cerdas.');
+    }
+    
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', window.location.origin + '/products');
+    
+    return () => {
+      document.title = 'Niscahya Indonesia Cerdas';
+    };
+  }, []);
+
   const { searchQuery, setSearchQuery } = useApp();
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState('Semua');

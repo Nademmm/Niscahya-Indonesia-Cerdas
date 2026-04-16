@@ -13,6 +13,15 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3001;
 
+// Global error handlers to catch silent crashes
+process.on('uncaughtException', (err) => {
+  console.error('CRITICAL: Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 // Ensure upload directory exists
 const uploadDir = path.resolve(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -32,10 +41,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Seed database on startup
-seedDatabase(initialProducts);
+try {
+  // Seed database on startup
+  seedDatabase(initialProducts);
+  console.log('Database check/seed completed.');
+} catch (dbError) {
+  console.error('CRITICAL: Database initialization failed:', dbError);
+}
 
 app.use(cors());
+
 app.use(express.json());
 app.use('/uploads', express.static(uploadDir));
 
@@ -58,7 +73,7 @@ app.post('/api/upload', (req, res) => {
     console.log('File uploaded successfully:', req.file.filename);
     // Return relative path (for production/proxy) and absolute (for debugging)
     const imageUrl = `/uploads/${req.file.filename}`;
-    res.json({ imageUrl, fullUrl: `http://localhost:${port}${imageUrl}` });
+    res.json({ imageUrl, fullUrl: `http://127.0.0.1:${port}${imageUrl}` });
   });
 });
 
@@ -96,9 +111,18 @@ app.get('/api/products', (req, res) => {
   }
 });
 
-app.get('/api/products/:id', (req, res) => {
+app.get('/api/products/:idOrSlug', (req, res) => {
   try {
-    const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
+    const { idOrSlug } = req.params;
+    let product;
+    
+    // Check if the parameter is an ID (number) or a Slug (text)
+    if (/^\d+$/.test(idOrSlug)) {
+      product = db.prepare('SELECT * FROM products WHERE id = ?').get(idOrSlug);
+    } else {
+      product = db.prepare('SELECT * FROM products WHERE slug = ?').get(idOrSlug);
+    }
+
     if (product) {
       product.specs = JSON.parse(product.specs || '[]');
       product.images = JSON.parse(product.images || '[]');
@@ -113,10 +137,14 @@ app.get('/api/products/:id', (req, res) => {
 
 app.post('/api/products', (req, res) => {
   const { name, price, category, image, images, description, specs } = req.body;
+  const slug = name.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+    
   try {
     const insertStmt = db.prepare(`
-      INSERT INTO products (name, price, category, image, images, description, specs)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO products (name, price, category, image, images, description, specs, slug)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
     const result = insertStmt.run(
       name, 
@@ -125,9 +153,10 @@ app.post('/api/products', (req, res) => {
       image, 
       JSON.stringify(images || []), 
       description, 
-      JSON.stringify(specs)
+      JSON.stringify(specs),
+      slug
     );
-    res.status(201).json({ id: result.lastInsertRowid, ...req.body });
+    res.status(201).json({ id: result.lastInsertRowid, slug, ...req.body });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -186,6 +215,10 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(port, '127.0.0.1', (err) => {
+  if (err) {
+    console.error('CRITICAL: Server failed to start:', err);
+    return;
+  }
+  console.log(`[BACKEND] Server is active at http://127.0.0.1:${port}`);
 });

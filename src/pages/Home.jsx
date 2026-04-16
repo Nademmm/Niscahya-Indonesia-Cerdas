@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
+import { blogPosts } from '../data/blog';
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -112,6 +113,28 @@ const HeroSlider = () => {
 };
 
 const Home = () => {
+  useEffect(() => {
+    document.title = 'Niscahya Indonesia Cerdas | Lampu PJU Tenaga Surya Terbaik';
+    
+    // SEO Meta Update
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', 'Distributor resmi Lampu PJU Tenaga Surya berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif.');
+    }
+    
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', window.location.origin + '/');
+    
+    return () => {
+      document.title = 'Niscahya Indonesia Cerdas';
+    };
+  }, []);
+
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -190,7 +213,7 @@ const Home = () => {
           className="relative h-[500px] rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
         >
           <img 
-            src="/public/PJU TENAGA SURYA.jpeg" 
+            src="/PJU TENAGA SURYA.jpeg" 
             alt="Industri Energi Surya" 
             className="w-full h-full object-cover"
           />
@@ -275,6 +298,63 @@ const Home = () => {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Latest Blog Section */}
+      <section className="space-y-16">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+          <div className="space-y-4">
+            <span className="text-[10px] font-black tracking-[0.4em] text-secondary uppercase">Wawasan & Edukasi</span>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">Blog Terbaru.</h2>
+          </div>
+          <Link to="/blog" className="px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all">
+            Jelajahi Semua Artikel <i className="bx bx-right-arrow-alt text-lg align-middle ml-2"></i>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => (
+            <motion.article
+              key={post.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col"
+            >
+              <Link to={`/blog/${post.id}`} className="relative aspect-video overflow-hidden block">
+                <img 
+                  src={post.image} 
+                  alt={post.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute top-4 left-4">
+                  <span className="px-3 py-1.5 bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-lg text-secondary shadow-lg">
+                    {post.category}
+                  </span>
+                </div>
+              </Link>
+              <div className="p-8 space-y-4 flex-grow flex flex-col">
+                <p className="text-[9px] font-black text-text-secondary uppercase tracking-widest">{post.date}</p>
+                <Link to={`/blog/${post.id}`}>
+                  <h3 className="text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+                </Link>
+                <p className="text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed flex-grow">
+                  {post.excerpt}
+                </p>
+                <div className="pt-4">
+                  <Link 
+                    to={`/blog/${post.id}`}
+                    className="text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all"
+                  >
+                    Baca Selengkapnya <i className="bx bx-right-arrow-alt text-lg"></i>
+                  </Link>
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </div>
       </section>
 
       {/* Hubungi & Lokasi Section */}

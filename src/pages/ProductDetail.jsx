@@ -28,7 +28,7 @@ const getCategoryDisplay = (fullCategory) => {
 };
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -55,7 +55,7 @@ const ProductDetail = () => {
   // Chat ke WhatsApp
   const handleBuyNow = () => {
   const phoneNumber = "6287853536124";
-  const message = `Halo Admin Niscaya Indonesia Cerdas
+  const message = `Halo Admin Niscahya Indonesia Cerdas
   Saya ingin melakukan pembelian produk berikut:
   ${product?.name || 'Produk'}
   Jumlah: ${quantity} unit
@@ -68,7 +68,7 @@ const ProductDetail = () => {
     const fetchData = async () => {
       try {
         const [prodRes, allRes] = await Promise.all([
-          fetch(`/api/products/${id}`),
+          fetch(`/api/products/${slug}`),
           fetch('/api/products')
         ]);
 
@@ -86,13 +86,28 @@ const ProductDetail = () => {
 
           setProduct(prodData);
           setSelectedImage(firstAvailableImage);
+          document.title = `${prodData.name} | Niscahya Indonesia Cerdas`;
+          
+          // SEO Meta Update
+          let metaDesc = document.querySelector('meta[name="description"]');
+          if (metaDesc) {
+            metaDesc.setAttribute('content', prodData.description.substring(0, 160));
+          }
+          
+          let canonical = document.querySelector('link[rel="canonical"]');
+          if (!canonical) {
+            canonical = document.createElement('link');
+            canonical.setAttribute('rel', 'canonical');
+            document.head.appendChild(canonical);
+          }
+          canonical.setAttribute('href', window.location.href);
         } else {
           setProduct(null);
         }
 
         if (allRes.ok) {
           const allData = await allRes.json();
-          setRelatedProducts(allData.filter(p => p.id !== parseInt(id)));
+          setRelatedProducts(allData.filter(p => p.slug !== slug));
         }
       } catch (err) {
         console.error('Failed to fetch product data:', err);
@@ -101,7 +116,7 @@ const ProductDetail = () => {
       }
     };
     fetchData();
-  }, [id]);
+  }, [slug]);
 
   if (loading) {
     return (
@@ -146,8 +161,30 @@ const ProductDetail = () => {
 
   const displayedImage = selectedImage || allImages[0] || '';
 
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": allImages,
+    "description": product.description,
+    "brand": {
+      "@type": "Brand",
+      "name": "Niscahya"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": window.location.href,
+      "priceCurrency": "IDR",
+      "price": product.price || "0",
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
   return (
     <div className="space-y-24">
+      <script type="application/ld+json">
+        {JSON.stringify(jsonLd)}
+      </script>
       {/* Detail Header */}
       <section className="flex flex-col lg:flex-row gap-16">
         {/* Gallery Utama */}
@@ -165,39 +202,29 @@ const ProductDetail = () => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
                 src={displayedImage} 
-                alt={product.name} 
-                className="w-full h-full object-cover" 
+                alt={`${product.name} - Lampu PJU Tenaga Surya Niscahya`} 
+                className="w-full h-full object-cover"
               />
             </AnimatePresence>
-            <div className="absolute top-8 left-8">
-              <span className="px-6 py-2 glass-bright rounded-full text-xs font-black uppercase tracking-[0.2em] border border-black/10">
-                {getCategoryDisplay(product.category)}
-              </span>
-            </div>
           </div>
-          
-          {/* Thumbnail Selector */}
-          <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+
+          <div className="grid grid-cols-5 gap-3">
             {thumbnailSlots.map((img, i) => (
-              <motion.div 
-                key={i} 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button 
+                key={i}
                 onClick={() => img && setSelectedImage(img)}
-                className={`flex-shrink-0 w-24 h-24 glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 border-2 ${
-                  displayedImage === img && img
-                    ? 'border-primary opacity-100 ring-4 ring-primary/10' 
-                    : 'border-transparent opacity-40 hover:opacity-70'
-                }`}
+                className={`aspect-square rounded-2xl overflow-hidden transition-all ${
+                  selectedImage === img ? 'ring-4 ring-primary' : 'opacity-60 hover:opacity-100'
+                } ${!img ? 'bg-black/5' : ''}`}
               >
-                {img ? (
-                  <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-text-secondary/30">
-                    Slot {i + 1}
-                  </div>
+                {img && (
+                  <img 
+                    src={img} 
+                    alt={`${product.name} Gallery ${i + 1}`} 
+                    className="w-full h-full object-cover" 
+                  />
                 )}
-              </motion.div>
+              </button>
             ))}
           </div>
         </motion.div>
