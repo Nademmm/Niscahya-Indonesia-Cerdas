@@ -17,21 +17,6 @@ const categoryStructure = {
 
 const categories = ['Semua', ...Object.keys(categoryStructure)];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 }
-};
-
 const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
   if (loading) {
     return (
@@ -43,26 +28,21 @@ const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
   }
 
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
+    <div 
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
     >
       {products.map((product) => (
-        <motion.div
+        <div
           key={product.id}
-          variants={itemVariants}
+          className="animate-in fade-in duration-300"
         >
           <ProductCard product={product} />
-        </motion.div>
+        </div>
       ))}
 
       {products.length === 0 && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5"
+        <div 
+          className="col-span-full py-40 glass rounded-[64px] flex flex-col items-center justify-center text-center space-y-8 shadow-2xl shadow-black/5 border-black/5 animate-in fade-in duration-500"
         >
           <div className="w-24 h-24 bg-black/5 rounded-[32px] flex items-center justify-center border border-black/5 animate-bounce-slow">
             <i className="bx bx-ghost text-5xl text-text-secondary"></i>
@@ -77,9 +57,9 @@ const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
           >
             Atur Ulang Filter
           </button>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 });
 
@@ -87,8 +67,8 @@ const normalizeText = (text) => {
   if (!text) return '';
   return text
     .toLowerCase()
-    .replace(/watts?/g, 'w')
-    .replace(/kilowatts?/g, 'kw')
+    .replace(/wa+t+s?/g, 'w') // handles wat, watt, watts, waatt, etc.
+    .replace(/kilo\s*wa+t+s?/g, 'kw') // handles kilowatt, kilovat, etc.
     .replace(/(\d+)\s*(w|kw|ah|v|a|wp)\b/g, '$1$2') // 100 watt -> 100w, 100 w -> 100w
     .replace(/[^a-z0-9\s]/g, ' ') // replace special chars with space
     .replace(/\s+/g, ' ')
@@ -179,7 +159,7 @@ const Products = () => {
     const cat = selectedCategory;
     const subCat = selectedSubCategory;
 
-    return products.filter(product => {
+    const filtered = products.filter(product => {
       // Category filter first (usually more selective)
       if (cat !== 'Semua') {
         const productCat = product.category;
@@ -198,12 +178,31 @@ const Products = () => {
 
       // Search filter last (more expensive)
       if (query) {
-        const searchableText = `${product.name} ${product.category} ${product.description} ${(product.specs || []).join(' ')}`;
-        return fuzzyMatch(searchableText, query);
+        // Prioritize: Name > Category > Specs
+        // We'll give each a match status
+        const nameMatch = fuzzyMatch(product.name, query);
+        const categoryMatch = fuzzyMatch(product.category, query);
+        const specMatch = (product.specs || []).some(spec => fuzzyMatch(spec, query));
+
+        // Store match score for sorting later
+        product._searchScore = 0;
+        if (nameMatch) product._searchScore += 100;
+        if (categoryMatch) product._searchScore += 50;
+        if (specMatch) product._searchScore += 20;
+
+        return nameMatch || categoryMatch || specMatch;
       }
       
+      product._searchScore = 0;
       return true;
     });
+
+    // Sort by search score (highest first) if there's a query
+    if (query) {
+      return [...filtered].sort((a, b) => (b._searchScore || 0) - (a._searchScore || 0));
+    }
+
+    return filtered;
   }, [products, selectedCategory, selectedSubCategory, searchQuery]);
 
   return (
@@ -211,29 +210,21 @@ const Products = () => {
       {/* Experimental Header */}
       <section className="relative pt-10">
         <div className="max-w-3xl space-y-6">
-          <motion.div 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+          <div 
             className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-2xl"
           >
             <span className="text-[10px] font-black tracking-[0.4em] text-secondary uppercase">Pasar / Katalog</span>
-          </motion.div>
-          <motion.h1 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
+          </div>
+          <h1 
             className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
           >
             Solusi Terdepan.
-          </motion.h1>
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
+          </h1>
+          <p 
             className="text-xl text-text-secondary font-medium max-w-xl"
           >
             Pilih perangkat yang tepat untuk sistem energi Anda. Teknologi mutakhir dengan efisiensi terverifikasi.
-          </motion.p>
+          </p>
         </div>
       </section>
 
@@ -248,11 +239,8 @@ const Products = () => {
             <i className="bx bx-chevron-left text-2xl"></i>
           </button>
           
-          <motion.div 
+          <div 
             ref={scrollRef}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
             className="glass p-2 rounded-[24px] border-black/5 flex flex-nowrap items-center justify-start gap-2 shadow-2xl shadow-black/5 overflow-x-auto scrollbar-hide no-scrollbar scroll-smooth"
           >
             {categories.map((cat) => (
@@ -271,7 +259,7 @@ const Products = () => {
                 {cat}
               </button>
             ))}
-          </motion.div>
+          </div>
 
           <button 
             onClick={() => scroll('right')}
@@ -285,9 +273,9 @@ const Products = () => {
         <AnimatePresence>
           {currentSubCategories.length > 0 && (
             <motion.div 
-              initial={{ height: 0, opacity: 0, y: -10 }}
-              animate={{ height: 'auto', opacity: 1, y: 0 }}
-              exit={{ height: 0, opacity: 0, y: -10 }}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden flex justify-start"
             >
               <div className="flex flex-nowrap items-center justify-start gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[20px] border border-black/5 shadow-inner overflow-x-auto scrollbar-hide no-scrollbar w-full">
@@ -320,6 +308,37 @@ const Products = () => {
           )}
         </AnimatePresence>
       </section>
+
+      {/* Search Result Indicator */}
+      <AnimatePresence>
+        {searchQuery && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8 glass rounded-[32px] border-primary/10 shadow-2xl shadow-primary/5"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                <i className="bx bx-search-alt text-2xl text-primary animate-pulse"></i>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Hasil Pencarian</p>
+                <h2 className="text-xl font-black tracking-tight">
+                  Menampilkan <span className="text-primary">{filteredProducts.length}</span> produk untuk <span className="text-primary">"{searchQuery}"</span>
+                </h2>
+              </div>
+            </div>
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="px-6 py-3 bg-black/5 hover:bg-black/10 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-2 group"
+            >
+              <i className="bx bx-x text-lg group-hover:rotate-90 transition-transform"></i>
+              Hapus Pencarian
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ProductGrid 
         products={filteredProducts} 
