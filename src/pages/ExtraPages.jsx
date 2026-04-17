@@ -68,6 +68,124 @@ export const Solutions = () => (
   </div>
 );
 
+export const Contact = () => (
+  <div className="space-y-32">
+    <PageHero 
+      title="Hubungi Kami" 
+      subtitle="Kami siap membantu mewujudkan solusi energi terbaik untuk Anda. Hubungi kami melalui berbagai saluran komunikasi."
+      icon="bx-message-square-detail"
+      color="accent"
+    />
+
+    {/* Contact Cards Grid */}
+    <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* WhatsApp Card */}
+      <motion.div
+        whileHover={{ y: -10 }}
+        className="glass p-10 rounded-[48px] space-y-6 border-black/5 shadow-xl shadow-black/5 flex flex-col"
+      >
+        <div className="w-16 h-16 bg-green-500/10 text-green-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+          <i className="bx bxl-whatsapp"></i>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-2xl font-black uppercase tracking-tighter">WhatsApp</h3>
+          <p className="text-sm text-text-secondary font-medium">Respon cepat untuk konsultasi produk & teknis.</p>
+        </div>
+        <div className="space-y-3 mt-auto">
+          <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="block text-lg font-black tracking-tight text-text-main hover:text-green-500 transition-colors">+62 878 5353 6124</a>
+          <a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="block text-lg font-black tracking-tight text-text-main hover:text-green-500 transition-colors">+62 821 4370 7398</a>
+        </div>
+      </motion.div>
+
+      {/* Email Card */}
+      <motion.a
+        href="https://mail.google.com/mail/?view=cm&fs=1&to=cvniscahyaindonesiacerdas@gmail.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        whileHover={{ y: -10 }}
+        className="glass p-10 rounded-[48px] space-y-6 border-black/5 shadow-xl shadow-black/5 block"
+      >
+        <div className="w-16 h-16 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+          <i className="bx bx-envelope"></i>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-2xl font-black uppercase tracking-tighter">Email</h3>
+          <p className="text-sm text-text-secondary font-medium">Untuk penawaran proyek dan kerjasama resmi.</p>
+        </div>
+        <p className="text-lg font-black tracking-tight text-text-main break-all">cvniscahyaindonesiacerdas@gmail.com</p>
+      </motion.a>
+
+      {/* Instagram Card */}
+      <motion.a
+        href="https://instagram.com/niscahya.id"
+        target="_blank"
+        rel="noopener noreferrer"
+        whileHover={{ y: -10 }}
+        className="glass p-10 rounded-[48px] space-y-6 border-black/5 shadow-xl shadow-black/5 block"
+      >
+        <div className="w-16 h-16 bg-pink-500/10 text-pink-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+          <i className="bx bxl-instagram"></i>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-2xl font-black uppercase tracking-tighter">Instagram</h3>
+          <p className="text-sm text-text-secondary font-medium">Update proyek terbaru dan edukasi.</p>
+        </div>
+        <p className="text-lg font-black tracking-tight text-text-main break-all">@niscahya.id</p>
+      </motion.a>
+    </section>
+
+    {/* Marketing Office Info Section */}
+    <section className="flex justify-center">
+      <div className="w-full max-w-4xl">
+        <div className="space-y-12 text-center flex flex-col items-center">
+          <div className="space-y-8 w-full">
+            <h2 className="text-5xl font-black uppercase tracking-tighter leading-none">Marketing <br /><span className="text-accent">Office.</span></h2>
+            <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 space-y-8 flex flex-col md:flex-row justify-around items-center">
+              <div className="flex items-start gap-6 text-left max-w-sm">
+                <div className="w-12 h-12 shrink-0 bg-accent/10 text-accent rounded-xl flex items-center justify-center text-2xl">
+                  <i className="bx bxs-map"></i>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-text-secondary">Alamat</p>
+                  <p className="text-xl font-black leading-tight tracking-tight">
+                    Wisma Juanda Permai Jl. Bouraq Blok B1 No. 15, Sedati Gede, Kec. Sedati, Kabupaten Sidoarjo, Jawa Timur
+                  </p>
+                </div>
+              </div>
+              <div className="w-px h-16 bg-black/5 hidden md:block"></div>
+              <div className="flex items-start gap-6 text-left max-w-xs">
+                <div className="w-12 h-12 shrink-0 bg-accent/10 text-accent rounded-xl flex items-center justify-center text-2xl">
+                  <i className="bx bxs-time"></i>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-text-secondary">Jam Operasional</p>
+                  <p className="text-xl font-black leading-tight tracking-tight">Senin - Jumat: 09:00 - 17:00 <br />Sabtu: 09:00 - 12:00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Map Section */}
+    <section className="space-y-10">
+      <div className="glass p-4 rounded-[64px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[500px]">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
+          width="100%" 
+          height="100%" 
+          style={{ border: 0 }} 
+          allowFullScreen="" 
+          loading="lazy" 
+          referrerPolicy="no-referrer-when-downgrade"
+          className="rounded-[48px] shadow-inner"
+        ></iframe>
+      </div>
+    </section>
+  </div>
+);
+
 export const Impact = () => (
   <div className="space-y-32">
     <PageHero 
@@ -112,25 +230,118 @@ export const About = () => (
   <div className="space-y-32">
     <PageHero 
       title="Cerita Kami" 
-      subtitle="Menghadirkan solusi energi berkelanjutan untuk masa depan Indonesia yang lebih terang."
-      icon="bx-user-voice"
+      subtitle="Membangun masa depan Indonesia melalui kemandirian energi surya yang andal dan berkelanjutan."
+      icon="bx-bullseye"
       color="accent"
     />
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-12">
+
+    {/* Vision & Mission Section */}
+    <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
       <div className="space-y-8">
-        <h3 className="text-4xl font-black uppercase tracking-tighter">Visi Kami.</h3>
-        <p className="text-xl text-text-secondary font-medium leading-relaxed">
-          CV Niscahya Indonesia Cerdas berdedikasi dalam penyediaan dan distribusi lampu PJU Tenaga Surya serta PLN yang efisien. Kami percaya bahwa setiap wilayah di Indonesia, dari perkotaan hingga daerah terpencil, berhak mendapatkan akses penerangan yang aman, andal, dan ramah lingkungan.
-        </p>
-      </div>
-      <div className="grid grid-cols-2 gap-6">
-        <div className="glass p-6 rounded-[32px] border-accent/20">
-          <h4 className="text-xl font-black uppercase">Inovasi</h4>
-          <p className="text-sm text-text-secondary">Selalu di depan dalam riset R&D.</p>
+        <div className="space-y-4">
+          <span className="text-[10px] font-black tracking-[0.4em] text-accent uppercase">Visi & Misi</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">Menerangi <br /><span className="text-accent">Nusantara.</span></h2>
         </div>
-        <div className="glass p-6 rounded-[32px] border-primary/20">
-          <h4 className="text-xl font-black uppercase">Integritas</h4>
-          <p className="text-sm text-text-secondary">Transparansi dalam setiap efisiensi.</p>
+        <p className="text-xl text-text-secondary font-medium leading-relaxed">
+          CV Niscahya Indonesia Cerdas hadir sebagai jawaban atas tantangan energi masa depan. Kami bukan sekadar distributor, melainkan partner strategis dalam menghadirkan teknologi penerangan yang efisien untuk setiap sudut Indonesia.
+        </p>
+        <div className="space-y-6 pt-4">
+          <div className="flex gap-6">
+            <div className="w-12 h-12 shrink-0 bg-accent/10 text-accent rounded-xl flex items-center justify-center text-2xl">
+              <i className="bx bx-check-double"></i>
+            </div>
+            <div className="space-y-1">
+              <h4 className="text-lg font-black uppercase tracking-tight">Kualitas Premium</h4>
+              <p className="text-sm text-text-secondary font-medium">Hanya menyediakan komponen dengan standar industri tertinggi.</p>
+            </div>
+          </div>
+          <div className="flex gap-6">
+            <div className="w-12 h-12 shrink-0 bg-accent/10 text-accent rounded-xl flex items-center justify-center text-2xl">
+              <i className="bx bx-leaf"></i>
+            </div>
+            <div className="space-y-1">
+              <h4 className="text-lg font-black uppercase tracking-tight">Ramah Lingkungan</h4>
+              <p className="text-sm text-text-secondary font-medium">Mendukung penuh target Net Zero Emission Indonesia.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="relative">
+        <div className="absolute -inset-4 bg-accent/20 rounded-[64px] blur-3xl -z-10 animate-pulse"></div>
+        <div className="glass p-12 rounded-[64px] border-black/5 shadow-2xl space-y-10 relative overflow-hidden">
+          <div className="space-y-6">
+            <h3 className="text-2xl font-black uppercase tracking-tighter border-b border-black/5 pb-4">Visi Kami</h3>
+            <p className="text-lg font-bold text-text-main italic leading-relaxed">
+              "Menjadi penggerak utama transformasi energi terbarukan di Indonesia melalui penyediaan infrastruktur PJU Tenaga Surya yang inovatif, andal, dan dapat diakses oleh seluruh lapisan masyarakat."
+            </p>
+          </div>
+          <div className="space-y-6">
+            <h3 className="text-2xl font-black uppercase tracking-tighter border-b border-black/5 pb-4">Misi Kami</h3>
+            <ul className="space-y-4">
+              {[
+                'Memberikan solusi energi yang disesuaikan dengan kebutuhan geografis Indonesia.',
+                'Menjamin ketersediaan stok dan layanan purna jual yang profesional.',
+                'Mendukung program pemerintah dalam percepatan kemandirian energi desa.'
+              ].map((misi, i) => (
+                <li key={i} className="flex gap-4 text-sm font-medium text-text-secondary">
+                  <span className="text-accent font-black">0{i+1}.</span>
+                  {misi}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Core Values Section */}
+    <section className="space-y-16">
+      <div className="text-center space-y-4">
+        <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Nilai Kami</span>
+        <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">Prinsip Kerja.</h2>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          { title: 'Integritas', desc: 'Kejujuran dalam spesifikasi produk dan transparansi harga adalah kunci kepercayaan mitra kami.', icon: 'bx-shield-quarter' },
+          { title: 'Inovasi', desc: 'Terus mengadopsi teknologi panel surya dan baterai lithium terbaru untuk efisiensi maksimal.', icon: 'bx-bolt-circle' },
+          { title: 'Responsif', desc: 'Tim teknis dan admin kami siap memberikan solusi cepat untuk setiap kendala di lapangan.', icon: 'bx-support' }
+        ].map((value, i) => (
+          <motion.div 
+            key={i}
+            whileHover={{ y: -10 }}
+            className="glass p-10 rounded-[48px] border-black/5 shadow-xl text-center space-y-6"
+          >
+            <div className="w-20 h-20 mx-auto bg-primary/10 text-primary rounded-3xl flex items-center justify-center text-4xl shadow-inner">
+              <i className={`bx ${value.icon}`}></i>
+            </div>
+            <h3 className="text-2xl font-black uppercase tracking-tighter">{value.title}</h3>
+            <p className="text-sm text-text-secondary font-medium leading-relaxed">{value.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+
+    {/* Experience Stats */}
+    <section className="bg-accent p-12 md:p-20 rounded-[64px] relative overflow-hidden">
+      <div className="absolute top-0 left-0 p-10 opacity-10 -rotate-12">
+        <i className="bx bx-certification text-[250px] text-white"></i>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
+        <div className="space-y-6">
+          <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none">Mitra Energi <br />Terpercaya.</h2>
+          <p className="text-white/80 font-medium text-lg leading-relaxed">
+            Dengan pengalaman bertahun-tahun dalam menangani berbagai skala proyek, CV Niscahya Indonesia Cerdas telah membuktikan dedikasinya dalam menjaga kualitas setiap unit yang terpasang.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="glass-bright p-8 rounded-[32px] text-center space-y-2 border-white/20 shadow-2xl">
+            <h4 className="text-4xl font-black text-accent tracking-tighter">100%</h4>
+            <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Original Produk</p>
+          </div>
+          <div className="glass-bright p-8 rounded-[32px] text-center space-y-2 border-white/20 shadow-2xl">
+            <h4 className="text-4xl font-black text-accent tracking-tighter">Garansi</h4>
+            <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Layanan</p>
+          </div>
         </div>
       </div>
     </section>
@@ -166,22 +377,36 @@ export const Sustainability = () => (
 export const Projects = () => (
   <div className="space-y-32">
     <PageHero 
-      title="Proyek Besar" 
-      subtitle="Implementasi nyata yang mengubah wajah energi di berbagai sektor."
-      icon="bx-briefcase-alt-2"
+      title="Galeri Projek" 
+      subtitle="Dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia."
+      icon="bx-images"
       color="secondary"
     />
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    
+    {/* Project Grid */}
+    <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {[
-        { title: 'Penerangan Cerdas Jakarta', area: 'Area Urban', img: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop' },
-        { title: 'Grid Eco-Resort Bali', area: 'Perhotelan', img: 'https://images.unsplash.com/photo-1563298723-dcfebaa392e3?q=80&w=1000&auto=format&fit=crop' }
+        { img: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop' },
+        { img: 'https://images.unsplash.com/photo-1509391366360-fe5bb5843e0c?q=80&w=1000&auto=format&fit=crop' },
+        { img: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1000&auto=format&fit=crop' },
+        { img: 'https://images.unsplash.com/photo-1563298723-dcfebaa392e3?q=80&w=1000&auto=format&fit=crop' },
+        { img: 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?q=80&w=1000&auto=format&fit=crop' },
+        { img: 'https://images.unsplash.com/photo-1592833159155-c62df1b35624?q=80&w=1000&auto=format&fit=crop' },
+        { img: 'https://images.unsplash.com/photo-1509391366360-fe5bb5843e0c?q=80&w=1000&auto=format&fit=crop' },
+        { img: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop' }
       ].map((proj, i) => (
-        <motion.div key={i} className="group relative aspect-video glass rounded-[48px] overflow-hidden">
-          <img src={proj.img} className="w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-1000" />
-          <div className="absolute inset-0 p-12 flex flex-col justify-end bg-gradient-to-t from-background to-transparent">
-            <span className="text-xs font-black text-secondary uppercase tracking-[0.3em] mb-2">{proj.area}</span>
-            <h3 className="text-4xl font-black uppercase tracking-tighter">{proj.title}</h3>
-          </div>
+        <motion.div 
+          key={i} 
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ delay: i * 0.05 }}
+          className="group relative aspect-[9/16] glass rounded-3xl md:rounded-[40px] overflow-hidden border-black/5"
+        >
+          <img 
+            src={proj.img} 
+            alt={`Project ${i + 1}`}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+          />
         </motion.div>
       ))}
     </section>
@@ -215,64 +440,6 @@ export const Careers = () => (
           </div>
         </motion.div>
       ))}
-    </section>
-  </div>
-);
-
-export const Contact = () => (
-  <div className="space-y-32">
-    <PageHero 
-      title="Hubungi Kami" 
-      subtitle="Mulai konsultasi energi Anda hari ini bersama tim ahli Niscahya Indonesia Cerdas."
-      icon="bx-message-square-detail"
-      color="accent"
-    />
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-16">
-      <div className="space-y-12">
-        <div className="space-y-6">
-          <h3 className="text-4xl font-black uppercase tracking-tighter">Kontak Langsung.</h3>
-          <div className="space-y-4">
-            <div className="flex items-start gap-6">
-              <div className="w-12 h-12 shrink-0 glass rounded-xl flex items-center justify-center text-accent text-2xl shadow-lg shadow-accent/5"><i className="bx bxs-phone-call"></i></div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Telepon / WA</span>
-                <div className="flex flex-col">
-                  <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="text-xl font-bold tracking-tight hover:text-accent transition-colors">+62 878 5353 6124</a>
-                  <a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="text-xl font-bold tracking-tight hover:text-accent transition-colors">+62 821 4370 7398</a>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-start gap-6">
-              <div className="w-12 h-12 shrink-0 glass rounded-xl flex items-center justify-center text-accent text-2xl shadow-lg shadow-accent/5"><i className="bx bxs-envelope"></i></div>
-              <div className="flex flex-col min-w-0 overflow-hidden">
-                <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Email</span>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=cvniscahyaindonesiacerdas@gmail.com" target="_blank" rel="noopener noreferrer" className="text-base md:text-xl font-bold tracking-tight break-all hover:text-accent transition-colors">cvniscahyaindonesiacerdas@gmail.com</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="glass p-8 rounded-[40px] border-black/5 shadow-xl shadow-black/5">
-          <h4 className="text-sm font-black uppercase tracking-widest text-text-secondary mb-4">Marketing Office</h4>
-          <p className="text-lg font-bold">Wisma Juanda Permai Jl. Bouraq Blok B1 No. 15, Sedati Gede, <br />Kec. Sedati, Kabupaten Sidoarjo, Jawa Timur</p>
-        </div>
-      </div>
-      <div className="glass p-12 rounded-[56px] space-y-8 border-black/5 shadow-xl shadow-black/5">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Nama</label>
-            <input type="text" className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold" placeholder="Nama Anda" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Email</label>
-            <input type="email" className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold" placeholder="alamat@sistem.com" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2">Pesan</label>
-          <textarea className="w-full bg-black/5 border border-black/10 rounded-2xl px-6 py-4 outline-none focus:border-accent transition-all font-bold h-40 resize-none" placeholder="Detail kebutuhan Anda..."></textarea>
-        </div>
-        <button className="w-full py-6 bg-accent text-background font-black text-xl rounded-3xl hover:bg-accent/90 transition-colors shadow-2xl shadow-accent/20 uppercase tracking-tighter">Kirim Pesan</button>
-      </div>
     </section>
   </div>
 );

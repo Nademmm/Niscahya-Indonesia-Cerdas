@@ -143,7 +143,10 @@ const Home = () => {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
-        setFeaturedProducts(data.slice(0, 4));
+        const targetIds = [32, 77, 83, 80];
+        const filtered = data.filter(p => targetIds.includes(p.id))
+                           .sort((a, b) => targetIds.indexOf(a.id) - targetIds.indexOf(b.id));
+        setFeaturedProducts(filtered.length > 0 ? filtered : data.slice(0, 4));
       } catch (err) {
         console.error('Failed to fetch products:', err);
       } finally {
@@ -154,9 +157,9 @@ const Home = () => {
   }, []);
 
   const stats = [
-    { label: 'Offset CO2', value: '42.5rb', unit: 'Ton', icon: 'bx bx-leaf', color: 'text-primary' },
-    { label: 'Energi Hemat', value: '850jt', unit: 'Wh', icon: 'bx bx-bolt', color: 'text-secondary' },
-    { label: 'Jangkauan', value: '120+', unit: 'Kota', icon: 'bx bx-globe', color: 'text-accent' },
+    { label: 'Proyek Selesai', value: '150+', unit: 'Unit', icon: 'bx bx-check-double', color: 'text-primary' },
+    { label: 'Panel Terpasang', value: '5000+', unit: 'Panel', icon: 'bx bx-sun', color: 'text-secondary' },
+    { label: 'Jangkauan Wilayah', value: '24+', unit: 'Provinsi', icon: 'bx bx-map-alt', color: 'text-accent' },
   ];
 
   const partners = ['NISCAHYA', 'INDONESIA', 'CERDAS'];
@@ -358,7 +361,7 @@ const Home = () => {
       </section>
 
       {/* Hubungi & Lokasi Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-12 border-t border-black/5">
+      <section id="contact" className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-12 border-t border-black/5">
         {/* Kontak Kami */}
         <div className="glass p-10 rounded-[48px] space-y-8 flex flex-col justify-between border-black/5 shadow-xl shadow-black/5">
           <div className="space-y-6">
@@ -400,7 +403,7 @@ const Home = () => {
             </div>
           </div>
           <Link 
-            to="/contact"
+            to="/#contact"
             className="w-full py-5 bg-black/5 hover:bg-black/10 transition-colors rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3"
           >
             Konsultasi Sekarang <i className="bx bx-right-arrow-alt text-xl"></i>

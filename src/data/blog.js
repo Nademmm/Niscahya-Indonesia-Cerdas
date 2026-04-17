@@ -4,7 +4,7 @@ export const blogPosts = [
     title: "Harga Lampu Jalan Tenaga Surya 2025: Simak Dahulu Sebelum Membeli",
     date: "Agustus 25, 2025",
     category: "Panduan",
-    image: "https://images.unsplash.com/photo-1509391366360-fe5bb5843e0c?q=80&w=1000&auto=format&fit=crop",
+    image: "/blog1.jpg",
     excerpt: "Lampu jalan tenaga surya telah menjadi pilihan populer untuk penerangan jalan di berbagai daerah. Ketahui harga dan faktor pertimbangannya.",
     content: `
       Lampu jalan tenaga surya telah menjadi pilihan populer untuk penerangan jalan di berbagai daerah, terutama karena keunggulannya dalam menghemat energi dan ramah lingkungan. Namun, sebelum membeli lampu jalan tenaga surya, ada beberapa hal yang perlu dipertimbangkan, termasuk harga, kualitas, dan fitur-fitur yang ditawarkan.
@@ -38,7 +38,7 @@ export const blogPosts = [
     title: "Lampu PJU Tenaga Surya Hybrid: Menggabungkan Listrik PLN dan Tenaga Surya",
     date: "Januari 13, 2026",
     category: "Teknologi",
-    image: "https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop",
+    image: "PJU TENAGA SURYA.jpeg",
     excerpt: "Apa itu sistem hybrid? Simak bagaimana penggabungan dua sumber daya ini dapat meningkatkan efisiensi dan keandalan penerangan jalan Anda.",
     content: `
       Sistem Hybrid pada PJU Tenaga Surya adalah terobosan terbaru dalam dunia energi terbarukan. Dengan menggabungkan listrik dari PLN dan panel surya, sistem ini menawarkan keandalan 100% tanpa takut kehabisan daya saat cuaca mendung berkepanjangan.
@@ -57,7 +57,7 @@ export const blogPosts = [
     title: "Lithium vs VRLA? Pilih yang Mana untuk Sistem Solar Anda?",
     date: "Oktober 2, 2025",
     category: "Komparasi",
-    image: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?q=80&w=1000&auto=format&fit=crop",
+    image: "/blog6.jpg",
     excerpt: "Masih bingung memilih jenis baterai? Kami bandingkan performa, harga, dan daya tahan antara baterai Lithium dan VRLA.",
     content: `
       Memilih baterai adalah keputusan krusial dalam membangun sistem tenaga surya. Dua jenis yang paling populer adalah Lithium (LiFePO4) dan VRLA (Lead Acid). Mana yang lebih baik?
@@ -82,7 +82,7 @@ export const blogPosts = [
     title: "Jenis-Jenis Tiang Lampu Jalan Tenaga Surya dan Fungsinya",
     date: "Agustus 28, 2025",
     category: "Edukasi",
-    image: "https://images.unsplash.com/photo-1516937941344-00b4e0337589?q=80&w=1000&auto=format&fit=crop",
+    image: "/blog5.jpg",
     excerpt: "Dari tiang oktagonal hingga galvanis, ketahui jenis tiang yang paling cocok untuk kebutuhan proyek Anda.",
     content: `
       Tiang bukan sekadar penyangga. Desain dan material tiang menentukan keamanan dan estetika sistem PJU Anda.
@@ -101,7 +101,7 @@ export const blogPosts = [
     title: "Aetheria 100W vs Nebula High-Bay: Mana yang Lebih Terang?",
     date: "Juni 2, 2025",
     category: "Produk",
-    image: "https://images.unsplash.com/photo-1563298723-dcfebaa392e3?q=80&w=1000&auto=format&fit=crop",
+    image: "/blog4.jpg",
     excerpt: "Perbandingan mendalam antara dua produk unggulan kami untuk kebutuhan penerangan area luas.",
     content: `
       Banyak pelanggan bertanya, mana yang lebih baik antara Aetheria 100W dan Nebula High-Bay? Jawabannya tergantung lokasi pemasangan Anda.
@@ -125,7 +125,7 @@ export const blogPosts = [
     title: "All-in-One vs Two-in-One vs Konvensional: Mana yang Paling Untung?",
     date: "April 10, 2026",
     category: "Hot Topic",
-    image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1000&auto=format&fit=crop",
+    image: "/blog3.jpg",
     excerpt: "Bingung memilih model PJU Tenaga Surya? Simak kelebihan dan kekurangan masing-masing model untuk proyek Anda.",
     content: `
       Pasar PJU Tenaga Surya saat ini didominasi oleh tiga model utama. Memilih yang salah bisa berarti pemborosan anggaran atau biaya perawatan yang membengkak.
@@ -154,7 +154,7 @@ export const blogPosts = [
     title: "5 Tips Perawatan PJU Tenaga Surya Agar Awet Hingga 10 Tahun",
     date: "Maret 15, 2026",
     category: "Tips",
-    image: "https://images.unsplash.com/photo-1592833159155-c62df1b35624?q=80&w=1000&auto=format&fit=crop",
+    image: "/blog2.jpg",
     excerpt: "Jangan biarkan investasi Anda rusak karena kurang perawatan. Ikuti langkah sederhana ini agar sistem solar Anda tetap prima.",
     content: `
       Investasi PJU Tenaga Surya tidak murah, jadi pastikan Anda merawatnya dengan benar. Sistem yang dirawat bisa bertahan 2-3 kali lebih lama.

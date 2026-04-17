@@ -8,8 +8,8 @@ const navLinks = [
   { name: 'Beranda', path: '/' },
   { name: 'Produk', path: '/products' },
   { name: 'Blog', path: '/blog' },
-  { name: 'Solusi', path: '/solutions' },
-  { name: 'Dampak', path: '/impact' },
+  { name: 'Kontak', path: '/contact' },
+  { name: 'Galeri', path: '/projects' },
 ];
 
 const Navbar = () => {
@@ -64,7 +64,7 @@ const Navbar = () => {
               key={link.name}
               to={link.path}
               className={`px-6 py-2.5 rounded-xl text-sm font-bold tracking-tight transition-all duration-300 ${
-                location.pathname === link.path
+                (location.pathname + location.hash) === link.path || (location.pathname === link.path)
                   ? 'bg-primary text-background shadow-lg shadow-primary/20'
                   : 'text-text-secondary hover:text-primary hover:bg-black/5'
               }`}
@@ -74,25 +74,25 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-black/5 border border-black/10 rounded-2xl text-sm font-bold group focus-within:border-primary/50 transition-all">
-            <i className="bx bx-search text-xl text-text-secondary group-focus-within:text-primary"></i>
-            <input 
-              type="text" 
-              placeholder="Cari unit..."
-              value={localSearch}
-              onChange={handleSearch}
-              className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-32 md:w-48"
-            />
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-black/5 border border-black/10 rounded-2xl text-sm font-bold group focus-within:border-primary/50 transition-all">
+              <i className="bx bx-search text-xl text-text-secondary group-focus-within:text-primary"></i>
+              <input 
+                type="text" 
+                placeholder="Cari unit..."
+                value={localSearch}
+                onChange={handleSearch}
+                className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-32 md:w-48"
+              />
+            </div>
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2.5 bg-black/5 text-text-main rounded-2xl border border-black/10"
+            >
+              <i className={`bx ${mobileMenuOpen ? 'bx-x' : 'bx-menu-alt-right'} text-2xl`}
+            ></i>
+            </button>
           </div>
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2.5 bg-black/5 text-text-main rounded-2xl border border-black/10"
-          >
-            <i className={`bx ${mobileMenuOpen ? 'bx-x' : 'bx-menu-alt-right'} text-2xl`}
-          ></i>
-          </button>
-        </div>
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -124,10 +124,6 @@ const Navbar = () => {
 const Layout = ({ children }) => {
   const { notification } = useApp();
   const location = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-background text-text-main selection:bg-primary/30 selection:text-primary relative overflow-x-hidden">
@@ -165,41 +161,53 @@ const Layout = ({ children }) => {
         {children}
       </motion.main>
 
-      <footer className="py-20 px-6 lg:px-10 max-w-7xl mx-auto border-t border-black/5 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-          <div className="col-span-2 space-y-6">
-            <Link to="/" className="flex items-center gap-3 group">
-              <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
-              <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya Indonesia Cerdas</span>
+      <footer className="py-32 px-6 lg:px-10 max-w-7xl mx-auto border-t border-black/5 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
+          <div className="col-span-1 md:col-span-2 space-y-8">
+            <Link to="/" className="flex items-center gap-4 group">
+              <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-14 h-14 object-contain" />
+              <div className="flex flex-col">
+                <span className="text-3xl font-black tracking-tighter text-text-main uppercase leading-none">Niscahya</span>
+                <span className="text-sm font-black tracking-[0.3em] text-primary uppercase mt-1">Indonesia Cerdas</span>
+              </div>
             </Link>
-            <p className="text-text-secondary font-medium max-w-sm">
-              Membangun masa depan yang berkelanjutan melalui inovasi teknologi energi surya yang cerdas dan terjangkau.
+            <p className="text-text-secondary font-medium text-lg max-w-md leading-relaxed">
+              Membangun masa depan yang berkelanjutan melalui inovasi teknologi energi surya yang cerdas, andal, dan terjangkau untuk seluruh penjuru Nusantara.
             </p>
           </div>
-          <div className="space-y-6">
-            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">Wawasan</h4>
-            <ul className="space-y-4">
-              <li><Link to="/blog" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Blog & Artikel</Link></li>
-              <li><Link to="/solutions" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Studi Kasus</Link></li>
-              <li><Link to="/impact" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Laporan Dampak</Link></li>
+          <div className="space-y-8">
+            <h4 className="text-sm font-black uppercase tracking-[0.4em] text-text-main">Navigasi</h4>
+            <ul className="space-y-5">
+              <li><Link to="/" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Beranda</Link></li>
+              <li><Link to="/products" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Produk</Link></li>
+              <li><Link to="/blog" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Blog & Artikel</Link></li>
+              <li><Link to="/projects" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Galeri Projek</Link></li>
             </ul>
           </div>
-          <div className="space-y-6">
-            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-text-main">Sistem</h4>
-            <ul className="space-y-4">
-              <li><Link to="/admin" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Panel Admin</Link></li>
-              <li><Link to="/contact" className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">Bantuan</Link></li>
+          <div className="space-y-8">
+            <h4 className="text-sm font-black uppercase tracking-[0.4em] text-text-main">Bantuan</h4>
+            <ul className="space-y-5">
+              <li><Link to="/#contact" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Kontak Kami</Link></li>
+              <li><Link to="/admin" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Panel Admin</Link></li>
+              <li><a href="https://wa.me/6287853536124" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">WhatsApp 1</a></li>
+              <li><a href="https://wa.me/6282143707398" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">WhatsApp 2</a></li>
             </ul>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 border-t border-black/5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Copyright © 2026 CV Niscahya Indonesia Cerdas. All Rights Reserved.</p>
-          <div className="flex gap-6 text-xl text-text-secondary">
-            <a href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-12 border-t border-black/5">
+          <div className="space-y-2 text-center md:text-left">
+            <p className="text-xs font-black uppercase tracking-widest text-text-secondary">Copyright © 2026 CV Niscahya Indonesia Cerdas.</p>
+            <p className="text-[10px] font-bold text-text-secondary/50 uppercase tracking-[0.2em]">Penerangan Jalan Umum Tenaga Surya & PLN Terpercaya</p>
+          </div>
+          <div className="flex gap-8 text-2xl text-text-secondary">
+            <a href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
               <i className="bx bxl-instagram"></i>
             </a>
-            <a href="https://www.facebook.com/pjutenagasuryasurabaya" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+            <a href="https://www.facebook.com/pjutenagasuryasurabaya" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
               <i className="bx bxl-facebook-circle"></i>
+            </a>
+            <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
+              <i className="bx bxl-whatsapp"></i>
             </a>
           </div>
         </div>
