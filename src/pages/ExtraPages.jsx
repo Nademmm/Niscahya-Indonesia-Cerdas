@@ -386,14 +386,18 @@ export const Projects = () => (
     {/* Project Grid */}
     <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {[
-        { img: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop' },
-        { img: 'https://images.unsplash.com/photo-1509391366360-fe5bb5843e0c?q=80&w=1000&auto=format&fit=crop' },
-        { img: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1000&auto=format&fit=crop' },
-        { img: 'https://images.unsplash.com/photo-1563298723-dcfebaa392e3?q=80&w=1000&auto=format&fit=crop' },
-        { img: 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?q=80&w=1000&auto=format&fit=crop' },
-        { img: 'https://images.unsplash.com/photo-1592833159155-c62df1b35624?q=80&w=1000&auto=format&fit=crop' },
-        { img: 'https://images.unsplash.com/photo-1509391366360-fe5bb5843e0c?q=80&w=1000&auto=format&fit=crop' },
-        { img: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=1000&auto=format&fit=crop' }
+        { img: '/galeri/galeri1.jpg' },
+        { img: '/galeri/galeri2.jpg' },
+        { img: '/galeri/galeri3.jpg' },
+        { img: '/galeri/galeri4.jpg' },
+        { img: '/galeri/galeri5.jpg' },
+        { img: '/galeri/galeri6.jpg' },
+        { img: '/galeri/galeri7.jpg' },
+        { img: '/galeri/galeri8.jpg' },
+        { img: '/galeri/galeri9.jpg' },
+        { img: '/galeri/galeri10.jpg' },
+        { img: '/galeri/galeri11.jpg' },
+        { img: '/galeri/galeri12.jpg' }
       ].map((proj, i) => (
         <motion.div 
           key={i} 
