@@ -1,116 +1,92 @@
-import Database from 'better-sqlite3';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import mysql from 'mysql2/promise';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const dbPath = join(__dirname, 'database.sqlite');
-const db = new Database(dbPath);
+// MySQL Connection Pool
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'niscahya_indonesia_cerdas',
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
-// Create products table
-db.exec(`
-  CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    price INTEGER NOT NULL,
-    category TEXT NOT NULL,
-    image TEXT,
-    images TEXT,
-    description TEXT,
-    specs TEXT,
-    slug TEXT UNIQUE
-  )
-`);
-
-// Add slug column if it doesn't exist (migration)
-try {
-  db.exec("ALTER TABLE products ADD COLUMN slug TEXT");
-  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_products_slug ON products (slug)");
-} catch (e) {
-  // Column might already exist
-}
-
-// Data Migration: Clean image paths and fill missing slugs
-const migrateData = () => {
-  const generateSlug = (name) => {
-    return name.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-  };
-
-  // 1. Fix missing slugs
-  const productsWithoutSlugs = db.prepare("SELECT id, name FROM products WHERE slug IS NULL OR slug = ''").all();
-  if (productsWithoutSlugs.length > 0) {
-    const updateSlugStmt = db.prepare('UPDATE products SET slug = ? WHERE id = ?');
-    const updateSlugs = db.transaction((items) => {
-      for (const item of items) {
-        // Append ID to ensure uniqueness during migration
-        const baseSlug = generateSlug(item.name);
-        updateSlugStmt.run(`${baseSlug}-${item.id}`, item.id);
-      }
-    });
-    updateSlugs(productsWithoutSlugs);
-    console.log(`[DB] Migrated ${productsWithoutSlugs.length} products with new unique slugs.`);
-  }
-
-  // 2. Clean /public/ from image paths
-  const productsWithPublicPaths = db.prepare("SELECT id, image FROM products WHERE image LIKE '/public/%'").all();
-  if (productsWithPublicPaths.length > 0) {
-    const updatePathStmt = db.prepare('UPDATE products SET image = ? WHERE id = ?');
-    const updatePaths = db.transaction((items) => {
-      for (const item of items) {
-        const newPath = item.image.replace('/public/', '/');
-        updatePathStmt.run(newPath, item.id);
-      }
-    });
-    updatePaths(productsWithPublicPaths);
-    console.log(`[DB] Cleaned /public/ from ${productsWithPublicPaths.length} image paths.`);
+// Initialize database and create tables
+export const initializeDatabase = async () => {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    
+    // Create products table
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS products (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        price INT NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        image VARCHAR(255),
+        images JSON DEFAULT '[]',
+        description TEXT,
+        specs JSON DEFAULT '[]',
+        slug VARCHAR(255) UNIQUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+    
+    console.log('[DB] Products table ready');
+    connection.release();
+  } catch (error) {
+    console.error('[DB] Initialization error:', error);
+    throw error;
   }
 };
 
-migrateData();
-
-// Add images column if it doesn't exist (migration)
-try {
-  db.exec("ALTER TABLE products ADD COLUMN images TEXT DEFAULT '[]'");
-} catch (e) {
-  // Column already exists
-}
-
-// Function to seed initial data
-export const seedDatabase = (initialProducts) => {
-  const checkStmt = db.prepare('SELECT COUNT(*) as count FROM products');
-  const { count } = checkStmt.get();
-
-  const generateSlug = (name) => {
-    return name.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-  };
-
-  if (count === 0) {
-    const insertStmt = db.prepare(`
-      INSERT INTO products (name, price, category, image, images, description, specs, slug)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    const insertMany = db.transaction((products) => {
-      for (const product of products) {
-        insertStmt.run(
-          product.name,
-          product.price,
-          product.category,
-          product.image,
-          JSON.stringify(product.images || []),
-          product.description,
-          JSON.stringify(product.specs),
-          generateSlug(product.name)
+// Function to seed initial data (only if database is empty)
+export const seedDatabase = async (initialProducts) => {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    
+    // Check if products exist
+    const [rows] = await connection.execute('SELECT COUNT(*) as count FROM products');
+    const count = rows[0].count;
+    
+    // Only seed if database is empty (0 products)
+    if (count === 0) {
+      const generateSlug = (name) => {
+        return name.toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '');
+      };
+      
+      for (const product of initialProducts) {
+        await connection.execute(
+          `INSERT INTO products (name, price, category, image, images, description, specs, slug)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            product.name,
+            product.price,
+            product.category,
+            product.image,
+            JSON.stringify(product.images || []),
+            product.description,
+            JSON.stringify(product.specs),
+            generateSlug(product.name)
+          ]
         );
       }
-    });
-
-    insertMany(initialProducts);
-    console.log('Database seeded with initial products.');
+      console.log(`[DB] Database seeded with ${initialProducts.length} products`);
+    } else {
+      console.log(`[DB] Database already has ${count} products, skipping seed`);
+    }
+    
+    connection.release();
+  } catch (error) {
+    console.error('[DB] Seed error:', error);
+    throw error;
   }
 };
 
-export default db;
+export default pool;

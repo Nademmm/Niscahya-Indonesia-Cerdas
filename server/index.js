@@ -4,7 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import db, { seedDatabase } from './db.js';
+import pool, { seedDatabase, initializeDatabase } from './db.js';
 import { products as initialProducts } from '../src/data/products.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,7 +22,6 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Ensure upload directory exists
 const uploadDir = path.resolve(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -41,13 +40,67 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-try {
-  // Seed database on startup
-  seedDatabase(initialProducts);
-  console.log('Database check/seed completed.');
-} catch (dbError) {
-  console.error('CRITICAL: Database initialization failed:', dbError);
-}
+const parseJsonArray = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== 'string' || value.trim() === '') return [];
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_error) {
+    return value.split(',').map((item) => item.trim()).filter(Boolean);
+  }
+};
+
+const normalizeProduct = (product) => {
+  if (!product) return product;
+
+  return {
+    ...product,
+    images: parseJsonArray(product.images),
+    specs: parseJsonArray(product.specs)
+  };
+};
+
+const createSlug = async (connection, name, excludeId = null) => {
+  const baseSlug = name.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+  let slug = baseSlug;
+  let suffix = 1;
+
+  while (true) {
+    const params = [slug];
+    let query = 'SELECT id FROM products WHERE slug = ?';
+
+    if (excludeId) {
+      query += ' AND id != ?';
+      params.push(excludeId);
+    }
+
+    const [rows] = await connection.execute(query, params);
+    if (rows.length === 0) {
+      return slug;
+    }
+
+    suffix += 1;
+    slug = `${baseSlug}-${suffix}`;
+  }
+};
+
+// Initialize database on startup
+const initDB = async () => {
+  try {
+    await initializeDatabase();
+    await seedDatabase(initialProducts);
+    console.log('Database initialized and seeded.');
+  } catch (dbError) {
+    console.error('CRITICAL: Database initialization failed:', dbError);
+  }
+};
+
+initDB();
 
 app.use(cors());
 
@@ -96,111 +149,139 @@ app.post('/api/upload-multiple', (req, res) => {
 });
 
 // Routes for products
-app.get('/api/products', (req, res) => {
+app.get('/api/products', async (req, res) => {
+  let connection;
   try {
-    const products = db.prepare('SELECT * FROM products').all();
-    // Parse specs and images from JSON string back to array
-    const parsedProducts = products.map(p => ({
-      ...p,
-      specs: JSON.parse(p.specs || '[]'),
-      images: JSON.parse(p.images || '[]')
-    }));
-    res.json(parsedProducts);
+    connection = await pool.getConnection();
+    const [products] = await connection.execute('SELECT * FROM products');
+    res.json(products.map(normalizeProduct));
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
-app.get('/api/products/:idOrSlug', (req, res) => {
+app.get('/api/products/:idOrSlug', async (req, res) => {
+  let connection;
   try {
     const { idOrSlug } = req.params;
+    connection = await pool.getConnection();
     let product;
     
     // Check if the parameter is an ID (number) or a Slug (text)
     if (/^\d+$/.test(idOrSlug)) {
-      product = db.prepare('SELECT * FROM products WHERE id = ?').get(idOrSlug);
+      const [results] = await connection.execute('SELECT * FROM products WHERE id = ?', [idOrSlug]);
+      product = results[0];
     } else {
-      product = db.prepare('SELECT * FROM products WHERE slug = ?').get(idOrSlug);
+      const [results] = await connection.execute('SELECT * FROM products WHERE slug = ?', [idOrSlug]);
+      product = results[0];
     }
 
     if (product) {
-      product.specs = JSON.parse(product.specs || '[]');
-      product.images = JSON.parse(product.images || '[]');
-      res.json(product);
+      res.json(normalizeProduct(product));
     } else {
       res.status(404).json({ message: 'Product not found' });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
-app.post('/api/products', (req, res) => {
-  const { name, price, category, image, images, description, specs } = req.body;
-  const slug = name.toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+app.post('/api/products', async (req, res) => {
+  let connection;
+  try {
+    const { name, price, category, image, images, description, specs } = req.body;
+
+    if (!name || !category || !image) {
+      return res.status(400).json({ error: 'Nama, kategori, dan gambar utama wajib diisi' });
+    }
     
-  try {
-    const insertStmt = db.prepare(`
-      INSERT INTO products (name, price, category, image, images, description, specs, slug)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    const result = insertStmt.run(
-      name, 
-      price, 
-      category, 
-      image, 
-      JSON.stringify(images || []), 
-      description, 
-      JSON.stringify(specs),
-      slug
+    connection = await pool.getConnection();
+    const slug = await createSlug(connection, name);
+    const [result] = await connection.execute(
+      `INSERT INTO products (name, price, category, image, images, description, specs, slug)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        name, 
+        price, 
+        category, 
+        image, 
+        JSON.stringify(parseJsonArray(images)), 
+        description, 
+        JSON.stringify(parseJsonArray(specs)),
+        slug
+      ]
     );
-    res.status(201).json({ id: result.lastInsertRowid, slug, ...req.body });
+
+    const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [result.insertId]);
+    res.status(201).json(normalizeProduct(rows[0]));
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
-app.put('/api/products/:id', (req, res) => {
-  const { name, price, category, image, images, description, specs } = req.body;
+app.put('/api/products/:id', async (req, res) => {
+  let connection;
   try {
-    const updateStmt = db.prepare(`
-      UPDATE products 
-      SET name = ?, price = ?, category = ?, image = ?, images = ?, description = ?, specs = ?
-      WHERE id = ?
-    `);
-    const result = updateStmt.run(
-      name, 
-      price, 
-      category, 
-      image, 
-      JSON.stringify(images || []), 
-      description, 
-      JSON.stringify(specs), 
-      req.params.id
+    const { name, price, category, image, images, description, specs } = req.body;
+    connection = await pool.getConnection();
+
+    if (!name || !category || !image) {
+      return res.status(400).json({ error: 'Nama, kategori, dan gambar utama wajib diisi' });
+    }
+
+    const slug = await createSlug(connection, name, req.params.id);
+    
+    const [result] = await connection.execute(
+      `UPDATE products 
+       SET name = ?, price = ?, category = ?, image = ?, images = ?, description = ?, specs = ?, slug = ?
+       WHERE id = ?`,
+      [
+        name, 
+        price, 
+        category, 
+        image, 
+        JSON.stringify(parseJsonArray(images)), 
+        description, 
+        JSON.stringify(parseJsonArray(specs)), 
+        slug,
+        req.params.id
+      ]
     );
-    if (result.changes > 0) {
-      res.json({ id: req.params.id, ...req.body });
+    
+    if (result.affectedRows > 0) {
+      const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [req.params.id]);
+      res.json(normalizeProduct(rows[0]));
     } else {
       res.status(404).json({ message: 'Product not found' });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
-app.delete('/api/products/:id', (req, res) => {
+app.delete('/api/products/:id', async (req, res) => {
+  let connection;
   try {
-    const deleteStmt = db.prepare('DELETE FROM products WHERE id = ?');
-    const result = deleteStmt.run(req.params.id);
-    if (result.changes > 0) {
+    connection = await pool.getConnection();
+    const [result] = await connection.execute('DELETE FROM products WHERE id = ?', [req.params.id]);
+    
+    if (result.affectedRows > 0) {
       res.json({ message: 'Product deleted' });
     } else {
       res.status(404).json({ message: 'Product not found' });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 

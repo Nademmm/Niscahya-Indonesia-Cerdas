@@ -175,11 +175,15 @@ const Admin = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+
       if (res.ok) {
         fetchProducts();
         setEditingProduct(null);
         setSelectedMainCategory('');
         setFormData({ name: '', category: '', image: '', images: ['', '', '', ''], description: '' });
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || data.message || 'Gagal menyimpan produk');
       }
     } catch (err) {
       setError('Gagal menyimpan produk');
@@ -207,7 +211,12 @@ const Admin = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Hapus produk ini?')) {
       try {
-        await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          setError(data.error || data.message || 'Gagal menghapus produk');
+          return;
+        }
         fetchProducts();
       } catch (err) {
         setError('Gagal menghapus produk');
