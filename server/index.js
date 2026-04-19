@@ -4,8 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import pool, { seedDatabase, initializeDatabase } from './db.js';
-import { products as initialProducts } from '../src/data/products.js';
+import pool, { initializeDatabase } from './db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -93,8 +92,7 @@ const createSlug = async (connection, name, excludeId = null) => {
 const initDB = async () => {
   try {
     await initializeDatabase();
-    await seedDatabase(initialProducts);
-    console.log('Database initialized and seeded.');
+    console.log('Database initialized.');
   } catch (dbError) {
     console.error('CRITICAL: Database initialization failed:', dbError);
   }
