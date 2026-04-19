@@ -92,13 +92,30 @@ const ProductDetail = () => {
             document.head.appendChild(canonical);
           }
           canonical.setAttribute('href', window.location.href);
+
+          // Fetch related products after product data is loaded
+          if (allRes.ok) {
+            const allData = await allRes.json();
+            
+            // 1. Ambil semua produk kecuali produk saat ini
+            const otherProducts = allData.filter(p => p.id !== prodData.id);
+            
+            // 2. Pisahkan antara kategori yang sama dan kategori berbeda
+            const sameCategory = otherProducts
+              .filter(p => p.category === prodData.category)
+              .sort(() => 0.5 - Math.random());
+              
+            const differentCategory = otherProducts
+              .filter(p => p.category !== prodData.category)
+              .sort(() => 0.5 - Math.random());
+            
+            // 3. Gabungkan keduanya: kategori sama di depan, sisa slot diisi kategori berbeda
+            const combined = [...sameCategory, ...differentCategory].slice(0, 4);
+            
+            setRelatedProducts(combined);
+          }
         } else {
           setProduct(null);
-        }
-
-        if (allRes.ok) {
-          const allData = await allRes.json();
-          setRelatedProducts(allData.filter(p => p.slug !== slug));
         }
       } catch (err) {
         console.error('Failed to fetch product data:', err);
@@ -230,7 +247,7 @@ const ProductDetail = () => {
             <div className="flex items-center gap-2 md:gap-4 text-[10px] md:text-xs font-black tracking-[0.3em] text-text-secondary uppercase">
               <Link to="/products" className="hover:text-primary transition-colors">Katalog</Link>
               <i className="bx bx-chevron-right text-base md:text-lg"></i>
-              <span className="text-primary truncate max-w-[150px] md:max-w-none">{product.name}</span>
+              <span className="text-primary truncate max-w-37.5 md:max-w-none">{product.name}</span>
             </div>
             <motion.h1 
               layoutId={`product-name-${product.id}`}
@@ -274,7 +291,7 @@ const ProductDetail = () => {
             <div className="grid grid-cols-2 gap-3 md:gap-4">
               <div className="glass p-4 md:p-6 rounded-2xl md:rounded-4xl flex items-center gap-3 md:gap-4 border-black/5 shadow-lg shadow-black/5">
                 <i className="bx bx-shield-alt-2 text-2xl md:text-3xl text-primary"></i>
-                <span className="text-[8px] md:text-xs font-black uppercase tracking-widest text-text-secondary leading-tight">Garansi 2 Tahun</span>
+                <span className="text-[8px] md:text-xs font-black uppercase tracking-widest text-text-secondary leading-tight">Bergaransi</span>
               </div>
               <div className="glass p-4 md:p-6 rounded-2xl md:rounded-4xl flex items-center gap-3 md:gap-4 border-black/5 shadow-lg shadow-black/5">
                 <i className="bx bx-trending-up text-2xl md:text-3xl text-secondary"></i>
@@ -292,18 +309,6 @@ const ProductDetail = () => {
             <p className="text-sm md:text-lg text-text-secondary font-medium leading-relaxed whitespace-pre-line">
               {renderDescription(product.description)}
             </p>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            <div className="glass p-6 md:p-8 rounded-2xl md:rounded-4xl border-black/5 flex items-center gap-4 md:gap-6 group hover:border-primary/30 transition-all">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-primary/10 text-primary rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl group-hover:scale-110 transition-transform">
-                <i className="bx bx-check-shield"></i>
-              </div>
-              <div>
-                <h4 className="text-sm md:text-base font-black uppercase tracking-tighter">Kualitas Terjamin</h4>
-                <p className="text-[10px] md:text-xs text-text-secondary font-bold uppercase tracking-widest">Sertifikasi Standar Nasional</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -386,7 +391,7 @@ const ProductDetail = () => {
         </div>
 
         {/* Lokasi Kami (Map) */}
-        <div className="glass p-2 md:p-4 rounded-3xl md:rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[300px] md:h-125 lg:h-auto">
+        <div className="glass p-2 md:p-4 rounded-3xl md:rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-75 md:h-125 lg:h-auto">
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
             width="100%" 

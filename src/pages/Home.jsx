@@ -12,17 +12,17 @@ const HeroSlider = () => {
     {
       id: 1,
       image: "/hero-1.png",
-      title: "Penerangan Jalan Umum Tenaga Surya"
+      title: "Infrastruktur PJU Tenaga Surya Terintegrasi"
     },
     {
       id: 2,
       image: "/hero-2.png",
-      title: "Our best seller"
+      title: "Unit Unggulan All In One Series"
     },
     {
       id: 3,
       image: "/hero-3.png",
-      title: "PJU Solar Panel"
+      title: "Solusi Energi Terbarukan Berkelanjutan"
     }
   ];
 
@@ -57,7 +57,7 @@ const HeroSlider = () => {
   };
 
   return (
-    <section className="relative w-full aspect-[16/9] md:aspect-auto md:h-[80vh] rounded-xl md:rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
+    <section className="relative w-full aspect-video md:aspect-auto md:h-[80vh] rounded-xl md:rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
       <AnimatePresence initial={false} custom={direction}>
         <motion.img
           key={currentSlide}
@@ -288,13 +288,14 @@ const Home = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="flex overflow-x-auto overflow-y-hidden lg:grid lg:grid-cols-4 gap-4 md:gap-8 pb-4 scrollbar-hide">
             {featuredProducts.map((product, i) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
+                className="min-w-70 lg:min-w-0"
               >
                 <ProductCard product={product} />
               </motion.div>
@@ -315,14 +316,14 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="flex flex-nowrap md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-6 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide no-scrollbar snap-x snap-mandatory">
+        <div className="flex flex-nowrap md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto overflow-y-hidden pb-6 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide no-scrollbar snap-x snap-mandatory">
           {[...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => (
             <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="min-w-[280px] w-[80vw] md:w-auto snap-center group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col shrink-0"
+              className="min-w-70 w-[80vw] md:w-auto snap-center group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col shrink-0"
             >
               <Link to={`/blog/${post.id}`} className="relative aspect-video overflow-hidden block">
                 <img 

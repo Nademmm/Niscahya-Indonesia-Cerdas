@@ -1,8 +1,7 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
-const PageHero = ({ title, subtitle, icon, color = 'primary' }) => (
-  <section className="relative pt-12 md:pt-20 pb-4 md:pb-6">
+const PageHero = ({ title, subtitle, icon }) => (
+  <section className="relative pt-6 md:pt-10 pb-4 md:pb-6">
     <motion.div 
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 0.05, scale: 1 }}
@@ -11,12 +10,12 @@ const PageHero = ({ title, subtitle, icon, color = 'primary' }) => (
       <i className={`bx ${icon} text-[150px] md:text-[300px]`}></i>
     </motion.div>
     
-    <div className="max-w-4xl space-y-6 md:space-y-8">
+    <div className="max-w-3xl space-y-4 md:space-y-6">
       <motion.h1 
-        initial={{ y: 30, opacity: 0 }}
+        initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter uppercase leading-[0.85] md:leading-[0.8]"
+        className="text-3xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
       >
         {title.split(' ').slice(0, -1).join(' ')} <br />
         <span className="text-gradient">{title.split(' ').slice(-1)}</span>
@@ -27,7 +26,7 @@ const PageHero = ({ title, subtitle, icon, color = 'primary' }) => (
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-lg md:text-2xl text-text-secondary font-medium leading-relaxed max-w-2xl"
+          className="text-lg md:text-xl text-text-secondary font-medium leading-relaxed max-w-xl"
         >
           {subtitle}
         </motion.p>
@@ -42,7 +41,6 @@ export const Solutions = () => (
       title="Solusi Eco" 
       subtitle="Integrasi energi surya tercanggih untuk kebutuhan domestik dan industri."
       icon="bx-chip"
-      color="primary"
     />
     <section className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
       {[
@@ -68,7 +66,6 @@ export const Contact = () => (
       title="Hubungi Kami" 
       subtitle="Kami siap membantu mewujudkan solusi energi terbaik untuk Anda. Hubungi kami melalui berbagai saluran komunikasi."
       icon="bx-message-square-detail"
-      color="accent"
     />
 
     {/* Contact Cards Grid */}
@@ -164,7 +161,7 @@ export const Contact = () => (
 
     {/* Map Section */}
     <section className="space-y-6 md:space-y-10">
-      <div className="glass p-2 md:p-4 rounded-3xl md:rounded-[64px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[300px] md:h-[500px]">
+      <div className="glass p-2 md:p-4 rounded-3xl md:rounded-[64px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-75 md:h-125">
         <iframe 
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
           width="100%" 
@@ -186,7 +183,6 @@ export const Impact = () => (
       title="Dampak Global" 
       subtitle="Melacak kontribusi nyata Niscahya dalam menjaga ekosistem bumi."
       icon="bx-globe"
-      color="primary"
     />
     <section className="glass p-8 md:p-12 rounded-3xl md:rounded-[64px] relative overflow-hidden">
       <div className="absolute inset-0 bg-primary/5 -z-10 animate-pulse"></div>
@@ -224,7 +220,6 @@ export const About = () => (
   <div className="space-y-10 md:space-y-16">
     <PageHero 
       title="Cerita Kami" 
-      color="accent"
     />
 
     {/* Vision & Mission Section */}
@@ -322,11 +317,11 @@ export const About = () => (
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4 md:gap-6">
-          <div className="glass-bright p-6 md:p-8 rounded-2xl md:rounded-[32px] text-center space-y-2 border-white/20 shadow-2xl">
+          <div className="glass-bright p-6 md:p-8 rounded-2xl md:rounded-4xl text-center space-y-2 border-white/20 shadow-2xl">
             <h4 className="text-2xl md:text-4xl font-black text-accent tracking-tighter">100%</h4>
             <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-text-secondary">Original Produk</p>
           </div>
-          <div className="glass-bright p-6 md:p-8 rounded-2xl md:rounded-[32px] text-center space-y-2 border-white/20 shadow-2xl">
+          <div className="glass-bright p-6 md:p-8 rounded-2xl md:rounded-4xl text-center space-y-2 border-white/20 shadow-2xl">
             <h4 className="text-2xl md:text-4xl font-black text-accent tracking-tighter">Garansi</h4>
             <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-text-secondary">Layanan</p>
           </div>
@@ -342,7 +337,6 @@ export const Sustainability = () => (
       title="Jalur Berkelanjutan" 
       subtitle="Roadmap menuju emisi nol bersih pada tahun 2030."
       icon="bx-leaf"
-      color="primary"
     />
     <div className="relative space-y-8 md:space-y-12">
       {[
@@ -352,7 +346,7 @@ export const Sustainability = () => (
       ].map((item, i) => (
         <motion.div key={i} whileInView={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -50 }} className="flex gap-6 md:gap-12 items-center group">
           <h3 className="text-4xl md:text-6xl font-black text-black/5 group-hover:text-primary transition-colors">{item.year}</h3>
-          <div className="glass p-6 md:p-8 rounded-2xl md:rounded-[32px] flex-1 flex justify-between items-center border-black/5 shadow-xl shadow-black/5">
+          <div className="glass p-6 md:p-8 rounded-2xl md:rounded-4xl flex-1 flex justify-between items-center border-black/5 shadow-xl shadow-black/5">
             <span className="text-base md:text-xl font-bold uppercase tracking-tight">{item.goal}</span>
             <span className="px-3 py-1 bg-black/5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest">{item.status}</span>
           </div>
@@ -368,7 +362,6 @@ export const Projects = () => (
       title="Galeri Projek" 
       subtitle="Dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia."
       icon="bx-images"
-      color="secondary"
     />
     
     {/* Project Grid */}
@@ -392,7 +385,7 @@ export const Projects = () => (
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ delay: i * 0.05 }}
-          className="group relative aspect-[9/16] glass rounded-3xl md:rounded-[40px] overflow-hidden border-black/5"
+          className="group relative aspect-9/16 glass rounded-3xl md:rounded-[40px] overflow-hidden border-black/5"
         >
           <img 
             src={proj.img} 
@@ -411,7 +404,6 @@ export const Careers = () => (
       title="Join Mission" 
       subtitle="Bekerja dengan teknologi terbaik untuk misi yang paling berarti."
       icon="bx-rocket"
-      color="primary"
     />
     <section className="space-y-4 md:space-y-6">
       {[
@@ -419,7 +411,7 @@ export const Careers = () => (
         { role: 'AI Algorithm Developer', loc: 'Bandung', type: 'Full-time' },
         { role: 'Sustainable Supply Chain', loc: 'Surabaya', type: 'Contract' }
       ].map((job, i) => (
-        <motion.div key={i} whileHover={{ x: 20 }} className="glass p-6 md:p-8 rounded-2xl md:rounded-[32px] flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 border-black/5 shadow-xl shadow-black/5 cursor-pointer">
+        <motion.div key={i} whileHover={{ x: 20 }} className="glass p-6 md:p-8 rounded-2xl md:rounded-4xl flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 border-black/5 shadow-xl shadow-black/5 cursor-pointer">
           <div>
             <h4 className="text-xl md:text-2xl font-black uppercase tracking-tighter">{job.role}</h4>
             <p className="text-text-secondary font-medium uppercase text-[10px] md:text-xs tracking-widest">{job.loc}</p>

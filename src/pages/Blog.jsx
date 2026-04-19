@@ -36,16 +36,16 @@ const Blog = () => {
     : sortedPosts.filter(post => post.category === activeCategory);
 
   return (
-    <div className="space-y-12 md:space-y-16">
+    <div className="space-y-8 md:space-y-12">
       {/* Blog Header */}
-      <section className="relative pt-10">
-        <div className="max-w-3xl space-y-6">
+      <section className="relative pt-6 md:pt-10">
+        <div className="max-w-3xl space-y-4 md:space-y-6">
           
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
+            className="text-3xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
           >
             Wawasan Energi Terbarukan.
           </motion.h1>
@@ -53,7 +53,7 @@ const Blog = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-text-secondary font-medium max-w-xl"
+            className="text-lg md:text-xl text-text-secondary font-medium max-w-xl"
           >
             Jelajahi artikel terbaru kami tentang teknologi PJU tenaga surya, tips efisiensi, dan fakta unik dunia energi.
           </motion.p>
@@ -61,7 +61,7 @@ const Blog = () => {
       </section>
 
       {/* Category Filter */}
-      <section className="flex flex-wrap gap-3">
+      <section className="flex flex-wrap gap-2 md:gap-3">
         {categories.map((cat, idx) => (
           <motion.button
             key={cat}

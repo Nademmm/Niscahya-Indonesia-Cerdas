@@ -229,19 +229,26 @@ const Products = () => {
   return (
     <div className="space-y-12 md:space-y-16">
       {/* Experimental Header */}
-      <section className="relative pt-10">
-        <div className="max-w-3xl space-y-6">
+      <section className="relative pt-6 md:pt-10 pb-4 md:pb-6">
+        <div className="max-w-3xl space-y-4 md:space-y-6">
           
-          <h1 
-            className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
+          <motion.h1 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
           >
-            Solusi Terdepan.
-          </h1>
-          <p 
-            className="text-xl text-text-secondary font-medium max-w-xl"
+            Solusi <br />
+            <span className="text-gradient">Terdepan.</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg md:text-xl text-text-secondary font-medium max-w-xl"
           >
-            Pilih perangkat yang tepat untuk sistem energi Anda. Teknologi mutakhir dengan efisiensi terverifikasi.
-          </p>
+            Katalog perangkat PJU Tenaga Surya standar industri. Solusi infrastruktur dengan durabilitas tinggi dan efisiensi energi teruji untuk berbagai kebutuhan proyek Anda.
+          </motion.p>
         </div>
       </section>
 

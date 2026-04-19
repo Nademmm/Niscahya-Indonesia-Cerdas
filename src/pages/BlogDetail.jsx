@@ -113,26 +113,7 @@ const BlogDetail = () => {
               ))}
             </div>
             
-            <div className="pt-12 border-t border-black/5 flex flex-wrap gap-4 items-center justify-between">
-              <div className="flex gap-4">
-                <a 
-                  href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-12 h-12 bg-black/5 hover:bg-black/10 rounded-2xl flex items-center justify-center text-xl transition-all hover:text-primary"
-                >
-                  <i className="bx bxl-instagram"></i>
-                </a>
-                <a 
-                  href="https://www.facebook.com/pjutenagasuryasurabaya" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-12 h-12 bg-black/5 hover:bg-black/10 rounded-2xl flex items-center justify-center text-xl transition-all hover:text-primary"
-                >
-                  <i className="bx bxl-facebook-circle"></i>
-                </a>
-              </div>
-            </div>
+
           </div>
         </div>
 
