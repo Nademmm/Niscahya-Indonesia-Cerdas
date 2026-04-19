@@ -57,7 +57,7 @@ const HeroSlider = () => {
   };
 
   return (
-    <section className="relative w-full h-150 md:h-[80vh] rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
+    <section className="relative w-full aspect-[16/9] md:aspect-auto md:h-[80vh] rounded-xl md:rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5 mt-4">
       <AnimatePresence initial={false} custom={direction}>
         <motion.img
           key={currentSlide}
@@ -76,11 +76,11 @@ const HeroSlider = () => {
         />
       </AnimatePresence>
       
-      {/* Overlay gradient if you want to put text later */}
+      {/* Overlay gradient */}
       <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+      <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-10">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -88,8 +88,8 @@ const HeroSlider = () => {
               setDirection(index > currentSlide ? 1 : -1);
               setCurrentSlide(index);
             }}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              currentSlide === index ? "bg-primary w-8" : "bg-white/50 hover:bg-white"
+            className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
+              currentSlide === index ? "bg-primary w-6 md:w-8" : "bg-white/50 hover:bg-white"
             }`}
           />
         ))}
@@ -98,15 +98,15 @@ const HeroSlider = () => {
       {/* Prev/Next buttons */}
       <button 
         onClick={() => paginate(-1)}
-        className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
+        className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
       >
-        <i className="bx bx-chevron-left text-3xl"></i>
+        <i className="bx bx-chevron-left text-2xl md:text-3xl"></i>
       </button>
       <button 
         onClick={() => paginate(1)}
-        className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
+        className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
       >
-        <i className="bx bx-chevron-right text-3xl"></i>
+        <i className="bx bx-chevron-right text-2xl md:text-3xl"></i>
       </button>
     </section>
   );
@@ -165,7 +165,7 @@ const Home = () => {
   const partners = ['NISCAHYA', 'INDONESIA', 'CERDAS'];
 
   return (
-    <div className="space-y-32">
+    <div className="space-y-10 md:space-y-24">
       <HeroSlider />
 
       {/* About Industry Section */}
@@ -213,7 +213,7 @@ const Home = () => {
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative h-125 rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
+          className="relative h-64 md:h-125 rounded-3xl md:rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
         >
           <img 
             src="/PJU TENAGA SURYA.jpeg" 
@@ -221,16 +221,16 @@ const Home = () => {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
-          <div className="absolute bottom-8 left-8 right-8 p-6 glass-bright rounded-3xl border border-white/20">
+          <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 p-4 md:p-6 glass-bright rounded-2xl md:rounded-3xl border border-white/20">
             <div className="flex justify-around items-center">
               <div className="text-center">
-                <h4 className="text-3xl font-black text-primary">10+</h4>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mt-1">Tahun Pengalaman</p>
+                <h4 className="text-2xl md:text-3xl font-black text-primary">10+</h4>
+                <p className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-text-secondary mt-1">Tahun Pengalaman</p>
               </div>
-              <div className="w-px h-12 bg-black/10"></div>
+              <div className="w-px h-10 md:h-12 bg-black/10"></div>
               <div className="text-center">
-                <h4 className="text-3xl font-black text-secondary">500+</h4>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mt-1">Proyek Selesai</p>
+                <h4 className="text-2xl md:text-3xl font-black text-secondary">500+</h4>
+                <p className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-text-secondary mt-1">Proyek Selesai</p>
               </div>
             </div>
           </div>
@@ -238,21 +238,21 @@ const Home = () => {
       </section>
 
       {/* Energy Impact Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="grid grid-cols-3 gap-3 md:gap-8">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
             whileInView={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 20 }}
             transition={{ delay: i * 0.1 }}
-            className="glass p-10 rounded-[48px] text-center space-y-4 border-black/5 hover:border-primary/20 transition-all group shadow-xl shadow-black/5"
+            className="glass p-6 md:p-10 rounded-2xl md:rounded-[48px] text-center space-y-4 md:space-y-6 border-black/5 hover:border-primary/20 transition-all group shadow-xl shadow-black/5"
           >
-            <div className={`w-16 h-16 mx-auto bg-black/5 rounded-3xl flex items-center justify-center text-3xl ${stat.color} group-hover:scale-110 transition-transform`}>
+            <div className={`w-10 h-10 md:w-20 md:h-20 mx-auto bg-black/5 rounded-xl md:rounded-3xl flex items-center justify-center text-xl md:text-4xl ${stat.color} group-hover:scale-110 transition-transform`}>
               <i className={stat.icon}></i>
             </div>
-            <div className="space-y-1">
-              <h4 className="text-5xl font-black tracking-tighter uppercase">{stat.value}</h4>
-              <p className="text-sm font-black text-text-secondary uppercase tracking-[0.2em]">{stat.label} ({stat.unit})</p>
+            <div className="space-y-1 md:space-y-2">
+              <h4 className="text-2xl md:text-6xl font-black tracking-tighter uppercase">{stat.value}</h4>
+              <p className="text-[8px] md:text-sm font-black text-text-secondary uppercase tracking-widest md:tracking-[0.2em] leading-tight">{stat.label}</p>
             </div>
           </motion.div>
         ))}
@@ -271,7 +271,7 @@ const Home = () => {
 
       {/* Featured Products */}
       <section className="space-y-16">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-4">
             <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Produk Kami</span>
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">Unggulan.</h2>
@@ -282,13 +282,13 @@ const Home = () => {
         </div>
         
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {[1,2,3,4].map(i => (
-              <div key={i} className="h-100 glass animate-pulse rounded-[48px]"></div>
+              <div key={i} className="h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]"></div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {featuredProducts.map((product, i) => (
               <motion.div
                 key={product.id}
@@ -305,7 +305,7 @@ const Home = () => {
 
       {/* Latest Blog Section */}
       <section className="space-y-16">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-4">
             <span className="text-[10px] font-black tracking-[0.4em] text-secondary uppercase">Wawasan & Edukasi</span>
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">Blog Terbaru.</h2>
@@ -315,14 +315,14 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex flex-nowrap md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-6 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide no-scrollbar snap-x snap-mandatory">
           {[...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => (
             <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col"
+              className="min-w-[280px] w-[80vw] md:w-auto snap-center group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col shrink-0"
             >
               <Link to={`/blog/${post.id}`} className="relative aspect-video overflow-hidden block">
                 <img 

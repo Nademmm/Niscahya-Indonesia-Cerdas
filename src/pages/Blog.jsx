@@ -36,17 +36,11 @@ const Blog = () => {
     : sortedPosts.filter(post => post.category === activeCategory);
 
   return (
-    <div className="space-y-20">
+    <div className="space-y-12 md:space-y-16">
       {/* Blog Header */}
       <section className="relative pt-10">
         <div className="max-w-3xl space-y-6">
-          <motion.div 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-2xl"
-          >
-            <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Inovasi / Edukasi</span>
-          </motion.div>
+          
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

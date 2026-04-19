@@ -29,7 +29,7 @@ const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
 
   return (
     <div 
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+      className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8"
     >
       {products.map((product) => (
         <div
@@ -227,15 +227,11 @@ const Products = () => {
   }, [products, selectedCategory, selectedSubCategory, searchQuery]);
 
   return (
-    <div className="space-y-20">
+    <div className="space-y-12 md:space-y-16">
       {/* Experimental Header */}
       <section className="relative pt-10">
         <div className="max-w-3xl space-y-6">
-          <div 
-            className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-2xl"
-          >
-            <span className="text-[10px] font-black tracking-[0.4em] text-secondary uppercase">Pasar / Katalog</span>
-          </div>
+          
           <h1 
             className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
           >

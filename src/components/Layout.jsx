@@ -187,10 +187,9 @@ const Layout = ({ children }) => {
           <div className="space-y-8">
             <h4 className="text-sm font-black uppercase tracking-[0.4em] text-text-main">Bantuan</h4>
             <ul className="space-y-5">
-              <li><Link to="/#contact" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Kontak Kami</Link></li>
-              <li><Link to="/admin" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Panel Admin</Link></li>
-              <li><a href="https://wa.me/6287853536124" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">WhatsApp 1</a></li>
-              <li><a href="https://wa.me/6282143707398" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">WhatsApp 2</a></li>
+              <li><Link to="/contact" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Kontak Kami</Link></li>
+              <li><a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">+62 878 5353 6124</a></li>
+              <li><a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">+62 821 4370 7398</a></li>
             </ul>
           </div>
         </div>

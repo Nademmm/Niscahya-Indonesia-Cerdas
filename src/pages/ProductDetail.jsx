@@ -172,19 +172,19 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="space-y-24">
+    <div className="space-y-8 md:space-y-16">
       <script type="application/ld+json">
         {JSON.stringify(jsonLd)}
       </script>
       {/* Detail Header */}
-      <section className="flex flex-col lg:flex-row gap-16">
+      <section className="flex flex-col lg:flex-row gap-8 md:gap-16">
         {/* Gallery Utama */}
         <motion.div 
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="flex-1 space-y-6"
+          className="flex-1 space-y-4 md:space-y-6"
         >
-          <div className="relative aspect-4/5 glass rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5">
+          <div className="relative aspect-square md:aspect-4/5 glass rounded-3xl md:rounded-[48px] overflow-hidden group shadow-2xl shadow-black/5">
             <AnimatePresence mode="wait">
               <motion.img 
                 key={displayedImage}
@@ -199,13 +199,13 @@ const ProductDetail = () => {
             </AnimatePresence>
           </div>
 
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-5 gap-2 md:gap-3">
             {thumbnailSlots.map((img, i) => (
               <button 
                 key={i}
                 onClick={() => img && setSelectedImage(img)}
-                className={`aspect-square rounded-2xl overflow-hidden transition-all ${
-                  selectedImage === img ? 'ring-4 ring-primary' : 'opacity-60 hover:opacity-100'
+                className={`aspect-square rounded-xl md:rounded-2xl overflow-hidden transition-all ${
+                  selectedImage === img ? 'ring-2 md:ring-4 ring-primary' : 'opacity-60 hover:opacity-100'
                 } ${!img ? 'bg-black/5' : ''}`}
               >
                 {img && (
@@ -224,35 +224,35 @@ const ProductDetail = () => {
         <motion.div 
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="flex-1 flex flex-col justify-center space-y-12"
+          className="flex-1 flex flex-col justify-center space-y-8 md:space-y-12"
         >
-          <div className="space-y-6">
-            <div className="flex items-center gap-4 text-xs font-black tracking-[0.3em] text-text-secondary uppercase">
+          <div className="space-y-4 md:space-y-6">
+            <div className="flex items-center gap-2 md:gap-4 text-[10px] md:text-xs font-black tracking-[0.3em] text-text-secondary uppercase">
               <Link to="/products" className="hover:text-primary transition-colors">Katalog</Link>
-              <i className="bx bx-chevron-right text-lg"></i>
-              <span className="text-primary">{product.name}</span>
+              <i className="bx bx-chevron-right text-base md:text-lg"></i>
+              <span className="text-primary truncate max-w-[150px] md:max-w-none">{product.name}</span>
             </div>
             <motion.h1 
               layoutId={`product-name-${product.id}`}
-              className="text-3xl md:text-5xl font-black tracking-tighter uppercase leading-[1.1]"
+              className="text-2xl md:text-5xl font-black tracking-tighter uppercase leading-tight md:leading-[1.1]"
             >
               {product.name}
             </motion.h1>
-            <span className="inline-flex px-4 py-2 bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-xl">
+            <span className="inline-flex px-3 py-1.5 md:px-4 md:py-2 bg-primary/10 border border-primary/20 text-primary text-[8px] md:text-[10px] font-black uppercase tracking-widest rounded-lg md:rounded-xl">
               Tersedia
             </span>
           </div>
 
           <div className="space-y-6">
             <div className="flex items-center gap-6">
-              <div className="flex items-center glass border border-black/10 rounded-2xl overflow-hidden h-14">
+              <div className="flex items-center glass border border-black/10 rounded-2xl overflow-hidden h-12 md:h-14">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="px-4 hover:bg-black/5 transition-colors h-full"
                 >
                   <i className="bx bx-minus font-bold"></i>
                 </button>
-                <span className="w-12 text-center font-black text-xl">{quantity}</span>
+                <span className="w-10 md:w-12 text-center font-black text-lg md:text-xl">{quantity}</span>
                 <button 
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-4 hover:bg-black/5 transition-colors h-full"
@@ -265,20 +265,20 @@ const ProductDetail = () => {
             <div className="flex gap-4">
               <button 
                 onClick={handleBuyNow}
-                className="flex-1 py-6 bg-primary text-background font-black text-2xl rounded-4xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20 flex items-center justify-center gap-4 group"
+                className="flex-1 py-4 md:py-6 bg-primary text-background font-black text-base md:text-2xl rounded-2xl md:rounded-4xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20 flex items-center justify-center gap-2 md:gap-4 group"
               >
-                <i className="bx bxl-whatsapp text-4xl"></i>
-                <span>Beli Sekarang via WhatsApp</span>
+                <i className="bx bxl-whatsapp text-2xl md:text-4xl"></i>
+                <span>WhatsApp Admin</span>
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="glass p-6 rounded-4xl flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
-                <i className="bx bx-shield-alt-2 text-3xl text-primary"></i>
-                <span className="text-xs font-black uppercase tracking-widest text-text-secondary">Garansi 2 Tahun</span>
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
+              <div className="glass p-4 md:p-6 rounded-2xl md:rounded-4xl flex items-center gap-3 md:gap-4 border-black/5 shadow-lg shadow-black/5">
+                <i className="bx bx-shield-alt-2 text-2xl md:text-3xl text-primary"></i>
+                <span className="text-[8px] md:text-xs font-black uppercase tracking-widest text-text-secondary leading-tight">Garansi 2 Tahun</span>
               </div>
-              <div className="glass p-6 rounded-4xl flex items-center gap-4 border-black/5 shadow-lg shadow-black/5">
-                <i className="bx bx-trending-up text-3xl text-secondary"></i>
-                <span className="text-xs font-black uppercase tracking-widest text-text-secondary">Sertifikasi Eco</span>
+              <div className="glass p-4 md:p-6 rounded-2xl md:rounded-4xl flex items-center gap-3 md:gap-4 border-black/5 shadow-lg shadow-black/5">
+                <i className="bx bx-trending-up text-2xl md:text-3xl text-secondary"></i>
+                <span className="text-[8px] md:text-xs font-black uppercase tracking-widest text-text-secondary leading-tight">Sertifikasi Eco</span>
               </div>
             </div>
           </div>
@@ -286,22 +286,22 @@ const ProductDetail = () => {
       </section>
 
       {/* Deskripsi */}
-      <section className="space-y-12">
-        <div className="space-y-12">
-          <div className="glass p-10 rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-linear-to-br from-white to-black/5">
-            <p className="text-base md:text-lg text-text-secondary font-medium leading-relaxed whitespace-pre-line">
+      <section className="space-y-8 md:space-y-12">
+        <div className="space-y-8 md:space-y-12">
+          <div className="glass p-6 md:p-10 rounded-3xl md:rounded-[48px] border-black/5 shadow-xl shadow-black/5 bg-linear-to-br from-white to-black/5">
+            <p className="text-sm md:text-lg text-text-secondary font-medium leading-relaxed whitespace-pre-line">
               {renderDescription(product.description)}
             </p>
           </div>
           
           <div className="grid grid-cols-1 gap-4">
-            <div className="glass p-8 rounded-4xl border-black/5 flex items-center gap-6 group hover:border-primary/30 transition-all">
-              <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            <div className="glass p-6 md:p-8 rounded-2xl md:rounded-4xl border-black/5 flex items-center gap-4 md:gap-6 group hover:border-primary/30 transition-all">
+              <div className="w-12 h-12 md:w-14 md:h-14 bg-primary/10 text-primary rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl group-hover:scale-110 transition-transform">
                 <i className="bx bx-check-shield"></i>
               </div>
               <div>
-                <h4 className="font-black uppercase tracking-tighter">Kualitas Terjamin</h4>
-                <p className="text-xs text-text-secondary font-bold uppercase tracking-widest">Sertifikasi Standar Nasional</p>
+                <h4 className="text-sm md:text-base font-black uppercase tracking-tighter">Kualitas Terjamin</h4>
+                <p className="text-[10px] md:text-xs text-text-secondary font-bold uppercase tracking-widest">Sertifikasi Standar Nasional</p>
               </div>
             </div>
           </div>
@@ -309,26 +309,26 @@ const ProductDetail = () => {
       </section>
 
       {/* Similar Selection */}
-      <section className="space-y-12">
+      <section className="space-y-8 md:space-y-12">
         <div className="flex items-end justify-between">
-          <h2 className="text-4xl font-black uppercase tracking-tighter">Unit Terkait</h2>
-          <Link to="/products" className="text-lg font-black uppercase tracking-tighter hover:text-primary transition-colors flex items-center gap-2">
-            Katalog <i className="bx bx-right-arrow-alt text-2xl"></i>
+          <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter">Unit Terkait</h2>
+          <Link to="/products" className="text-sm md:text-lg font-black uppercase tracking-tighter hover:text-primary transition-colors flex items-center gap-2">
+            Katalog <i className="bx bx-right-arrow-alt text-xl md:text-2xl"></i>
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
           {relatedProducts.slice(0, 4).map(p => (
             <motion.div 
               key={p.id} 
               whileHover={{ y: -10 }}
-              className="group glass rounded-4xl overflow-hidden hover:border-primary/30 transition-all border-black/5 shadow-xl shadow-black/5"
+              className="group glass rounded-2xl md:rounded-4xl overflow-hidden hover:border-primary/30 transition-all border-black/5 shadow-xl shadow-black/5"
             >
               <div className="aspect-square relative overflow-hidden">
                 <img src={p.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <Link to={`/products/${p.id}`} className="absolute inset-0 z-10"></Link>
               </div>
-              <div className="p-6 space-y-2">
-                <h4 className="text-sm font-black uppercase tracking-tight line-clamp-1">{p.name}</h4>
+              <div className="p-4 md:p-6 space-y-1 md:space-y-2">
+                <h4 className="text-[10px] md:text-sm font-black uppercase tracking-tight line-clamp-1">{p.name}</h4>
               </div>
             </motion.div>
           ))}
@@ -336,57 +336,57 @@ const ProductDetail = () => {
       </section>
 
       {/* Hubungi & Lokasi Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-12 border-t border-black/5">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 pt-12 border-t border-black/5">
         {/* Kontak Kami */}
-        <div className="glass p-10 rounded-[48px] space-y-8 flex flex-col justify-between border-black/5 shadow-xl shadow-black/5">
+        <div className="glass p-6 md:p-10 rounded-3xl md:rounded-[48px] space-y-6 md:space-y-8 flex flex-col justify-between border-black/5 shadow-xl shadow-black/5">
           <div className="space-y-6">
             <div className="space-y-2">
               <span className="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Hubungi Kami</span>
-              <h3 className="text-4xl font-black uppercase tracking-tighter">Siap Melayani <br />Kebutuhan Anda.</h3>
+              <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter leading-tight">Siap Melayani <br />Kebutuhan Anda.</h3>
             </div>
             <div className="space-y-4">
-              <div className="flex items-start gap-6">
-                <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl">
+              <div className="flex items-start gap-4 md:gap-6">
+                <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-xl md:text-2xl">
                   <i className="bx bxs-phone-call"></i>
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Telepon / WA</span>
                   <div className="flex flex-col gap-0.5">
-                    <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 878 5353 6124</a>
-                    <a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 821 4370 7398</a>
+                    <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="text-sm md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 878 5353 6124</a>
+                    <a href="https://wa.me/6282143707398" target="_blank" rel="noopener noreferrer" className="text-sm md:text-lg font-black tracking-tight hover:text-primary transition-colors">+62 821 4370 7398</a>
                   </div>
                 </div>
               </div>
-              <div className="flex items-start gap-6">
-                <div className="w-14 h-14 shrink-0 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary text-2xl">
+              <div className="flex items-start gap-4 md:gap-6">
+                <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-xl md:rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary text-xl md:text-2xl">
                   <i className="bx bxs-envelope"></i>
                 </div>
                 <div className="flex flex-col min-w-0 overflow-hidden">
                   <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Email</span>
-                  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=cvniscahyaindonesiacerdas@gmail.com" target="_blank" rel="noopener noreferrer" className="text-sm md:text-base font-black tracking-tight break-all hover:text-secondary transition-colors">cvniscahyaindonesiacerdas@gmail.com</a>
+                  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=cvniscahyaindonesiacerdas@gmail.com" target="_blank" rel="noopener noreferrer" className="text-xs md:text-base font-black tracking-tight break-all hover:text-secondary transition-colors">cvniscahyaindonesiacerdas@gmail.com</a>
                 </div>
               </div>
-              <div className="flex items-start gap-6">
-                <div className="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl">
+              <div className="flex items-start gap-4 md:gap-6">
+                <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-xl md:text-2xl">
                   <i className="bx bxs-map"></i>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black text-text-secondary/60 uppercase tracking-[0.2em]">Marketing Office</span>
-                  <span className="text-lg font-black leading-tight tracking-tight">Wisma Juanda Permai Jl. Bouraq Blok B1 No. 15, Sedati Gede, <br />Kec. Sedati, Kabupaten Sidoarjo, Jawa Timur</span>
+                  <span className="text-sm md:text-lg font-black leading-tight tracking-tight">Wisma Juanda Permai Jl. Bouraq Blok B1 No. 15, Sedati Gede, <br />Kec. Sedati, Kabupaten Sidoarjo, Jawa Timur</span>
                 </div>
               </div>
             </div>
           </div>
           <button 
             onClick={handleBuyNow}
-            className="w-full py-5 bg-black/5 hover:bg-black/10 transition-colors rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3"
+            className="w-full mt-6 py-4 md:py-5 bg-black/5 hover:bg-black/10 transition-colors rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center justify-center gap-3"
           >
-            Konsultasi Sekarang <i className="bx bx-right-arrow-alt text-xl"></i>
+            Konsultasi Sekarang <i className="bx bx-right-arrow-alt text-lg"></i>
           </button>
         </div>
 
         {/* Lokasi Kami (Map) */}
-        <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-125 lg:h-auto">
+        <div className="glass p-2 md:p-4 rounded-3xl md:rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-[300px] md:h-125 lg:h-auto">
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
             width="100%" 
@@ -395,10 +395,10 @@ const ProductDetail = () => {
             allowFullScreen="" 
             loading="lazy" 
             referrerPolicy="no-referrer-when-downgrade"
-            className="rounded-[36px] shadow-inner"
+            className="rounded-2xl md:rounded-[36px] shadow-inner"
           ></iframe>
-          <div className="absolute top-8 right-8 pointer-events-none">
-            <span className="px-4 py-2 glass-bright rounded-full text-[10px] font-black uppercase tracking-widest border border-black/10 shadow-lg">Showroom Kami</span>
+          <div className="absolute top-4 right-4 md:top-8 md:right-8 pointer-events-none">
+            <span className="px-3 py-1.5 md:px-4 md:py-2 glass-bright rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest border border-black/10 shadow-lg">Showroom Kami</span>
           </div>
         </div>
       </section>

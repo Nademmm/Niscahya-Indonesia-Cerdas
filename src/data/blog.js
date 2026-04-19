@@ -38,7 +38,7 @@ export const blogPosts = [
     title: "Lampu PJU Tenaga Surya Hybrid: Menggabungkan Listrik PLN dan Tenaga Surya",
     date: "Januari 13, 2026",
     category: "Teknologi",
-    image: "PJU TENAGA SURYA.jpeg",
+    image: "/PJU TENAGA SURYA.jpeg",
     excerpt: "Apa itu sistem hybrid? Simak bagaimana penggabungan dua sumber daya ini dapat meningkatkan efisiensi dan keandalan penerangan jalan Anda.",
     content: `
       Sistem Hybrid pada PJU Tenaga Surya adalah terobosan terbaru dalam dunia energi terbarukan. Dengan menggabungkan listrik dari PLN dan panel surya, sistem ini menawarkan keandalan 100% tanpa takut kehabisan daya saat cuaca mendung berkepanjangan.
