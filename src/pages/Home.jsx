@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
 import { blogPosts } from '../data/blog';
+import { updateSEO } from '../utils/seo';
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -114,25 +115,11 @@ const HeroSlider = () => {
 
 const Home = () => {
   useEffect(() => {
-    document.title = 'Niscahya Indonesia Cerdas | Lampu PJU Tenaga Surya Terbaik';
-    
-    // SEO Meta Update
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Distributor resmi Lampu PJU Tenaga Surya berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif.');
-    }
-    
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute('href', window.location.origin + '/');
-    
-    return () => {
-      document.title = 'Niscahya Indonesia Cerdas';
-    };
+    updateSEO({
+      title: 'Distributor Lampu PJU Tenaga Surya Terbaik 2026',
+      description: 'Distributor resmi Lampu PJU Tenaga Surya (Solar Street Light) berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif dan garansi terjamin.',
+      keywords: 'lampu pju tenaga surya, solar street light indonesia, harga lampu jalan tenaga surya, distributor solar panel surabaya, pju all in one, pju two in one, energi terbarukan indonesia, niscahya indonesia cerdas'
+    });
   }, []);
 
   const [featuredProducts, setFeaturedProducts] = useState([]);

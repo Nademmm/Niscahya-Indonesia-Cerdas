@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { useApp } from '../context/AppContext';
+import { updateSEO } from '../utils/seo';
 
 const categoryStructure = {
   'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
@@ -101,25 +102,11 @@ const fuzzyMatch = (text, query) => {
 
 const Products = () => {
   useEffect(() => {
-    document.title = 'Katalog Produk Lampu PJU & Solar Panel | Niscahya';
-    
-    // SEO Meta Update
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Jelajahi katalog lengkap lampu PJU tenaga surya, solar panel, baterai lithium, dan aksesori energi terbarukan di Niscahya Indonesia Cerdas.');
-    }
-    
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute('href', window.location.origin + '/products');
-    
-    return () => {
-      document.title = 'Niscahya Indonesia Cerdas';
-    };
+    updateSEO({
+      title: 'Katalog Produk Lampu PJU & Solar Panel',
+      description: 'Jelajahi katalog lengkap lampu PJU tenaga surya, solar panel, baterai lithium, dan aksesori energi terbarukan di Niscahya Indonesia Cerdas. Solusi infrastruktur hemat energi.',
+      keywords: 'katalog pju tenaga surya, jual lampu pju solar cell, harga paket pju tenaga surya, distributor lampu pju surabaya, baterai lithium pju, panel surya industri'
+    });
   }, []);
 
   const { searchQuery, setSearchQuery } = useApp();

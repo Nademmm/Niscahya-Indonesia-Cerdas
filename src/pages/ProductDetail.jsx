@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { updateSEO } from '../utils/seo';
 
 const normalizeImageList = (value) => {
   if (Array.isArray(value)) return value;
@@ -77,21 +78,15 @@ const ProductDetail = () => {
 
           setProduct(prodData);
           setSelectedImage(firstAvailableImage);
-          document.title = `${prodData.name} | Niscahya Indonesia Cerdas`;
-          
-          // SEO Meta Update
-          let metaDesc = document.querySelector('meta[name="description"]');
-          if (metaDesc) {
-            metaDesc.setAttribute('content', prodData.description.substring(0, 160));
-          }
-          
-          let canonical = document.querySelector('link[rel="canonical"]');
-          if (!canonical) {
-            canonical = document.createElement('link');
-            canonical.setAttribute('rel', 'canonical');
-            document.head.appendChild(canonical);
-          }
-          canonical.setAttribute('href', window.location.href);
+
+          // Dynamic SEO Update
+          updateSEO({
+            title: prodData.name,
+            description: prodData.description.substring(0, 160),
+            keywords: `${prodData.name}, ${prodData.category}, jual pju tenaga surya, spesifikasi ${prodData.name}, harga pju solar cell`,
+            image: firstAvailableImage || '/og-image.png',
+            type: 'product'
+          });
 
           // Fetch related products after product data is loaded
           if (allRes.ok) {

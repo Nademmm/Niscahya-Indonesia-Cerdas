@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { blogPosts } from '../data/blog';
+import { updateSEO } from '../utils/seo';
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -12,32 +13,14 @@ const BlogDetail = () => {
     if (!post) {
       navigate('/blog');
     } else {
-      document.title = `${post.title} | Blog Niscahya Indonesia Cerdas`;
-      
-      // Update meta description for SEO
-      let metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) {
-        metaDesc.setAttribute('content', post.excerpt);
-      }
-      
-      // Add canonical link
-      let canonical = document.querySelector('link[rel="canonical"]');
-      if (!canonical) {
-        canonical = document.createElement('link');
-        canonical.setAttribute('rel', 'canonical');
-        document.head.appendChild(canonical);
-      }
-      canonical.setAttribute('href', window.location.href);
+      updateSEO({
+        title: post.title,
+        description: post.excerpt,
+        keywords: `${post.title}, ${post.category}, edukasi pju tenaga surya, tips solar panel, niscahya blog`,
+        image: post.image,
+        type: 'article'
+      });
     }
-    
-    return () => {
-      document.title = 'Niscahya Indonesia Cerdas';
-      // Reset meta description
-      let metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) {
-        metaDesc.setAttribute('content', 'Distributor resmi Lampu PJU Tenaga Surya berkualitas di Indonesia.');
-      }
-    };
   }, [post, navigate]);
 
   if (!post) return null;

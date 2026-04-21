@@ -2,28 +2,15 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { blogPosts } from '../data/blog';
+import { updateSEO } from '../utils/seo';
 
 const Blog = () => {
   useEffect(() => {
-    document.title = 'Wawasan & Edukasi Energi Terbarukan | Blog Niscahya';
-    
-    // SEO Meta Update
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Dapatkan informasi terbaru mengenai teknologi panel surya, panduan harga lampu jalan 2025, dan tips perawatan energi terbarukan di Blog Niscahya.');
-    }
-    
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute('href', window.location.origin + '/blog');
-    
-    return () => {
-      document.title = 'Niscahya Indonesia Cerdas';
-    };
+    updateSEO({
+      title: 'Wawasan & Edukasi Energi Terbarukan',
+      description: 'Dapatkan informasi terbaru mengenai teknologi panel surya, panduan harga lampu jalan 2025, dan tips perawatan energi terbarukan di Blog Niscahya Indonesia Cerdas.',
+      keywords: 'blog energi terbarukan, tips lampu pju, teknologi solar panel terbaru, panduan hemat energi, niscahya indonesia cerdas'
+    });
   }, []);
 
   const [activeCategory, setActiveCategory] = useState('Semua');

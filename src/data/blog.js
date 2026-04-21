@@ -188,5 +188,72 @@ export const blogPosts = [
       Jadi, Anda tidak perlu khawatir. Dengan desain sistem yang tepat dari Niscahya, jalanan Anda akan tetap terang meski di tengah musim hujan sekalipun.
     `,
     author: "Tim Riset Niscahya"
+  },
+  {
+    id: 9,
+    title: "Cara Memilih Lampu Panel Surya Terbaik untuk Kebutuhan Anda",
+    date: "April 21, 2026",
+    category: "Panduan",
+    image: "/blog1.jpg",
+    excerpt: "Jangan salah pilih! Simak panduan lengkap memilih lampu panel surya dengan efisiensi tinggi dan durabilitas jangka panjang.",
+    content: `
+      Memilih lampu panel surya (PJU) bukan hanya soal harga murah, tapi soal ketahanan sistem untuk penggunaan bertahun-tahun. Di pasar Indonesia yang ekstrem cuacanya, Anda butuh spesifikasi yang tepat.
+
+      Langkah Memilih Lampu Terbaik:
+      1. Periksa Tipe Panel Surya: Gunakan Monocrystalline untuk efisiensi pengisian daya lebih cepat, terutama di daerah yang sering mendung.
+      2. Cek Jenis Baterai: Pastikan menggunakan Lithium LiFePO4. Baterai ini jauh lebih ringan, tahan panas, dan memiliki siklus hidup (cycle life) hingga 10 tahun.
+      3. Kapasitas Lumens per Watt: Jangan hanya melihat Watt-nya, tapi lihat Lumens-nya. Lampu berkualitas tinggi memberikan cahaya lebih terang dengan daya yang lebih kecil.
+      4. Kualitas Chip LED: Pilih chip LED dari brand ternama seperti Bridgelux atau Philips untuk memastikan kecerahan tidak menurun drastis setelah satu tahun penggunaan.
+      5. Sertifikasi IP: Minimal IP65 atau IP66 untuk menjamin unit tahan terhadap air hujan dan debu konstruksi.
+
+      Dengan memperhatikan detail teknis ini, investasi energi terbarukan Anda akan memberikan hasil maksimal dalam jangka panjang.
+    `,
+    author: "Tim Konsultan Niscahya"
+  },
+  {
+    id: 10,
+    title: "Perbandingan Lampu Tenaga Surya vs Listrik Biasa (PLN)",
+    date: "April 21, 2026",
+    category: "Komparasi",
+    image: "/blog2.jpg",
+    excerpt: "Mana yang lebih hemat? Kami bedah perbandingan biaya investasi awal hingga biaya operasional antara sistem Solar dan PLN.",
+    content: `
+      Banyak calon pengguna ragu beralih ke tenaga surya karena investasi awal yang terlihat mahal. Mari kita bedah faktanya dibanding sistem listrik PLN konvensional.
+
+      Lampu Listrik Biasa (PLN):
+      - Investasi Awal: Murah (hanya tiang, kabel, dan lampu).
+      - Operasional: Mahal (tagihan bulanan terus naik selamanya).
+      - Instalasi: Rumit karena butuh penarikan kabel antar tiang yang panjang dan galian tanah.
+      - Risiko: Jika PLN padam, lampu ikut mati.
+
+      Lampu Tenaga Surya (Solar):
+      - Investasi Awal: Lebih mahal di depan karena komponen panel dan baterai.
+      - Operasional: Rp 0,- (Gratis dari matahari selamanya).
+      - Instalasi: Sangat mudah (Plug & Play), tidak butuh kabel antar tiang dan tidak butuh galian kabel tanah.
+      - Risiko: Mandiri energi, tetap menyala meski jaringan listrik kota padam.
+
+      Kesimpulan: Tenaga surya biasanya mencapai titik impas (break-even point) dalam 2-3 tahun. Setelah itu, Anda menikmati penerangan gratis sepenuhnya.
+    `,
+    author: "Tim Riset Niscahya"
+  },
+  {
+    id: 11,
+    title: "Apakah Lampu Solar Cocok untuk Rumah? Ini Penjelasannya",
+    date: "April 21, 2026",
+    category: "Edukasi",
+    image: "/blog3.jpg",
+    excerpt: "Tenaga surya bukan hanya untuk jalan raya. Pelajari bagaimana sistem solar dapat diaplikasikan untuk hunian pribadi Anda.",
+    content: `
+      Banyak yang mengira panel surya hanya untuk proyek pemerintah atau jalan raya. Faktanya, tren Solar Home System (SHS) kini sangat populer untuk hunian modern.
+
+      Kenapa Rumah Anda Butuh Lampu Solar?
+      1. Penerangan Taman & Keamanan: Lampu dinding atau lampu taman tenaga surya otomatis menyala saat malam, menjaga rumah tetap terang tanpa menambah beban listrik.
+      2. Cadangan Saat Mati Lampu: Saat pemadaman listrik, sistem solar rumah Anda tetap beroperasi secara mandiri.
+      3. Estetika Hunian: Tanpa kabel yang malang melintang, taman dan fasad rumah terlihat lebih bersih dan modern.
+      4. Kontribusi Lingkungan: Mengurangi jejak karbon keluarga Anda dengan menggunakan energi bersih.
+
+      Untuk rumah, Anda bisa memulai dengan lampu dinding sensor gerak atau lampu taman dekoratif yang tidak memerlukan instalasi kabel sama sekali.
+    `,
+    author: "Product Specialist"
   }
 ];
