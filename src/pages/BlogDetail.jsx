@@ -112,8 +112,6 @@ const BlogDetail = () => {
                 )
               ))}
             </div>
-            
-
           </div>
         </div>
 
