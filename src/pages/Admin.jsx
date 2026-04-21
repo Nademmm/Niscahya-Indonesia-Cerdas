@@ -298,7 +298,6 @@ const Admin = () => {
               Masuk
             </button>
           </form>
-          <p className="mt-4 text-center text-sm text-text-secondary">Bawaan: admin / admin123</p>
         </motion.div>
       </div>
     );
