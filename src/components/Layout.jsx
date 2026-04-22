@@ -15,6 +15,7 @@ const navLinks = [
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { searchQuery, setSearchQuery } = useApp();
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const location = useLocation();
@@ -45,17 +46,56 @@ const Navbar = () => {
     }
   };
 
+  const toggleMobileSearch = () => {
+    setMobileSearchOpen(!mobileSearchOpen);
+    if (mobileMenuOpen) setMobileMenuOpen(false);
+  };
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4 sm:px-6 py-4 ${
       scrolled ? 'lg:py-4' : 'lg:py-8'
     }`}>
-      <div className={`max-w-7xl mx-auto glass rounded-4xl px-6 py-3 flex items-center justify-between transition-all duration-500 ${
+      <div className={`max-w-7xl mx-auto glass rounded-4xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all duration-500 ${
         scrolled ? 'shadow-2xl shadow-primary/10 border-black/5' : 'bg-transparent border-transparent'
       }`}>
-        <Link to="/" className="flex items-center gap-3 group">
-          <img src="src/assets/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
-          <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya</span>
-        </Link>
+        {/* Logo - hides when mobile search is open */}
+        <AnimatePresence mode="wait">
+          {!mobileSearchOpen ? (
+            <motion.div
+              key="logo"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Link to="/" className="flex items-center gap-3 group">
+                <img src="src/assets/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
+                <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya</span>
+              </Link>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="mobile-search"
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: '100%' }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="flex-1 lg:hidden mr-2"
+            >
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-primary/30 rounded-2xl group focus-within:border-primary/50 transition-all">
+                <i className="bx bx-search text-xl text-primary"></i>
+                <input 
+                  type="text" 
+                  placeholder="Cari produk atau unit..."
+                  value={localSearch}
+                  onChange={handleSearch}
+                  autoFocus
+                  className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-full text-sm font-bold"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-1 bg-black/5 rounded-2xl p-1 border border-black/5">
@@ -74,7 +114,8 @@ const Navbar = () => {
           ))}
         </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Desktop Search Bar */}
             <div className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-black/5 border border-black/10 rounded-2xl text-sm font-bold group focus-within:border-primary/50 transition-all">
               <i className="bx bx-search text-xl text-text-secondary group-focus-within:text-primary"></i>
               <input 
@@ -85,9 +126,23 @@ const Navbar = () => {
                 className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-32 md:w-48"
               />
             </div>
+            {/* Mobile Search Icon Button */}
             <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2.5 bg-black/5 text-text-main rounded-2xl border border-black/10"
+              onClick={toggleMobileSearch}
+              className={`sm:hidden p-2.5 rounded-2xl border transition-all duration-300 ${
+                mobileSearchOpen 
+                  ? 'bg-primary text-background border-primary shadow-lg shadow-primary/20'
+                  : 'bg-black/5 text-text-main border-black/10 hover:bg-black/10'
+              }`}
+            >
+              <i className={`bx ${mobileSearchOpen ? 'bx-x' : 'bx-search'} text-xl`}></i>
+            </button>
+            <button 
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen);
+                if (mobileSearchOpen) setMobileSearchOpen(false);
+              }}
+              className="lg:hidden p-2.5 bg-black/5 text-text-main rounded-2xl border border-black/10 hover:bg-black/10 transition-all"
             >
               <i className={`bx ${mobileMenuOpen ? 'bx-x' : 'bx-menu-alt-right'} text-2xl`}
             ></i>
@@ -104,6 +159,7 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -20 }}
             className="fixed inset-0 bg-background/95 backdrop-blur-2xl z-[-1] lg:hidden flex flex-col items-center justify-center gap-8"
           >
+
             {navLinks.map((link) => (
               <Link
                 key={link.name}
