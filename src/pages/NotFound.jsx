@@ -14,13 +14,6 @@ const NotFound = () => {
           404
         </motion.h1>
         <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-dashed border-primary/30 rounded-full flex items-center justify-center"
-          >
-            <i className="bx bx-error-alt text-5xl text-primary"></i>
-          </motion.div>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">Sistem Offline.</h2>
         </div>
       </div>
@@ -31,7 +24,7 @@ const NotFound = () => {
 
       <Link
         to="/"
-        className="px-12 py-6 bg-primary text-background font-black text-2xl rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-primary/20 group"
+        className="px-5 py-5 bg-primary text-background font-black text-2xl rounded-2xl hover:scale-105 transition-all shadow-2xl "
       >
         <span className="flex items-center gap-3">
           <i className="bx bx-left-arrow-alt text-3xl group-hover:-translate-x-2 transition-transform"></i>

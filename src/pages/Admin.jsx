@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 const Admin = () => {
   const { searchQuery } = useApp();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -117,10 +117,10 @@ const Admin = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch('/api/admin-auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
       });
       const data = await res.json();
       if (data.success) {
@@ -280,22 +280,31 @@ const Admin = () => {
           <h2 className="text-3xl font-black mb-6">Login Admin</h2>
           {error && <p className="text-red-500 mb-4 font-medium">{error}</p>}
           <form onSubmit={handleLogin} className="space-y-4">
-            <input 
-              type="text" 
-              placeholder="Nama Pengguna" 
-              className="w-full p-4 rounded-2xl bg-black/5 border border-black/5 focus:border-secondary outline-none transition-all"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <input 
-              type="password" 
-              placeholder="Kata Sandi" 
-              className="w-full p-4 rounded-2xl bg-black/5 border border-black/5 focus:border-secondary outline-none transition-all"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div>
+              <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Email Admin</label>
+              <input 
+                type="email" 
+                className="w-full p-4 rounded-2xl bg-black/5 border border-black/5 focus:border-secondary outline-none transition-all"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Kata Sandi</label>
+              <input 
+                type="password"
+                placeholder="••••••••" 
+                className="w-full p-4 rounded-2xl bg-black/5 border border-black/5 focus:border-secondary outline-none transition-all"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
             <button className="w-full py-4 bg-secondary text-white rounded-2xl font-bold shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all">
-              Masuk
+              Login
             </button>
           </form>
         </motion.div>

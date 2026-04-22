@@ -283,14 +283,54 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
-// Admin login (simple placeholder)
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
-  // Simple hardcoded admin credentials
-  if (username === 'admin' && password === 'admin123') {
-    res.json({ success: true, token: 'fake-jwt-token' });
+// Rate limiting sederhana untuk mencegah brute force
+const loginAttempts = new Map();
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 menit
+
+// Admin login
+app.post('/api/admin-auth', (req, res) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+
+  // Cek apakah IP sedang di-lockout
+  if (loginAttempts.has(ip)) {
+    const attempts = loginAttempts.get(ip);
+    if (attempts.count >= MAX_ATTEMPTS) {
+      const timeLeft = Math.ceil((attempts.lastAttempt + LOCKOUT_DURATION - now) / 60000);
+      if (now - attempts.lastAttempt < LOCKOUT_DURATION) {
+        return res.status(429).json({
+          success: false,
+          message: `Terlalu banyak percobaan login. Coba lagi dalam ${timeLeft} menit.`
+        });
+      } else {
+        // Reset setelah lockout habis
+        loginAttempts.delete(ip);
+      }
+    }
+  }
+
+  const { email, password } = req.body;
+  const ADMIN_EMAIL = 'admin@niscahya.id';
+  const ADMIN_PASSWORD = 'n1scahya';
+
+  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    // Reset attempts setelah login berhasil
+    loginAttempts.delete(ip);
+    res.json({ success: true, token: 'nsc-auth-' + Date.now() });
   } else {
-    res.status(401).json({ success: false, message: 'Invalid credentials' });
+    // Catat percobaan gagal
+    const attempts = loginAttempts.get(ip) || { count: 0, lastAttempt: 0 };
+    attempts.count += 1;
+    attempts.lastAttempt = now;
+    loginAttempts.set(ip, attempts);
+
+    const remaining = MAX_ATTEMPTS - attempts.count;
+    const msg = remaining > 0
+      ? `Email atau kata sandi salah. Sisa percobaan: ${remaining}`
+      : 'Akun dikunci sementara. Coba lagi dalam 15 menit.';
+
+    res.status(401).json({ success: false, message: msg });
   }
 });
 

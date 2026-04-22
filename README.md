@@ -86,4 +86,10 @@ Atau jalankan secara terpisah:
 └── setup-db.js         # Script Inisialisasi Database
 ```
 
+## Cara ke admin panel
+```
+Email: admin@niscahya.id
+Password: n1scahya
+```
+
 © 2026 **CV NISCAHYA INDONESIA CERDAS**. Semua Sistem Beroperasi.
