@@ -5,13 +5,15 @@ import { blogPosts } from '../data/blog';
 import { updateSEO } from '../utils/seo';
 
 const BlogDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
-  const post = blogPosts.find(p => p.id === parseInt(id));
+  const post = blogPosts.find(p => p.slug === slug) || blogPosts.find(p => p.id === parseInt(slug));
 
   useEffect(() => {
     if (!post) {
       navigate('/blog');
+    } else if (post.slug !== slug) {
+      navigate(`/blog/${post.slug}`, { replace: true });
     } else {
       updateSEO({
         title: post.title,
@@ -103,10 +105,10 @@ const BlogDetail = () => {
           <div className="glass p-6 md:p-10 rounded-3xl md:rounded-[48px] border-black/5 space-y-6 md:space-y-8 sticky top-32">
             <h3 className="text-lg md:text-xl font-black uppercase tracking-tighter">Artikel Terkait</h3>
             <div className="space-y-6 md:space-y-8">
-              {blogPosts.filter(p => p.id !== post.id).slice(0, 3).map(related => (
+              {blogPosts.filter(p => p.slug !== post.slug).slice(0, 3).map(related => (
                 <Link 
                   key={related.id} 
-                  to={`/blog/${related.id}`}
+                  to={`/blog/${related.slug}`}
                   className="group flex gap-4"
                 >
                   <div className="w-20 h-20 md:w-24 md:h-24 shrink-0 rounded-xl md:rounded-2xl overflow-hidden bg-black/5">

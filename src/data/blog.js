@@ -1,4 +1,10 @@
-export const blogPosts = [
+const slugify = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+const rawBlogPosts = [
   {
     id: 5,
     title: "Harga Lampu Jalan Tenaga Surya 2025: Simak Dahulu Sebelum Membeli",
@@ -257,3 +263,10 @@ export const blogPosts = [
     author: "Product Specialist"
   }
 ];
+
+export const blogPosts = rawBlogPosts.map((post) => ({
+  ...post,
+  slug: slugify(post.title)
+}));
+
+export { slugify };

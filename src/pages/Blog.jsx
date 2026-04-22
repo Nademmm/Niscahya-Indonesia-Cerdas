@@ -77,7 +77,7 @@ const Blog = () => {
             transition={{ delay: 0.4 + idx * 0.1 }}
             className="group glass rounded-[48px] overflow-hidden border-black/5 hover:border-primary/20 transition-all flex flex-col h-full"
           >
-            <Link to={`/blog/${post.id}`} className="relative aspect-video overflow-hidden block">
+              <Link to={`/blog/${post.slug}`} className="relative aspect-video overflow-hidden block">
               <img 
                 src={post.image} 
                 alt={post.title} 
@@ -97,7 +97,7 @@ const Blog = () => {
                 <span>Oleh {post.author}</span>
               </div>
               
-              <Link to={`/blog/${post.id}`}>
+              <Link to={`/blog/${post.slug}`}>
                 <h2 className="text-2xl md:text-3xl font-black tracking-tighter uppercase leading-[1.1] group-hover:text-primary transition-colors line-clamp-2">
                   {post.title}
                 </h2>
@@ -109,7 +109,7 @@ const Blog = () => {
               
               <div className="pt-6 mt-auto">
                 <Link 
-                  to={`/blog/${post.id}`}
+                    to={`/blog/${post.slug}`}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-lg shadow-primary/20"
                 >
                   Baca Selengkapnya

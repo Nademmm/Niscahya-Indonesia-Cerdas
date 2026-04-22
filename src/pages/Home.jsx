@@ -12,17 +12,17 @@ const HeroSlider = () => {
   const slides = [
     {
       id: 1,
-      image: "/hero-1.png",
+      image: "src/assets/hero-1.png",
       title: "Infrastruktur PJU Tenaga Surya Terintegrasi"
     },
     {
       id: 2,
-      image: "/hero-2.png",
+      image: "src/assets/hero-2.png",
       title: "Unit Unggulan All In One Series"
     },
     {
       id: 3,
-      image: "/hero-3.png",
+      image: "src/assets/hero-3.png",
       title: "Solusi Energi Terbarukan Berkelanjutan"
     }
   ];
@@ -312,7 +312,7 @@ const Home = () => {
               transition={{ delay: i * 0.1 }}
               className="min-w-70 w-[80vw] md:w-auto snap-center group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col shrink-0"
             >
-              <Link to={`/blog/${post.id}`} className="relative aspect-video overflow-hidden block">
+              <Link to={`/blog/${post.slug}`} className="relative aspect-video overflow-hidden block">
                 <img 
                   src={post.image} 
                   alt={post.title} 
@@ -326,7 +326,7 @@ const Home = () => {
               </Link>
               <div className="p-8 space-y-4 grow flex flex-col">
                 <p className="text-[9px] font-black text-text-secondary uppercase tracking-widest">{post.date}</p>
-                <Link to={`/blog/${post.id}`}>
+                <Link to={`/blog/${post.slug}`}>
                   <h3 className="text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
@@ -336,7 +336,7 @@ const Home = () => {
                 </p>
                 <div className="pt-4">
                   <Link 
-                    to={`/blog/${post.id}`}
+                    to={`/blog/${post.slug}`}
                     className="text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all"
                   >
                     Baca Selengkapnya <i className="bx bx-right-arrow-alt text-lg"></i>

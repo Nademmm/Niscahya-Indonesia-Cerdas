@@ -53,7 +53,7 @@ const Navbar = () => {
         scrolled ? 'shadow-2xl shadow-primary/10 border-black/5' : 'bg-transparent border-transparent'
       }`}>
         <Link to="/" className="flex items-center gap-3 group">
-          <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
+          <img src="src/assets/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
           <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya</span>
         </Link>
 
@@ -165,7 +165,7 @@ const Layout = ({ children }) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
           <div className="col-span-1 md:col-span-2 space-y-8">
             <Link to="/" className="flex items-center gap-4 group">
-              <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-14 h-14 object-contain" />
+              <img src="src/assets/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-14 h-14 object-contain" />
               <div className="flex flex-col">
                 <span className="text-3xl font-black tracking-tighter text-text-main uppercase leading-none">Niscahya</span>
                 <span className="text-sm font-black tracking-[0.3em] text-primary uppercase mt-1">Indonesia Cerdas</span>
@@ -235,7 +235,7 @@ const Layout = ({ children }) => {
                     backgroundColor: "#f0fdf4",
                     textColor: "#064e3b",
                     showAvatar: true,
-                    avatarSrc: "/logo.png",
+                    avatarSrc: "src/assets/logo.png",
                 },
                 userMessage: {
                     backgroundColor: "#10b981",
