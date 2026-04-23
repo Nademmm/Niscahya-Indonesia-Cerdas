@@ -55,7 +55,7 @@ npm install
     npm run server
     ```
 
-## 🏃 Cara Menjalankan Aplikasi
+## Cara Menjalankan Aplikasi
 
 Anda bisa menjalankan frontend dan backend secara bersamaan dengan satu perintah:
 
@@ -69,7 +69,7 @@ Atau jalankan secara terpisah:
 
 ---
 
-## 📂 Struktur Folder Utama
+## Struktur Folder Utama
 
 ```text
 ├── public/             # Aset statis (Logo, Gambar Hero)
