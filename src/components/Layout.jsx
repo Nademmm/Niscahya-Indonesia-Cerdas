@@ -129,7 +129,7 @@ const Navbar = () => {
             {/* Mobile Search Icon Button */}
             <button 
               onClick={toggleMobileSearch}
-              className={`sm:hidden p-2.5 rounded-2xl border transition-all duration-300 ${
+              className={`sm:hidden px-2.5 pt-[13px] pb-[13px] w-[45px] h-[48px] rounded-2xl border transition-all duration-300 ${
                 mobileSearchOpen 
                   ? 'bg-primary text-background border-primary shadow-lg shadow-primary/20'
                   : 'bg-black/5 text-text-main border-black/10 hover:bg-black/10'

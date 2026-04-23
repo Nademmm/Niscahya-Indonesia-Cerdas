@@ -48,7 +48,7 @@ const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
             <i className="bx bx-ghost text-5xl text-text-secondary"></i>
           </div>
           <div className="space-y-2">
-            <h3 className="text-4xl font-black uppercase tracking-tighter">Sistem Kosong</h3>
+            <h3 className="text-3xl font-black uppercase tracking-tighter">Tidak Ditemukan.</h3>
             <p className="text-text-secondary font-medium tracking-tight">Tidak ada produk ditemukan untuk "{searchQuery}"</p>
           </div>
           <button 
