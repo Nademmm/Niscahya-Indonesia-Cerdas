@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { updateSEO } from '../utils/seo';
 
 export const meta = () => {
   return [
@@ -46,13 +45,7 @@ const PageHero = ({ title, subtitle, icon }) => (
 );
 
 export default function AboutPage() {
-  useEffect(() => {
-    updateSEO({
-      title: 'Cerita Kami',
-      description: 'Mengenal CV Niscahya Indonesia Cerdas, penggerak utama transformasi energi terbarukan di Indonesia melalui penyediaan infrastruktur PJU tenaga surya yang inovatif.',
-      keywords: 'profil niscahya indonesia cerdas, visi misi niscahya, distributor pju tenaga surya, energi terbarukan indonesia'
-    });
-  }, []);
+
 
   return (
     <div className="space-y-10 md:space-y-16">

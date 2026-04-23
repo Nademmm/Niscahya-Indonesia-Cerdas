@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams, Link, useLoaderData } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
-import { updateSEO } from '../utils/seo';
 
 export const meta = ({ data }) => {
   if (!data || !data.product) {
@@ -29,35 +28,46 @@ const normalizeImageList = (value) => {
   try {
     const parsed = JSON.parse(trimmed);
     if (Array.isArray(parsed)) return parsed;
-  } catch (_err) {
+  } catch {
     // Fallback for comma-separated legacy values.
   }
 
   return trimmed.split(',');
 };
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
   const { slug } = params;
+  const canonicalUrl = request.url;
   try {
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    const productUrl = `${baseUrl}/api/products/${slug}`;
+    const productsUrl = `${baseUrl}/api/products`;
+
     const [prodRes, allRes] = await Promise.all([
-      fetch(`http://localhost:3000/api/products/${slug}`),
-      fetch('http://localhost:3000/api/products')
+      fetch(productUrl, { timeout: 5000 }),
+      fetch(productsUrl, { timeout: 5000 })
     ]);
 
     if (prodRes.ok) {
       const product = await prodRes.json();
       const allProducts = allRes.ok ? await allRes.json() : [];
-      return { product, allProducts: Array.isArray(allProducts) ? allProducts : [] };
+      return { product, allProducts: Array.isArray(allProducts) ? allProducts : [], canonicalUrl };
     }
-    return { product: null, allProducts: [] };
-  } catch (e) {
-    return { product: null, allProducts: [] };
+    return { product: null, allProducts: [], canonicalUrl };
+  } catch (error) {
+    console.error('ProductDetail loader error:', error);
+    return { product: null, allProducts: [], canonicalUrl };
   }
 };
 
 const ProductDetail = () => {
   const { slug } = useParams();
-  const { product: initialProduct, allProducts: initialAllProducts } = useLoaderData() || { product: null, allProducts: [] };
+  const {
+    product: initialProduct,
+    allProducts: initialAllProducts,
+    canonicalUrl: initialCanonicalUrl
+  } = useLoaderData() || { product: null, allProducts: [], canonicalUrl: '' };
   const [product, setProduct] = useState(initialProduct);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(!initialProduct);
@@ -84,7 +94,7 @@ const ProductDetail = () => {
         setRelatedProducts([...sameCategory, ...differentCategory].slice(0, 4));
       }
     }
-  }, [product, initialAllProducts]);
+  }, [product, initialAllProducts, selectedImage]);
 
   useEffect(() => {
     if (initialProduct) {
@@ -228,6 +238,8 @@ const ProductDetail = () => {
 
   const displayedImage = selectedImage || allImages[0] || '';
 
+  const canonicalUrl = typeof window !== 'undefined' ? window.location.href : initialCanonicalUrl;
+
   const jsonLd = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -240,7 +252,7 @@ const ProductDetail = () => {
     },
     "offers": {
       "@type": "Offer",
-      "url": window.location.href,
+      "url": canonicalUrl,
       "priceCurrency": "IDR",
       "price": product.price || "0",
       "availability": "https://schema.org/InStock"

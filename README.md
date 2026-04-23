@@ -81,7 +81,7 @@ Atau jalankan secara terpisah:
 │   ├── components/     # Komponen UI (Navbar, Footer, Card)
 │   ├── context/        # State Management (AppContext)
 │   ├── pages/          # Halaman Web (Home, Admin, Products)
-│   └── App.jsx         # Routing Utama
+│   └── root.tsx        # Root Layout + Routing SSR
 ├── .env                # Konfigurasi Database (LOKAL)
 └── setup-db.js         # Script Inisialisasi Database
 ```

@@ -15,6 +15,11 @@ const PORT = process.env.PORT || 3000;
 
 app.use(compression());
 app.use(express.json());
+app.use("/assets", express.static(path.join(root, "build/client/assets"), {
+  maxAge: "1h",
+  immutable: true,
+  fallthrough: false,
+}));
 app.use(express.static(path.join(root, "build/client"), { maxAge: "1h" }));
 app.use("/uploads", express.static(path.join(root, "server/uploads")));
 

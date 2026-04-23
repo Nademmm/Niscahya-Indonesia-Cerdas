@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { updateSEO } from '../utils/seo';
 
 export const meta = () => {
   return [
@@ -46,14 +45,6 @@ const PageHero = ({ title, subtitle, icon }) => (
 );
 
 export default function ContactPage() {
-  useEffect(() => {
-    updateSEO({
-      title: 'Hubungi Kami',
-      description: 'Hubungi CV Niscahya Indonesia Cerdas untuk konsultasi PJU tenaga surya, penawaran proyek, dan kerjasama resmi. Marketing office Sidoarjo, Jawa Timur.',
-      keywords: 'kontak niscahya, pju surabaya, pju sidoarjo, konsultasi pju tenaga surya, alamat niscahya indonesia cerdas'
-    });
-  }, []);
-
   return (
     <div className="space-y-12 md:space-y-16">
       <PageHero 

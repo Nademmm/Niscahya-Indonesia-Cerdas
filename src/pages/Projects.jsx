@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { updateSEO } from '../utils/seo';
 
 export const meta = () => {
   return [
@@ -46,14 +45,6 @@ const PageHero = ({ title, subtitle, icon }) => (
 );
 
 export default function ProjectsPage() {
-  useEffect(() => {
-    updateSEO({
-      title: 'Galeri Projek PJU Tenaga Surya',
-      description: 'Lihat dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia. Bukti kualitas dan kepercayaan mitra kami.',
-      keywords: 'proyek pju tenaga surya, galeri pju solar panel, portofolio niscahya, instalasi lampu jalan tenaga surya'
-    });
-  }, []);
-
   return (
     <div className="space-y-12 md:space-y-16">
       <PageHero 

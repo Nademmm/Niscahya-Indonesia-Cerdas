@@ -125,14 +125,18 @@ const HeroSlider = () => {
   );
 };
 
-export const loader = async () => {
+export const loader = async ({ request }) => {
   try {
-    // In SSR, we might want to fetch directly from DB if possible, 
-    // but for now we'll use the API endpoint which is local
-    const res = await fetch('http://localhost:3000/api/products');
+    const url = new URL(request.url);
+    const apiUrl = `${url.protocol}//${url.host}/api/products`;
+    
+    const res = await fetch(apiUrl, { timeout: 5000 });
+    if (!res.ok) throw new Error(`API responded with ${res.status}`);
+    
     const products = await res.json();
     return { products: Array.isArray(products) ? products : [] };
-  } catch (e) {
+  } catch (error) {
+    console.error('Home loader error:', error);
     return { products: [] };
   }
 };

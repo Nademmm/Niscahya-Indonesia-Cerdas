@@ -1,9 +1,8 @@
-import { useState, useMemo, useEffect, memo, useRef } from 'react';
+import { useState, useEffect, useMemo, memo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useLoaderData } from 'react-router';
 import ProductCard from '../components/ProductCard';
 import { useApp } from '../context/AppContext';
-import { updateSEO } from '../utils/seo';
 
 export const meta = () => {
   return [
@@ -110,26 +109,25 @@ const fuzzyMatch = (text, query) => {
   });
 };
 
-export const loader = async () => {
+export const loader = async ({ request }) => {
   try {
-    const res = await fetch('http://localhost:3000/api/products');
+    // During SSR, construct absolute URL properly
+    const url = new URL(request.url);
+    const apiUrl = `${url.protocol}//${url.host}/api/products`;
+    
+    const res = await fetch(apiUrl, { timeout: 5000 });
+    if (!res.ok) throw new Error(`API responded with ${res.status}`);
+    
     const products = await res.json();
     return { products: Array.isArray(products) ? products : [] };
-  } catch (e) {
+  } catch (error) {
+    console.error('Products loader error:', error);
     return { products: [] };
   }
 };
 
 const Products = () => {
   const { products: initialProducts } = useLoaderData() || { products: [] };
-
-  useEffect(() => {
-    updateSEO({
-      title: 'Katalog Produk Lampu PJU & Solar Panel',
-      description: 'Jelajahi katalog lengkap lampu PJU tenaga surya, solar panel, baterai lithium, dan aksesori energi terbarukan di Niscahya Indonesia Cerdas. Solusi infrastruktur hemat energi.',
-      keywords: 'katalog pju tenaga surya, jual lampu pju solar cell, harga paket pju tenaga surya, distributor lampu pju surabaya, baterai lithium pju, panel surya industri'
-    });
-  }, []);
 
   const { searchQuery, setSearchQuery } = useApp();
   const location = useLocation();

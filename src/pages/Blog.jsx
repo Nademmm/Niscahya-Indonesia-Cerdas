@@ -1,18 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { blogPosts } from '../data/blog';
-import { updateSEO } from '../utils/seo';
+
+export const meta = () => {
+  const title = 'Wawasan & Edukasi Energi Terbarukan | Niscahya Indonesia Cerdas';
+  const description = 'Dapatkan informasi terbaru mengenai teknologi panel surya, panduan harga lampu jalan, dan tips perawatan energi terbarukan di Blog Niscahya Indonesia Cerdas.';
+  return [
+    { title },
+    { name: 'description', content: description },
+    { name: 'keywords', content: 'blog energi terbarukan, tips lampu pju, teknologi solar panel terbaru, panduan hemat energi, niscahya indonesia cerdas' },
+    { property: 'og:title', content: title },
+    { property: 'og:description', content: description },
+    { property: 'og:type', content: 'website' },
+    { property: 'twitter:card', content: 'summary_large_image' },
+    { property: 'twitter:title', content: title },
+    { property: 'twitter:description', content: description },
+  ];
+};
 
 const Blog = () => {
-  useEffect(() => {
-    updateSEO({
-      title: 'Wawasan & Edukasi Energi Terbarukan',
-      description: 'Dapatkan informasi terbaru mengenai teknologi panel surya, panduan harga lampu jalan 2025, dan tips perawatan energi terbarukan di Blog Niscahya Indonesia Cerdas.',
-      keywords: 'blog energi terbarukan, tips lampu pju, teknologi solar panel terbaru, panduan hemat energi, niscahya indonesia cerdas'
-    });
-  }, []);
-
   const [activeCategory, setActiveCategory] = useState('Semua');
   const categories = ['Semua', ...new Set(blogPosts.map(post => post.category))];
 

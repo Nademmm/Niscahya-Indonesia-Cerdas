@@ -2,7 +2,35 @@ import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import { blogPosts } from '../data/blog';
-import { updateSEO } from '../utils/seo';
+
+export const meta = ({ params }) => {
+  const slug = params?.slug;
+  const post = blogPosts.find((p) => p.slug === slug) || blogPosts.find((p) => p.id === Number(slug));
+
+  if (!post) {
+    return [
+      { title: 'Blog Tidak Ditemukan | Niscahya Indonesia Cerdas' },
+      { name: 'robots', content: 'noindex, follow' },
+    ];
+  }
+
+  const title = `${post.title} | Blog Niscahya Indonesia Cerdas`;
+  const description = post.excerpt;
+
+  return [
+    { title },
+    { name: 'description', content: description },
+    { name: 'keywords', content: `${post.title}, ${post.category}, edukasi pju tenaga surya, tips solar panel, niscahya blog` },
+    { property: 'og:title', content: title },
+    { property: 'og:description', content: description },
+    { property: 'og:type', content: 'article' },
+    { property: 'og:image', content: post.image || '/og-image.png' },
+    { property: 'twitter:card', content: 'summary_large_image' },
+    { property: 'twitter:title', content: title },
+    { property: 'twitter:description', content: description },
+    { property: 'twitter:image', content: post.image || '/og-image.png' },
+  ];
+};
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -14,16 +42,8 @@ const BlogDetail = () => {
       navigate('/blog');
     } else if (post.slug !== slug) {
       navigate(`/blog/${post.slug}`, { replace: true });
-    } else {
-      updateSEO({
-        title: post.title,
-        description: post.excerpt,
-        keywords: `${post.title}, ${post.category}, edukasi pju tenaga surya, tips solar panel, niscahya blog`,
-        image: post.image,
-        type: 'article'
-      });
     }
-  }, [post, navigate]);
+  }, [post, navigate, slug]);
 
   if (!post) return null;
 

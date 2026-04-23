@@ -1,6 +1,6 @@
 import { PassThrough } from "node:stream";
 import { createReadableStreamFromReadable } from "@react-router/node";
-import { Link, Links, Meta, Outlet, Scripts, ScrollRestoration, ServerRouter, UNSAFE_withComponentProps, UNSAFE_withErrorBoundaryProps, isRouteErrorResponse, useLocation, useNavigate, useParams } from "react-router";
+import { Link, Links, Meta, Outlet, Scripts, ScrollRestoration, ServerRouter, UNSAFE_withComponentProps, UNSAFE_withErrorBoundaryProps, isRouteErrorResponse, useLoaderData, useLocation, useNavigate, useParams } from "react-router";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { jsx, jsxs } from "react/jsx-runtime";
@@ -859,7 +859,8 @@ var blogPosts = [
 /**
 * Utility untuk mengelola SEO Meta Tags secara dinamis
 */
-var updateSEO = ({ title, description, keywords, image = "/og-image.png", type = "website" }) => {
+var updateSEO$1 = ({ title, description, keywords, image = "/og-image.png", type = "website" }) => {
+	if (typeof window === "undefined") return;
 	const siteName = "Niscahya Indonesia Cerdas";
 	const fullTitle = title ? `${title} | ${siteName}` : siteName;
 	const url = window.location.href;
@@ -897,7 +898,40 @@ var updateSEO = ({ title, description, keywords, image = "/og-image.png", type =
 };
 //#endregion
 //#region src/pages/Home.jsx
-var Home_exports = /* @__PURE__ */ __exportAll({ default: () => Home_default });
+var Home_exports = /* @__PURE__ */ __exportAll({
+	default: () => Home_default,
+	loader: () => loader$2,
+	meta: () => meta$7
+});
+var meta$7 = () => {
+	return [
+		{ title: "Distributor Lampu PJU Tenaga Surya Terbaik 2026 | Niscahya Indonesia Cerdas" },
+		{
+			name: "description",
+			content: "Distributor resmi Lampu PJU Tenaga Surya (Solar Street Light) berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif dan garansi terjamin."
+		},
+		{
+			name: "keywords",
+			content: "lampu pju tenaga surya, solar street light indonesia, harga lampu jalan tenaga surya, distributor solar panel surabaya, pju all in one, pju two in one, energi terbarukan indonesia, niscahya indonesia cerdas"
+		},
+		{
+			property: "og:title",
+			content: "Distributor Lampu PJU Tenaga Surya Terbaik 2026 | Niscahya Indonesia Cerdas"
+		},
+		{
+			property: "og:description",
+			content: "Distributor resmi Lampu PJU Tenaga Surya (Solar Street Light) berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif dan garansi terjamin."
+		},
+		{
+			property: "og:type",
+			content: "website"
+		},
+		{
+			property: "og:site_name",
+			content: "Niscahya Indonesia Cerdas"
+		}
+	];
+};
 var HeroSlider = () => {
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [direction, setDirection] = useState(0);
@@ -994,17 +1028,43 @@ var HeroSlider = () => {
 		]
 	});
 };
+var loader$2 = async ({ request }) => {
+	try {
+		const url = new URL(request.url);
+		const apiUrl = `${url.protocol}//${url.host}/api/products`;
+		const res = await fetch(apiUrl, { timeout: 5e3 });
+		if (!res.ok) throw new Error(`API responded with ${res.status}`);
+		const products = await res.json();
+		return { products: Array.isArray(products) ? products : [] };
+	} catch (error) {
+		console.error("Home loader error:", error);
+		return { products: [] };
+	}
+};
 var Home = () => {
+	const { products } = useLoaderData() || { products: [] };
 	useEffect(() => {
-		updateSEO({
+		updateSEO$1({
 			title: "Distributor Lampu PJU Tenaga Surya Terbaik 2026",
 			description: "Distributor resmi Lampu PJU Tenaga Surya (Solar Street Light) berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif dan garansi terjamin.",
 			keywords: "lampu pju tenaga surya, solar street light indonesia, harga lampu jalan tenaga surya, distributor solar panel surabaya, pju all in one, pju two in one, energi terbarukan indonesia, niscahya indonesia cerdas"
 		});
 	}, []);
 	const [featuredProducts, setFeaturedProducts] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(!products.length);
 	useEffect(() => {
+		if (products.length > 0) {
+			const targetIds = [
+				32,
+				77,
+				83,
+				80
+			];
+			const filtered = products.filter((p) => targetIds.includes(p.id)).sort((a, b) => targetIds.indexOf(a.id) - targetIds.indexOf(b.id));
+			setFeaturedProducts(filtered.length > 0 ? filtered : products.slice(0, 4));
+			setLoading(false);
+			return;
+		}
 		const fetchProducts = async () => {
 			try {
 				const data = await (await fetch("/api/products")).json();
@@ -1028,7 +1088,7 @@ var Home = () => {
 			}
 		};
 		fetchProducts();
-	}, []);
+	}, [products]);
 	const stats = [
 		{
 			label: "Proyek Selesai",
@@ -1449,7 +1509,32 @@ var Home = () => {
 var Home_default = UNSAFE_withComponentProps(Home);
 //#endregion
 //#region src/pages/Products.jsx
-var Products_exports = /* @__PURE__ */ __exportAll({ default: () => Products_default });
+var Products_exports = /* @__PURE__ */ __exportAll({
+	default: () => Products_default,
+	loader: () => loader$1,
+	meta: () => meta$6
+});
+var meta$6 = () => {
+	return [
+		{ title: "Solusi PJU Tenaga Surya Terdepan | Niscahya Indonesia Cerdas" },
+		{
+			name: "description",
+			content: "Katalog perangkat PJU Tenaga Surya standar industri. Solusi infrastruktur dengan durabilitas tinggi dan efisiensi energi teruji untuk berbagai kebutuhan proyek Anda."
+		},
+		{
+			name: "keywords",
+			content: "jual pju tenaga surya, katalog pju solar cell, pju all in one, pju two in one, lampu jalan tenaga surya surabaya, niscahya indonesia cerdas"
+		},
+		{
+			property: "og:title",
+			content: "Solusi PJU Tenaga Surya Terdepan | Niscahya Indonesia Cerdas"
+		},
+		{
+			property: "og:description",
+			content: "Katalog perangkat PJU Tenaga Surya standar industri. Solusi infrastruktur dengan durabilitas tinggi dan efisiensi energi teruji untuk berbagai kebutuhan proyek Anda."
+		}
+	];
+};
 var categoryStructure = {
 	"PJU Tenaga Surya": [
 		"All In One",
@@ -1531,20 +1616,27 @@ var fuzzyMatch = (text, query) => {
 		return false;
 	});
 };
+var loader$1 = async ({ request }) => {
+	try {
+		const url = new URL(request.url);
+		const apiUrl = `${url.protocol}//${url.host}/api/products`;
+		const res = await fetch(apiUrl, { timeout: 5e3 });
+		if (!res.ok) throw new Error(`API responded with ${res.status}`);
+		const products = await res.json();
+		return { products: Array.isArray(products) ? products : [] };
+	} catch (error) {
+		console.error("Products loader error:", error);
+		return { products: [] };
+	}
+};
 var Products = () => {
-	useEffect(() => {
-		updateSEO({
-			title: "Katalog Produk Lampu PJU & Solar Panel",
-			description: "Jelajahi katalog lengkap lampu PJU tenaga surya, solar panel, baterai lithium, dan aksesori energi terbarukan di Niscahya Indonesia Cerdas. Solusi infrastruktur hemat energi.",
-			keywords: "katalog pju tenaga surya, jual lampu pju solar cell, harga paket pju tenaga surya, distributor lampu pju surabaya, baterai lithium pju, panel surya industri"
-		});
-	}, []);
+	const { products: initialProducts } = useLoaderData() || { products: [] };
 	const { searchQuery, setSearchQuery } = useApp();
 	const location = useLocation();
 	const [selectedCategory, setSelectedCategory] = useState("Semua");
 	const [selectedSubCategory, setSelectedSubCategory] = useState("Semua");
-	const [products, setProducts] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [products, setProducts] = useState(initialProducts);
+	const [loading, setLoading] = useState(!initialProducts.length);
 	const scrollRef = useRef(null);
 	const scroll = (direction) => {
 		if (scrollRef.current) {
@@ -1557,6 +1649,11 @@ var Products = () => {
 		}
 	};
 	useEffect(() => {
+		if (initialProducts.length > 0) {
+			setProducts(initialProducts);
+			setLoading(false);
+			return;
+		}
 		const fetchProducts = async () => {
 			try {
 				const data = await (await fetch("/api/products")).json();
@@ -1572,7 +1669,7 @@ var Products = () => {
 			}
 		};
 		fetchProducts();
-	}, []);
+	}, [initialProducts]);
 	const handleReset = () => {
 		setSelectedCategory("Semua");
 		setSelectedSubCategory("Semua");
@@ -1797,7 +1894,42 @@ var Products = () => {
 var Products_default = UNSAFE_withComponentProps(Products);
 //#endregion
 //#region src/pages/ProductDetail.jsx
-var ProductDetail_exports = /* @__PURE__ */ __exportAll({ default: () => ProductDetail_default });
+var ProductDetail_exports = /* @__PURE__ */ __exportAll({
+	default: () => ProductDetail_default,
+	loader: () => loader,
+	meta: () => meta$5
+});
+var meta$5 = ({ data }) => {
+	if (!data || !data.product) return [{ title: "Produk Tidak Ditemukan | Niscahya Indonesia Cerdas" }];
+	const { product } = data;
+	return [
+		{ title: `${product.name} | Niscahya Indonesia Cerdas` },
+		{
+			name: "description",
+			content: product.description?.substring(0, 160) || ""
+		},
+		{
+			name: "keywords",
+			content: `${product.name}, ${product.category}, jual pju tenaga surya, spesifikasi ${product.name}, harga pju solar cell`
+		},
+		{
+			property: "og:title",
+			content: product.name
+		},
+		{
+			property: "og:description",
+			content: product.description?.substring(0, 160) || ""
+		},
+		{
+			property: "og:image",
+			content: product.image || "/og-image.png"
+		},
+		{
+			property: "og:type",
+			content: "product"
+		}
+	];
+};
 var normalizeImageList = (value) => {
 	if (Array.isArray(value)) return value;
 	if (typeof value !== "string") return [];
@@ -1806,37 +1938,82 @@ var normalizeImageList = (value) => {
 	try {
 		const parsed = JSON.parse(trimmed);
 		if (Array.isArray(parsed)) return parsed;
-	} catch (_err) {}
+	} catch {}
 	return trimmed.split(",");
+};
+var loader = async ({ params, request }) => {
+	const { slug } = params;
+	const canonicalUrl = request.url;
+	try {
+		const url = new URL(request.url);
+		const baseUrl = `${url.protocol}//${url.host}`;
+		const productUrl = `${baseUrl}/api/products/${slug}`;
+		const productsUrl = `${baseUrl}/api/products`;
+		const [prodRes, allRes] = await Promise.all([fetch(productUrl, { timeout: 5e3 }), fetch(productsUrl, { timeout: 5e3 })]);
+		if (prodRes.ok) {
+			const product = await prodRes.json();
+			const allProducts = allRes.ok ? await allRes.json() : [];
+			return {
+				product,
+				allProducts: Array.isArray(allProducts) ? allProducts : [],
+				canonicalUrl
+			};
+		}
+		return {
+			product: null,
+			allProducts: [],
+			canonicalUrl
+		};
+	} catch (error) {
+		console.error("ProductDetail loader error:", error);
+		return {
+			product: null,
+			allProducts: [],
+			canonicalUrl
+		};
+	}
 };
 var ProductDetail = () => {
 	const { slug } = useParams();
-	const [product, setProduct] = useState(null);
+	const { product: initialProduct, allProducts: initialAllProducts, canonicalUrl: initialCanonicalUrl } = useLoaderData() || {
+		product: null,
+		allProducts: [],
+		canonicalUrl: ""
+	};
+	const [product, setProduct] = useState(initialProduct);
 	const [relatedProducts, setRelatedProducts] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(!initialProduct);
 	const [quantity, setQuantity] = useState(1);
-	const [selectedImage, setSelectedImage] = useState(null);
-	const renderDescription = (text) => {
-		if (!text) return null;
-		return text.split(/(\*\*.*?\*\*)/g).map((part, index) => {
-			if (part.startsWith("**") && part.endsWith("**")) return /* @__PURE__ */ jsx("strong", {
-				className: "font-black text-text-main",
-				children: part.slice(2, -2)
-			}, index);
-			return part;
-		});
-	};
-	const handleBuyNow = () => {
-		const phoneNumber = "6287853536124";
-		const message = `Halo Admin Niscahya Indonesia Cerdas
-  Saya ingin melakukan pembelian produk berikut:
-  ${product?.name || "Produk"}
-  Jumlah: ${quantity} unit
-  Silakan diproses ya. Terima kasih`;
-		const encodedMessage = encodeURIComponent(message);
-		window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
-	};
+	const [selectedImage, setSelectedImage] = useState(initialProduct?.image || null);
 	useEffect(() => {
+		if (product) {
+			const normalizedExtras = [
+				...normalizeImageList(product.images),
+				product.image2,
+				product.image3,
+				product.image4,
+				product.image5
+			].filter(Boolean);
+			const firstAvailableImage = product.image || normalizedExtras[0] || null;
+			if (!selectedImage) setSelectedImage(firstAvailableImage);
+			if (initialAllProducts.length > 0) {
+				const otherProducts = initialAllProducts.filter((p) => p.id !== product.id);
+				const sameCategory = otherProducts.filter((p) => p.category === product.category).sort(() => .5 - Math.random());
+				const differentCategory = otherProducts.filter((p) => p.category !== product.category).sort(() => .5 - Math.random());
+				setRelatedProducts([...sameCategory, ...differentCategory].slice(0, 4));
+			}
+		}
+	}, [
+		product,
+		initialAllProducts,
+		selectedImage
+	]);
+	useEffect(() => {
+		if (initialProduct) {
+			setProduct(initialProduct);
+			setLoading(false);
+			return;
+		}
 		const fetchData = async () => {
 			try {
 				const [prodRes, allRes] = await Promise.all([fetch(`/api/products/${slug}`), fetch("/api/products")]);
@@ -1854,7 +2031,7 @@ var ProductDetail = () => {
 					setSelectedImage(firstAvailableImage);
 					updateSEO({
 						title: prodData.name,
-						description: prodData.description.substring(0, 160),
+						description: prodData.description?.substring(0, 160),
 						keywords: `${prodData.name}, ${prodData.category}, jual pju tenaga surya, spesifikasi ${prodData.name}, harga pju solar cell`,
 						image: firstAvailableImage || "/og-image.png",
 						type: "product"
@@ -1873,7 +2050,7 @@ var ProductDetail = () => {
 			}
 		};
 		fetchData();
-	}, [slug]);
+	}, [slug, initialProduct]);
 	if (loading) return /* @__PURE__ */ jsxs("div", {
 		className: "flex flex-col items-center justify-center py-40 glass rounded-[64px] space-y-4",
 		children: [/* @__PURE__ */ jsx("div", { className: "w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" }), /* @__PURE__ */ jsx("p", {
@@ -1903,10 +2080,31 @@ var ProductDetail = () => {
 		product.image4,
 		product.image5
 	].filter(Boolean);
+	const renderDescription = (text) => {
+		if (!text) return null;
+		return text.split(/(\*\*.*?\*\*)/g).map((part, index) => {
+			if (part.startsWith("**") && part.endsWith("**")) return /* @__PURE__ */ jsx("strong", {
+				className: "font-black text-text-main",
+				children: part.slice(2, -2)
+			}, index);
+			return part;
+		});
+	};
+	const handleBuyNow = () => {
+		const phoneNumber = "6287853536124";
+		const message = `Halo Admin Niscahya Indonesia Cerdas
+  Saya ingin melakukan pembelian produk berikut:
+  ${product?.name || "Produk"}
+  Jumlah: ${quantity} unit
+  Silakan diproses ya. Terima kasih`;
+		const encodedMessage = encodeURIComponent(message);
+		window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
+	};
 	const allImages = [product.image, ...normalizedGalleryImages].filter((img, index, self) => img && typeof img === "string" && img.trim() !== "" && self.indexOf(img) === index);
 	const galleryImages = normalizedGalleryImages.filter((img, index, self) => img && typeof img === "string" && img.trim() !== "" && self.indexOf(img) === index);
 	const thumbnailSlots = [allImages[0] || null, ...Array.from({ length: 4 }, (_, idx) => galleryImages[idx] || null)];
 	const displayedImage = selectedImage || allImages[0] || "";
+	const canonicalUrl = typeof window !== "undefined" ? window.location.href : initialCanonicalUrl;
 	const jsonLd = {
 		"@context": "https://schema.org/",
 		"@type": "Product",
@@ -1919,7 +2117,7 @@ var ProductDetail = () => {
 		},
 		"offers": {
 			"@type": "Offer",
-			"url": window.location.href,
+			"url": canonicalUrl,
 			"priceCurrency": "IDR",
 			"price": product.price || "0",
 			"availability": "https://schema.org/InStock"
@@ -2241,15 +2439,50 @@ var ProductDetail = () => {
 var ProductDetail_default = UNSAFE_withComponentProps(ProductDetail);
 //#endregion
 //#region src/pages/Blog.jsx
-var Blog_exports = /* @__PURE__ */ __exportAll({ default: () => Blog_default });
+var Blog_exports = /* @__PURE__ */ __exportAll({
+	default: () => Blog_default,
+	meta: () => meta$4
+});
+var meta$4 = () => {
+	const title = "Wawasan & Edukasi Energi Terbarukan | Niscahya Indonesia Cerdas";
+	const description = "Dapatkan informasi terbaru mengenai teknologi panel surya, panduan harga lampu jalan, dan tips perawatan energi terbarukan di Blog Niscahya Indonesia Cerdas.";
+	return [
+		{ title },
+		{
+			name: "description",
+			content: description
+		},
+		{
+			name: "keywords",
+			content: "blog energi terbarukan, tips lampu pju, teknologi solar panel terbaru, panduan hemat energi, niscahya indonesia cerdas"
+		},
+		{
+			property: "og:title",
+			content: title
+		},
+		{
+			property: "og:description",
+			content: description
+		},
+		{
+			property: "og:type",
+			content: "website"
+		},
+		{
+			property: "twitter:card",
+			content: "summary_large_image"
+		},
+		{
+			property: "twitter:title",
+			content: title
+		},
+		{
+			property: "twitter:description",
+			content: description
+		}
+	];
+};
 var Blog = () => {
-	useEffect(() => {
-		updateSEO({
-			title: "Wawasan & Edukasi Energi Terbarukan",
-			description: "Dapatkan informasi terbaru mengenai teknologi panel surya, panduan harga lampu jalan 2025, dan tips perawatan energi terbarukan di Blog Niscahya Indonesia Cerdas.",
-			keywords: "blog energi terbarukan, tips lampu pju, teknologi solar panel terbaru, panduan hemat energi, niscahya indonesia cerdas"
-		});
-	}, []);
 	const [activeCategory, setActiveCategory] = useState("Semua");
 	const categories = ["Semua", ...new Set(blogPosts.map((post) => post.category))];
 	const sortedPosts = [...blogPosts].sort((a, b) => b.id - a.id);
@@ -2403,7 +2636,63 @@ var Blog = () => {
 var Blog_default = UNSAFE_withComponentProps(Blog);
 //#endregion
 //#region src/pages/BlogDetail.jsx
-var BlogDetail_exports = /* @__PURE__ */ __exportAll({ default: () => BlogDetail_default });
+var BlogDetail_exports = /* @__PURE__ */ __exportAll({
+	default: () => BlogDetail_default,
+	meta: () => meta$3
+});
+var meta$3 = ({ params }) => {
+	const slug = params?.slug;
+	const post = blogPosts.find((p) => p.slug === slug) || blogPosts.find((p) => p.id === Number(slug));
+	if (!post) return [{ title: "Blog Tidak Ditemukan | Niscahya Indonesia Cerdas" }, {
+		name: "robots",
+		content: "noindex, follow"
+	}];
+	const title = `${post.title} | Blog Niscahya Indonesia Cerdas`;
+	const description = post.excerpt;
+	return [
+		{ title },
+		{
+			name: "description",
+			content: description
+		},
+		{
+			name: "keywords",
+			content: `${post.title}, ${post.category}, edukasi pju tenaga surya, tips solar panel, niscahya blog`
+		},
+		{
+			property: "og:title",
+			content: title
+		},
+		{
+			property: "og:description",
+			content: description
+		},
+		{
+			property: "og:type",
+			content: "article"
+		},
+		{
+			property: "og:image",
+			content: post.image || "/og-image.png"
+		},
+		{
+			property: "twitter:card",
+			content: "summary_large_image"
+		},
+		{
+			property: "twitter:title",
+			content: title
+		},
+		{
+			property: "twitter:description",
+			content: description
+		},
+		{
+			property: "twitter:image",
+			content: post.image || "/og-image.png"
+		}
+	];
+};
 var BlogDetail = () => {
 	const { slug } = useParams();
 	const navigate = useNavigate();
@@ -2411,14 +2700,11 @@ var BlogDetail = () => {
 	useEffect(() => {
 		if (!post) navigate("/blog");
 		else if (post.slug !== slug) navigate(`/blog/${post.slug}`, { replace: true });
-		else updateSEO({
-			title: post.title,
-			description: post.excerpt,
-			keywords: `${post.title}, ${post.category}, edukasi pju tenaga surya, tips solar panel, niscahya blog`,
-			image: post.image,
-			type: "article"
-		});
-	}, [post, navigate]);
+	}, [
+		post,
+		navigate,
+		slug
+	]);
 	if (!post) return null;
 	return /* @__PURE__ */ jsxs("div", {
 		className: "space-y-12 md:space-y-16",
@@ -2546,7 +2832,23 @@ var BlogDetail = () => {
 var BlogDetail_default = UNSAFE_withComponentProps(BlogDetail);
 //#endregion
 //#region src/pages/About.jsx
-var About_exports = /* @__PURE__ */ __exportAll({ default: () => About_default });
+var About_exports = /* @__PURE__ */ __exportAll({
+	default: () => About_default,
+	meta: () => meta$2
+});
+var meta$2 = () => {
+	return [
+		{ title: "Cerita Kami | Niscahya Indonesia Cerdas" },
+		{
+			name: "description",
+			content: "Mengenal CV Niscahya Indonesia Cerdas, penggerak utama transformasi energi terbarukan di Indonesia melalui penyediaan infrastruktur PJU tenaga surya yang inovatif."
+		},
+		{
+			name: "keywords",
+			content: "profil niscahya indonesia cerdas, visi misi niscahya, distributor pju tenaga surya, energi terbarukan indonesia"
+		}
+	];
+};
 var PageHero$2 = ({ title, subtitle, icon }) => /* @__PURE__ */ jsxs("section", {
 	className: "relative pt-6 md:pt-10 pb-4 md:pb-6",
 	children: [/* @__PURE__ */ jsx(motion.div, {
@@ -2598,13 +2900,6 @@ var PageHero$2 = ({ title, subtitle, icon }) => /* @__PURE__ */ jsxs("section", 
 	})]
 });
 var About_default = UNSAFE_withComponentProps(function AboutPage() {
-	useEffect(() => {
-		updateSEO({
-			title: "Cerita Kami",
-			description: "Mengenal CV Niscahya Indonesia Cerdas, penggerak utama transformasi energi terbarukan di Indonesia melalui penyediaan infrastruktur PJU tenaga surya yang inovatif.",
-			keywords: "profil niscahya indonesia cerdas, visi misi niscahya, distributor pju tenaga surya, energi terbarukan indonesia"
-		});
-	}, []);
 	return /* @__PURE__ */ jsxs("div", {
 		className: "space-y-10 md:space-y-16",
 		children: [
@@ -2788,7 +3083,23 @@ var About_default = UNSAFE_withComponentProps(function AboutPage() {
 });
 //#endregion
 //#region src/pages/Projects.jsx
-var Projects_exports = /* @__PURE__ */ __exportAll({ default: () => Projects_default });
+var Projects_exports = /* @__PURE__ */ __exportAll({
+	default: () => Projects_default,
+	meta: () => meta$1
+});
+var meta$1 = () => {
+	return [
+		{ title: "Galeri Projek PJU Tenaga Surya | Niscahya Indonesia Cerdas" },
+		{
+			name: "description",
+			content: "Lihat dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia. Bukti kualitas dan kepercayaan mitra kami."
+		},
+		{
+			name: "keywords",
+			content: "proyek pju tenaga surya, galeri pju solar panel, portofolio niscahya, instalasi lampu jalan tenaga surya"
+		}
+	];
+};
 var PageHero$1 = ({ title, subtitle, icon }) => /* @__PURE__ */ jsxs("section", {
 	className: "relative pt-6 md:pt-10 pb-4 md:pb-6",
 	children: [/* @__PURE__ */ jsx(motion.div, {
@@ -2840,13 +3151,6 @@ var PageHero$1 = ({ title, subtitle, icon }) => /* @__PURE__ */ jsxs("section", 
 	})]
 });
 var Projects_default = UNSAFE_withComponentProps(function ProjectsPage() {
-	useEffect(() => {
-		updateSEO({
-			title: "Galeri Projek PJU Tenaga Surya",
-			description: "Lihat dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia. Bukti kualitas dan kepercayaan mitra kami.",
-			keywords: "proyek pju tenaga surya, galeri pju solar panel, portofolio niscahya, instalasi lampu jalan tenaga surya"
-		});
-	}, []);
 	return /* @__PURE__ */ jsxs("div", {
 		className: "space-y-12 md:space-y-16",
 		children: [/* @__PURE__ */ jsx(PageHero$1, {
@@ -2890,7 +3194,23 @@ var Projects_default = UNSAFE_withComponentProps(function ProjectsPage() {
 });
 //#endregion
 //#region src/pages/Contact.jsx
-var Contact_exports = /* @__PURE__ */ __exportAll({ default: () => Contact_default });
+var Contact_exports = /* @__PURE__ */ __exportAll({
+	default: () => Contact_default,
+	meta: () => meta
+});
+var meta = () => {
+	return [
+		{ title: "Hubungi Kami | Niscahya Indonesia Cerdas" },
+		{
+			name: "description",
+			content: "Hubungi CV Niscahya Indonesia Cerdas untuk konsultasi PJU tenaga surya, penawaran proyek, dan kerjasama resmi. Marketing office Sidoarjo, Jawa Timur."
+		},
+		{
+			name: "keywords",
+			content: "kontak niscahya, pju surabaya, pju sidoarjo, konsultasi pju tenaga surya, alamat niscahya indonesia cerdas"
+		}
+	];
+};
 var PageHero = ({ title, subtitle, icon }) => /* @__PURE__ */ jsxs("section", {
 	className: "relative pt-6 md:pt-10 pb-4 md:pb-6",
 	children: [/* @__PURE__ */ jsx(motion.div, {
@@ -2942,13 +3262,6 @@ var PageHero = ({ title, subtitle, icon }) => /* @__PURE__ */ jsxs("section", {
 	})]
 });
 var Contact_default = UNSAFE_withComponentProps(function ContactPage() {
-	useEffect(() => {
-		updateSEO({
-			title: "Hubungi Kami",
-			description: "Hubungi CV Niscahya Indonesia Cerdas untuk konsultasi PJU tenaga surya, penawaran proyek, dan kerjasama resmi. Marketing office Sidoarjo, Jawa Timur.",
-			keywords: "kontak niscahya, pju surabaya, pju sidoarjo, konsultasi pju tenaga surya, alamat niscahya indonesia cerdas"
-		});
-	}, []);
 	return /* @__PURE__ */ jsxs("div", {
 		className: "space-y-12 md:space-y-16",
 		children: [
@@ -3793,8 +4106,8 @@ var NotFound_default = UNSAFE_withComponentProps(NotFound);
 //#region \0virtual:react-router/server-manifest
 var server_manifest_default = {
 	"entry": {
-		"module": "/assets/entry.client-D8nQoJ6f.js",
-		"imports": ["/assets/jsx-runtime-XS2-iQ9F.js"],
+		"module": "/assets/entry.client-B14fTpha.js",
+		"imports": ["/assets/jsx-runtime-iNLlZvXa.js"],
 		"css": []
 	},
 	"routes": {
@@ -3811,14 +4124,14 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": true,
-			"module": "/assets/root-CweG-VQ5.js",
+			"module": "/assets/root-B5f1BC3u.js",
 			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/AnimatePresence-BZf_bwxk.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/AppContext-BS1WP-mS.js"
+				"/assets/jsx-runtime-iNLlZvXa.js",
+				"/assets/AnimatePresence-Bfk2ZeFT.js",
+				"/assets/proxy-B-hc-kX8.js",
+				"/assets/AppContext-CclEYKsb.js"
 			],
-			"css": ["/assets/root-Bl5k_fty.css"],
+			"css": ["/assets/root-BsSuRRBs.css"],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
 			"clientMiddlewareModule": void 0,
@@ -3831,20 +4144,19 @@ var server_manifest_default = {
 			"index": void 0,
 			"caseSensitive": void 0,
 			"hasAction": false,
-			"hasLoader": false,
+			"hasLoader": true,
 			"hasClientAction": false,
 			"hasClientLoader": false,
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Home-CsmOuj8h.js",
+			"module": "/assets/Home-CoCw9Kj0.js",
 			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/AnimatePresence-BZf_bwxk.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/ProductCard-CINdSUr3.js",
-				"/assets/blog-CXJOJeiy.js",
-				"/assets/seo-DcmlWOFf.js"
+				"/assets/jsx-runtime-iNLlZvXa.js",
+				"/assets/AnimatePresence-Bfk2ZeFT.js",
+				"/assets/proxy-B-hc-kX8.js",
+				"/assets/ProductCard-CQSWl87V.js",
+				"/assets/blog-CXJOJeiy.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -3859,20 +4171,19 @@ var server_manifest_default = {
 			"index": void 0,
 			"caseSensitive": void 0,
 			"hasAction": false,
-			"hasLoader": false,
+			"hasLoader": true,
 			"hasClientAction": false,
 			"hasClientLoader": false,
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Products-98HNOCVE.js",
+			"module": "/assets/Products-CSBnZ4dp.js",
 			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/AnimatePresence-BZf_bwxk.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/ProductCard-CINdSUr3.js",
-				"/assets/AppContext-BS1WP-mS.js",
-				"/assets/seo-DcmlWOFf.js"
+				"/assets/jsx-runtime-iNLlZvXa.js",
+				"/assets/AnimatePresence-Bfk2ZeFT.js",
+				"/assets/proxy-B-hc-kX8.js",
+				"/assets/ProductCard-CQSWl87V.js",
+				"/assets/AppContext-CclEYKsb.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -3887,18 +4198,17 @@ var server_manifest_default = {
 			"index": void 0,
 			"caseSensitive": void 0,
 			"hasAction": false,
-			"hasLoader": false,
+			"hasLoader": true,
 			"hasClientAction": false,
 			"hasClientLoader": false,
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/ProductDetail-C3Ro4_40.js",
+			"module": "/assets/ProductDetail-B6bI1Nov.js",
 			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/AnimatePresence-BZf_bwxk.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/seo-DcmlWOFf.js"
+				"/assets/jsx-runtime-iNLlZvXa.js",
+				"/assets/AnimatePresence-Bfk2ZeFT.js",
+				"/assets/proxy-B-hc-kX8.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -3919,12 +4229,11 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Blog-B9mtUjHy.js",
+			"module": "/assets/Blog-IYAndUaz.js",
 			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/blog-CXJOJeiy.js",
-				"/assets/seo-DcmlWOFf.js"
+				"/assets/jsx-runtime-iNLlZvXa.js",
+				"/assets/proxy-B-hc-kX8.js",
+				"/assets/blog-CXJOJeiy.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -3945,12 +4254,11 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/BlogDetail-BKxWrzHS.js",
+			"module": "/assets/BlogDetail-C9H6bJav.js",
 			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/blog-CXJOJeiy.js",
-				"/assets/seo-DcmlWOFf.js"
+				"/assets/jsx-runtime-iNLlZvXa.js",
+				"/assets/proxy-B-hc-kX8.js",
+				"/assets/blog-CXJOJeiy.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -3971,12 +4279,8 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/About-U1FA5Um6.js",
-			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/seo-DcmlWOFf.js"
-			],
+			"module": "/assets/About-DwEchD9N.js",
+			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
@@ -3996,12 +4300,8 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Projects-Cws0AtGk.js",
-			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/seo-DcmlWOFf.js"
-			],
+			"module": "/assets/Projects-C3BhtIZX.js",
+			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
@@ -4021,12 +4321,8 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Contact--j2KEnbZ.js",
-			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/seo-DcmlWOFf.js"
-			],
+			"module": "/assets/Contact-QZ8mBSxI.js",
+			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
@@ -4046,11 +4342,11 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Admin-B7s01cXm.js",
+			"module": "/assets/Admin-pAHiEKsx.js",
 			"imports": [
-				"/assets/jsx-runtime-XS2-iQ9F.js",
-				"/assets/proxy-Dey3RYil.js",
-				"/assets/AppContext-BS1WP-mS.js"
+				"/assets/jsx-runtime-iNLlZvXa.js",
+				"/assets/proxy-B-hc-kX8.js",
+				"/assets/AppContext-CclEYKsb.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4071,8 +4367,8 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/NotFound-sLMNt9q-.js",
-			"imports": ["/assets/jsx-runtime-XS2-iQ9F.js", "/assets/proxy-Dey3RYil.js"],
+			"module": "/assets/NotFound-B7dUbNSA.js",
+			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
@@ -4080,8 +4376,8 @@ var server_manifest_default = {
 			"hydrateFallbackModule": void 0
 		}
 	},
-	"url": "/assets/manifest-80341ea4.js",
-	"version": "80341ea4",
+	"url": "/assets/manifest-0560b9c6.js",
+	"version": "0560b9c6",
 	"sri": void 0
 };
 //#endregion

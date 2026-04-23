@@ -1,0 +1,1 @@
+import{P as e,t,z as n}from"./jsx-runtime-iNLlZvXa.js";var r=n(e(),1),i=t(),a=(0,r.createContext)(),o=({children:e})=>{let[t,n]=(0,r.useState)(``),[o,s]=(0,r.useState)(null);return(0,i.jsx)(a.Provider,{value:{searchQuery:t,setSearchQuery:n,notification:o,showNotification:e=>{s(e),setTimeout(()=>s(null),3e3)}},children:e})},s=()=>(0,r.useContext)(a);export{s as n,o as t};

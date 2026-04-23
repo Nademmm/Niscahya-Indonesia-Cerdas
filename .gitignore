@@ -7,6 +7,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Temporary debug files
+.pid
+.server_pid.txt
+.tmp_*.ps1
+.lint-output.txt
+server.err.log
+server.out.log
+
 node_modules
 dist
 dist-ssr
