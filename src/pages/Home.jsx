@@ -12,17 +12,17 @@ const HeroSlider = () => {
   const slides = [
     {
       id: 1,
-      image: "src/assets/hero-1.png",
+      image: "/hero-1.png",
       title: "Infrastruktur PJU Tenaga Surya Terintegrasi"
     },
     {
       id: 2,
-      image: "src/assets/hero-2.png",
+      image: "/hero-2.png",
       title: "Unit Unggulan All In One Series"
     },
     {
       id: 3,
-      image: "src/assets/hero-3.png",
+      image: "/hero-3.png",
       title: "Solusi Energi Terbarukan Berkelanjutan"
     }
   ];
