@@ -390,12 +390,6 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <Link 
-            to="/#contact"
-            className="w-full py-5 bg-black/5 hover:bg-black/10 transition-colors rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3"
-          >
-            Konsultasi Sekarang <i className="bx bx-right-arrow-alt text-xl"></i>
-          </Link>
         </div>
 
         {/* Lokasi Kami (Map) */}
@@ -410,9 +404,6 @@ const Home = () => {
             referrerPolicy="no-referrer-when-downgrade"
             className="rounded-[36px] shadow-inner"
           ></iframe>
-          <div className="absolute top-8 right-8 pointer-events-none">
-            <span className="px-4 py-2 glass-bright rounded-full text-[10px] font-black uppercase tracking-widest border border-black/10 shadow-lg">Showroom Kami</span>
-          </div>
         </div>
       </section>
     </div>
