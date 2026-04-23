@@ -135,7 +135,7 @@ const Blog = () => {
           </p>
           <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
             <a 
-              href="https://wa.me/628123456789" 
+              href="https://wa.me/6287853536124" 
               className="px-10 py-4 bg-white text-primary font-black rounded-2xl hover:scale-105 transition-all uppercase tracking-widest text-xs"
             >
               Konsultasi via WhatsApp
