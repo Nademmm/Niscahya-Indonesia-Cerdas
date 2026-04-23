@@ -8,6 +8,8 @@ export const updateSEO = ({
   image = '/og-image.png',
   type = 'website'
 }) => {
+  if (typeof window === 'undefined') return; // SSR Safety
+
   const siteName = 'Niscahya Indonesia Cerdas';
   const fullTitle = title ? `${title} | ${siteName}` : siteName;
   const url = window.location.href;

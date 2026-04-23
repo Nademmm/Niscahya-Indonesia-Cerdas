@@ -1,7 +1,23 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { updateSEO } from '../utils/seo';
+
+export const meta = ({ data }) => {
+  if (!data || !data.product) {
+    return [{ title: "Produk Tidak Ditemukan | Niscahya Indonesia Cerdas" }];
+  }
+  const { product } = data;
+  return [
+    { title: `${product.name} | Niscahya Indonesia Cerdas` },
+    { name: "description", content: product.description?.substring(0, 160) || "" },
+    { name: "keywords", content: `${product.name}, ${product.category}, jual pju tenaga surya, spesifikasi ${product.name}, harga pju solar cell` },
+    { property: "og:title", content: product.name },
+    { property: "og:description", content: product.description?.substring(0, 160) || "" },
+    { property: "og:image", content: product.image || "/og-image.png" },
+    { property: "og:type", content: "product" },
+  ];
+};
 
 const normalizeImageList = (value) => {
   if (Array.isArray(value)) return value;
@@ -20,43 +36,63 @@ const normalizeImageList = (value) => {
   return trimmed.split(',');
 };
 
+export const loader = async ({ params }) => {
+  const { slug } = params;
+  try {
+    const [prodRes, allRes] = await Promise.all([
+      fetch(`http://localhost:3000/api/products/${slug}`),
+      fetch('http://localhost:3000/api/products')
+    ]);
+
+    if (prodRes.ok) {
+      const product = await prodRes.json();
+      const allProducts = allRes.ok ? await allRes.json() : [];
+      return { product, allProducts: Array.isArray(allProducts) ? allProducts : [] };
+    }
+    return { product: null, allProducts: [] };
+  } catch (e) {
+    return { product: null, allProducts: [] };
+  }
+};
+
 const ProductDetail = () => {
   const { slug } = useParams();
-  const [product, setProduct] = useState(null);
+  const { product: initialProduct, allProducts: initialAllProducts } = useLoaderData() || { product: null, allProducts: [] };
+  const [product, setProduct] = useState(initialProduct);
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialProduct);
   const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  // Render deskripsi dengan support bold markdown (**teks**)
-  const renderDescription = (text) => {
-    if (!text) return null;
-    
-    // Pecah teks berdasarkan pattern **...**
-    const parts = text.split(/(\*\*.*?\*\*)/g);
-    
-    return parts.map((part, index) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        // Hapus tanda bintang dan jadikan bold
-        return <strong key={index} className="font-black text-text-main">{part.slice(2, -2)}</strong>;
-      }
-      return part;
-    });
-  };
-
-  // Chat ke WhatsApp
-  const handleBuyNow = () => {
-  const phoneNumber = "6287853536124";
-  const message = `Halo Admin Niscahya Indonesia Cerdas
-  Saya ingin melakukan pembelian produk berikut:
-  ${product?.name || 'Produk'}
-  Jumlah: ${quantity} unit
-  Silakan diproses ya. Terima kasih`;
-  const encodedMessage = encodeURIComponent(message);
-  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-  };
+  const [selectedImage, setSelectedImage] = useState(initialProduct?.image || null);
 
   useEffect(() => {
+    if (product) {
+      const normalizedExtras = [
+        ...normalizeImageList(product.images),
+        product.image2,
+        product.image3,
+        product.image4,
+        product.image5
+      ].filter(Boolean);
+
+      const firstAvailableImage = product.image || normalizedExtras[0] || null;
+      if (!selectedImage) setSelectedImage(firstAvailableImage);
+
+      if (initialAllProducts.length > 0) {
+        const otherProducts = initialAllProducts.filter(p => p.id !== product.id);
+        const sameCategory = otherProducts.filter(p => p.category === product.category).sort(() => 0.5 - Math.random());
+        const differentCategory = otherProducts.filter(p => p.category !== product.category).sort(() => 0.5 - Math.random());
+        setRelatedProducts([...sameCategory, ...differentCategory].slice(0, 4));
+      }
+    }
+  }, [product, initialAllProducts]);
+
+  useEffect(() => {
+    if (initialProduct) {
+      setProduct(initialProduct);
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const [prodRes, allRes] = await Promise.all([
@@ -82,7 +118,7 @@ const ProductDetail = () => {
           // Dynamic SEO Update
           updateSEO({
             title: prodData.name,
-            description: prodData.description.substring(0, 160),
+            description: prodData.description?.substring(0, 160),
             keywords: `${prodData.name}, ${prodData.category}, jual pju tenaga surya, spesifikasi ${prodData.name}, harga pju solar cell`,
             image: firstAvailableImage || '/og-image.png',
             type: 'product'
@@ -119,7 +155,7 @@ const ProductDetail = () => {
       }
     };
     fetchData();
-  }, [slug]);
+  }, [slug, initialProduct]);
 
   if (loading) {
     return (
@@ -147,6 +183,34 @@ const ProductDetail = () => {
     product.image4,
     product.image5
   ].filter(Boolean);
+
+  // Render deskripsi dengan support bold markdown (**teks**)
+  const renderDescription = (text) => {
+    if (!text) return null;
+    
+    // Pecah teks berdasarkan pattern **...**
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        // Hapus tanda bintang dan jadikan bold
+        return <strong key={index} className="font-black text-text-main">{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+  };
+
+  // Chat ke WhatsApp
+  const handleBuyNow = () => {
+    const phoneNumber = "6287853536124";
+    const message = `Halo Admin Niscahya Indonesia Cerdas
+  Saya ingin melakukan pembelian produk berikut:
+  ${product?.name || 'Produk'}
+  Jumlah: ${quantity} unit
+  Silakan diproses ya. Terima kasih`;
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  };
 
   const allImages = [product.image, ...normalizedGalleryImages].filter((img, index, self) => 
     img && typeof img === 'string' && img.trim() !== '' && self.indexOf(img) === index

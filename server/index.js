@@ -1,343 +1,170 @@
-import express from 'express';
-import cors from 'cors';
-import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-import pool, { initializeDatabase } from './db.js';
+import express from "express";
+import compression from "compression";
+import { createRequestHandler } from "@react-router/express";
+import path from "path";
+import { fileURLToPath } from "url";
+import pool, { initializeDatabase } from "./db.js";
+import multer from "multer";
+import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, "..");
 
 const app = express();
-const port = 3001;
+const PORT = process.env.PORT || 3000;
 
-// Global error handlers to catch silent crashes
-process.on('uncaughtException', (err) => {
-  console.error('CRITICAL: Uncaught Exception:', err);
-});
+app.use(compression());
+app.use(express.json());
+app.use(express.static(path.join(root, "build/client"), { maxAge: "1h" }));
+app.use("/uploads", express.static(path.join(root, "server/uploads")));
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
-const uploadDir = path.resolve(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Multer configuration
+// Multer storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    const uploadDir = path.join(root, "server/uploads");
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
+  },
 });
 
 const upload = multer({ storage: storage });
 
-const parseJsonArray = (value) => {
-  if (Array.isArray(value)) return value;
-  if (typeof value !== 'string' || value.trim() === '') return [];
+// API Routes
+app.get("/api/products", async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM products ORDER BY created_at DESC");
+    res.json(rows);
+  } catch (error) {
+    console.error("Fetch products error:", error);
+    res.status(500).json({ error: "Gagal mengambil data produk" });
+  }
+});
+
+app.get("/api/products/:slugOrId", async (req, res) => {
+  const { slugOrId } = req.params;
+  try {
+    const [rows] = await pool.query(
+      "SELECT * FROM products WHERE slug = ? OR id = ?",
+      [slugOrId, slugOrId]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Produk tidak ditemukan" });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Fetch product detail error:", error);
+    res.status(500).json({ error: "Gagal mengambil detail produk" });
+  }
+});
+
+app.post("/api/admin-auth", (req, res) => {
+  const { email, password } = req.body;
+  // Simple auth for now - should be replaced with better auth in production
+  if (email === "admin@niscahya.com" && password === "niscahya2024") {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false, message: "Email atau password salah" });
+  }
+});
+
+app.post("/api/upload", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "Tidak ada file yang diunggah" });
+  }
+  const imageUrl = `/uploads/${req.file.filename}`;
+  res.json({ imageUrl });
+});
+
+app.post("/api/products", async (req, res) => {
+  const { name, category, image, images, description } = req.body;
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO products (name, category, image, images, description, slug, price) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [name, category, image, JSON.stringify(images || []), description, slug, 0]
+    );
+    res.status(201).json({ id: result.insertId, message: "Produk berhasil ditambahkan" });
+  } catch (error) {
+    console.error("Add product error:", error);
+    res.status(500).json({ error: "Gagal menambahkan produk" });
+  }
+});
+
+app.put("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, category, image, images, description } = req.body;
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (_error) {
-    return value.split(',').map((item) => item.trim()).filter(Boolean);
+    await pool.query(
+      "UPDATE products SET name = ?, category = ?, image = ?, images = ?, description = ?, slug = ? WHERE id = ?",
+      [name, category, image, JSON.stringify(images || []), description, slug, id]
+    );
+    res.json({ message: "Produk berhasil diperbarui" });
+  } catch (error) {
+    console.error("Update product error:", error);
+    res.status(500).json({ error: "Gagal memperbarui produk" });
   }
-};
+});
 
-const normalizeProduct = (product) => {
-  if (!product) return product;
-
-  return {
-    ...product,
-    images: parseJsonArray(product.images),
-    specs: parseJsonArray(product.specs)
-  };
-};
-
-const createSlug = async (connection, name, excludeId = null) => {
-  const baseSlug = name.toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-
-  let slug = baseSlug;
-  let suffix = 1;
-
-  while (true) {
-    const params = [slug];
-    let query = 'SELECT id FROM products WHERE slug = ?';
-
-    if (excludeId) {
-      query += ' AND id != ?';
-      params.push(excludeId);
-    }
-
-    const [rows] = await connection.execute(query, params);
-    if (rows.length === 0) {
-      return slug;
-    }
-
-    suffix += 1;
-    slug = `${baseSlug}-${suffix}`;
+app.delete("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query("DELETE FROM products WHERE id = ?", [id]);
+    res.json({ message: "Produk berhasil dihapus" });
+  } catch (error) {
+    console.error("Delete product error:", error);
+    res.status(500).json({ error: "Gagal menghapus produk" });
   }
-};
+});
 
-// Initialize database on startup
-const initDB = async () => {
+async function startServer() {
+  console.log("Starting server...");
+  
   try {
     await initializeDatabase();
-    console.log('Database initialized.');
-  } catch (dbError) {
-    console.error('CRITICAL: Database initialization failed:', dbError);
+    console.log("Database initialized");
+  } catch (err) {
+    console.error("Database initialization failed:", err);
   }
-};
 
-initDB();
+  let viteDevServer = null;
+  if (process.env.NODE_ENV !== "production") {
+    console.log("Starting Vite in middleware mode...");
+    const vite = await import("vite");
+    viteDevServer = await vite.createServer({
+      root,
+      server: { middlewareMode: true },
+    });
+    app.use(viteDevServer.middlewares);
+  }
 
-app.use(cors());
-
-app.use(express.json());
-app.use('/uploads', express.static(uploadDir));
-
-// Route for file upload
-app.post('/api/upload', (req, res) => {
-  upload.single('image')(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      console.error('Multer Error:', err);
-      return res.status(500).json({ error: `Multer error: ${err.message}` });
-    } else if (err) {
-      console.error('Unknown Error:', err);
-      return res.status(500).json({ error: `Unknown error: ${err.message}` });
+  app.use(async (req, res, next) => {
+    try {
+      await createRequestHandler({
+        build: viteDevServer 
+          ? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
+          : await import("../build/server/index.js"),
+      })(req, res, next);
+    } catch (error) {
+      console.error("React Router Request Handler Error:", error);
+      res.status(500).send("Internal Server Error: " + error.message);
     }
-
-    if (!req.file) {
-      console.error('No file in request');
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    console.log('File uploaded successfully:', req.file.filename);
-    // Return relative path (for production/proxy) and absolute (for debugging)
-    const imageUrl = `/uploads/${req.file.filename}`;
-    res.json({ imageUrl, fullUrl: `http://127.0.0.1:${port}${imageUrl}` });
   });
-});
 
-// Route for multiple file uploads
-app.post('/api/upload-multiple', (req, res) => {
-  upload.array('images', 5)(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      return res.status(500).json({ error: `Multer error: ${err.message}` });
-    } else if (err) {
-      return res.status(500).json({ error: `Unknown error: ${err.message}` });
-    }
-
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ error: 'No files uploaded' });
-    }
-
-    const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
-    res.json({ imageUrls });
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
   });
-});
+}
 
-// Routes for products
-app.get('/api/products', async (req, res) => {
-  let connection;
-  try {
-    connection = await pool.getConnection();
-    const [products] = await connection.execute('SELECT * FROM products');
-    res.json(products.map(normalizeProduct));
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  } finally {
-    if (connection) connection.release();
-  }
-});
-
-app.get('/api/products/:idOrSlug', async (req, res) => {
-  let connection;
-  try {
-    const { idOrSlug } = req.params;
-    connection = await pool.getConnection();
-    let product;
-    
-    // Check if the parameter is an ID (number) or a Slug (text)
-    if (/^\d+$/.test(idOrSlug)) {
-      const [results] = await connection.execute('SELECT * FROM products WHERE id = ?', [idOrSlug]);
-      product = results[0];
-    } else {
-      const [results] = await connection.execute('SELECT * FROM products WHERE slug = ?', [idOrSlug]);
-      product = results[0];
-    }
-
-    if (product) {
-      res.json(normalizeProduct(product));
-    } else {
-      res.status(404).json({ message: 'Product not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  } finally {
-    if (connection) connection.release();
-  }
-});
-
-app.post('/api/products', async (req, res) => {
-  let connection;
-  try {
-    const { name, price, category, image, images, description, specs } = req.body;
-
-    if (!name || !category || !image) {
-      return res.status(400).json({ error: 'Nama, kategori, dan gambar utama wajib diisi' });
-    }
-    
-    connection = await pool.getConnection();
-    const slug = await createSlug(connection, name);
-    const [result] = await connection.execute(
-      `INSERT INTO products (name, price, category, image, images, description, specs, slug)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        name, 
-        price, 
-        category, 
-        image, 
-        JSON.stringify(parseJsonArray(images)), 
-        description, 
-        JSON.stringify(parseJsonArray(specs)),
-        slug
-      ]
-    );
-
-    const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [result.insertId]);
-    res.status(201).json(normalizeProduct(rows[0]));
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  } finally {
-    if (connection) connection.release();
-  }
-});
-
-app.put('/api/products/:id', async (req, res) => {
-  let connection;
-  try {
-    const { name, price, category, image, images, description, specs } = req.body;
-    connection = await pool.getConnection();
-
-    if (!name || !category || !image) {
-      return res.status(400).json({ error: 'Nama, kategori, dan gambar utama wajib diisi' });
-    }
-
-    const slug = await createSlug(connection, name, req.params.id);
-    
-    const [result] = await connection.execute(
-      `UPDATE products 
-       SET name = ?, price = ?, category = ?, image = ?, images = ?, description = ?, specs = ?, slug = ?
-       WHERE id = ?`,
-      [
-        name, 
-        price, 
-        category, 
-        image, 
-        JSON.stringify(parseJsonArray(images)), 
-        description, 
-        JSON.stringify(parseJsonArray(specs)), 
-        slug,
-        req.params.id
-      ]
-    );
-    
-    if (result.affectedRows > 0) {
-      const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [req.params.id]);
-      res.json(normalizeProduct(rows[0]));
-    } else {
-      res.status(404).json({ message: 'Product not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  } finally {
-    if (connection) connection.release();
-  }
-});
-
-app.delete('/api/products/:id', async (req, res) => {
-  let connection;
-  try {
-    connection = await pool.getConnection();
-    const [result] = await connection.execute('DELETE FROM products WHERE id = ?', [req.params.id]);
-    
-    if (result.affectedRows > 0) {
-      res.json({ message: 'Product deleted' });
-    } else {
-      res.status(404).json({ message: 'Product not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  } finally {
-    if (connection) connection.release();
-  }
-});
-
-// Rate limiting sederhana untuk mencegah brute force
-const loginAttempts = new Map();
-const MAX_ATTEMPTS = 5;
-const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 menit
-
-// Admin login
-app.post('/api/admin-auth', (req, res) => {
-  const ip = req.ip || req.connection.remoteAddress;
-  const now = Date.now();
-
-  // Cek apakah IP sedang di-lockout
-  if (loginAttempts.has(ip)) {
-    const attempts = loginAttempts.get(ip);
-    if (attempts.count >= MAX_ATTEMPTS) {
-      const timeLeft = Math.ceil((attempts.lastAttempt + LOCKOUT_DURATION - now) / 60000);
-      if (now - attempts.lastAttempt < LOCKOUT_DURATION) {
-        return res.status(429).json({
-          success: false,
-          message: `Terlalu banyak percobaan login. Coba lagi dalam ${timeLeft} menit.`
-        });
-      } else {
-        // Reset setelah lockout habis
-        loginAttempts.delete(ip);
-      }
-    }
-  }
-
-  const { email, password } = req.body;
-  const ADMIN_EMAIL = 'admin@niscahya.id';
-  const ADMIN_PASSWORD = 'n1scahya';
-
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    // Reset attempts setelah login berhasil
-    loginAttempts.delete(ip);
-    res.json({ success: true, token: 'nsc-auth-' + Date.now() });
-  } else {
-    // Catat percobaan gagal
-    const attempts = loginAttempts.get(ip) || { count: 0, lastAttempt: 0 };
-    attempts.count += 1;
-    attempts.lastAttempt = now;
-    loginAttempts.set(ip, attempts);
-
-    const remaining = MAX_ATTEMPTS - attempts.count;
-    const msg = remaining > 0
-      ? `Email atau kata sandi salah. Sisa percobaan: ${remaining}`
-      : 'Akun dikunci sementara. Coba lagi dalam 15 menit.';
-
-    res.status(401).json({ success: false, message: msg });
-  }
-});
-
-app.listen(port, '127.0.0.1', (err) => {
-  if (err) {
-    console.error('CRITICAL: Server failed to start:', err);
-    return;
-  }
-  console.log(`[BACKEND] Server is active at http://127.0.0.1:${port}`);
+startServer().catch((err) => {
+  console.error("Failed to start server:", err);
+  process.exit(1);
 });

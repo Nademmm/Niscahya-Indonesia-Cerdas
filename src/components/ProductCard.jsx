@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 const ProductCard = memo(({ product }) => {
   // Extract category display text (show subcategory if available, else main category)

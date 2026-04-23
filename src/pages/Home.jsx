@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
 import { blogPosts } from '../data/blog';
 import { updateSEO } from '../utils/seo';
+
+export const meta = () => {
+  return [
+    { title: "Distributor Lampu PJU Tenaga Surya Terbaik 2026 | Niscahya Indonesia Cerdas" },
+    { name: "description", content: "Distributor resmi Lampu PJU Tenaga Surya (Solar Street Light) berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif dan garansi terjamin." },
+    { name: "keywords", content: "lampu pju tenaga surya, solar street light indonesia, harga lampu jalan tenaga surya, distributor solar panel surabaya, pju all in one, pju two in one, energi terbarukan indonesia, niscahya indonesia cerdas" },
+    { property: "og:title", content: "Distributor Lampu PJU Tenaga Surya Terbaik 2026 | Niscahya Indonesia Cerdas" },
+    { property: "og:description", content: "Distributor resmi Lampu PJU Tenaga Surya (Solar Street Light) berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif dan garansi terjamin." },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Niscahya Indonesia Cerdas" }
+  ];
+};
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -113,7 +125,21 @@ const HeroSlider = () => {
   );
 };
 
+export const loader = async () => {
+  try {
+    // In SSR, we might want to fetch directly from DB if possible, 
+    // but for now we'll use the API endpoint which is local
+    const res = await fetch('http://localhost:3000/api/products');
+    const products = await res.json();
+    return { products: Array.isArray(products) ? products : [] };
+  } catch (e) {
+    return { products: [] };
+  }
+};
+
 const Home = () => {
+  const { products } = useLoaderData() || { products: [] };
+  
   useEffect(() => {
     updateSEO({
       title: 'Distributor Lampu PJU Tenaga Surya Terbaik 2026',
@@ -123,17 +149,33 @@ const Home = () => {
   }, []);
 
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!products.length);
 
   useEffect(() => {
+    if (products.length > 0) {
+      const targetIds = [32, 77, 83, 80];
+      const filtered = products.filter(p => targetIds.includes(p.id))
+                         .sort((a, b) => targetIds.indexOf(a.id) - targetIds.indexOf(b.id));
+      setFeaturedProducts(filtered.length > 0 ? filtered : products.slice(0, 4));
+      setLoading(false);
+      return;
+    }
+
     const fetchProducts = async () => {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
-        const targetIds = [32, 77, 83, 80];
-        const filtered = data.filter(p => targetIds.includes(p.id))
-                           .sort((a, b) => targetIds.indexOf(a.id) - targetIds.indexOf(b.id));
-        setFeaturedProducts(filtered.length > 0 ? filtered : data.slice(0, 4));
+        
+        // Pastikan data adalah array
+        if (Array.isArray(data)) {
+          const targetIds = [32, 77, 83, 80];
+          const filtered = data.filter(p => targetIds.includes(p.id))
+                             .sort((a, b) => targetIds.indexOf(a.id) - targetIds.indexOf(b.id));
+          setFeaturedProducts(filtered.length > 0 ? filtered : data.slice(0, 4));
+        } else {
+          console.error('API did not return an array:', data);
+          setFeaturedProducts([]);
+        }
       } catch (err) {
         console.error('Failed to fetch products:', err);
       } finally {
@@ -141,7 +183,7 @@ const Home = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [products]);
 
   const stats = [
     { label: 'Proyek Selesai', value: '150+', unit: 'Unit', icon: 'bx bx-check-double', color: 'text-primary' },

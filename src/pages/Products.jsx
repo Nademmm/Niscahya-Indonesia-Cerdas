@@ -1,9 +1,19 @@
 import { useState, useMemo, useEffect, memo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useLoaderData } from 'react-router';
 import ProductCard from '../components/ProductCard';
 import { useApp } from '../context/AppContext';
 import { updateSEO } from '../utils/seo';
+
+export const meta = () => {
+  return [
+    { title: "Solusi PJU Tenaga Surya Terdepan | Niscahya Indonesia Cerdas" },
+    { name: "description", content: "Katalog perangkat PJU Tenaga Surya standar industri. Solusi infrastruktur dengan durabilitas tinggi dan efisiensi energi teruji untuk berbagai kebutuhan proyek Anda." },
+    { name: "keywords", content: "jual pju tenaga surya, katalog pju solar cell, pju all in one, pju two in one, lampu jalan tenaga surya surabaya, niscahya indonesia cerdas" },
+    { property: "og:title", content: "Solusi PJU Tenaga Surya Terdepan | Niscahya Indonesia Cerdas" },
+    { property: "og:description", content: "Katalog perangkat PJU Tenaga Surya standar industri. Solusi infrastruktur dengan durabilitas tinggi dan efisiensi energi teruji untuk berbagai kebutuhan proyek Anda." },
+  ];
+};
 
 const categoryStructure = {
   'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
@@ -100,7 +110,19 @@ const fuzzyMatch = (text, query) => {
   });
 };
 
+export const loader = async () => {
+  try {
+    const res = await fetch('http://localhost:3000/api/products');
+    const products = await res.json();
+    return { products: Array.isArray(products) ? products : [] };
+  } catch (e) {
+    return { products: [] };
+  }
+};
+
 const Products = () => {
+  const { products: initialProducts } = useLoaderData() || { products: [] };
+
   useEffect(() => {
     updateSEO({
       title: 'Katalog Produk Lampu PJU & Solar Panel',
@@ -113,8 +135,8 @@ const Products = () => {
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [selectedSubCategory, setSelectedSubCategory] = useState('Semua');
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(initialProducts);
+  const [loading, setLoading] = useState(!initialProducts.length);
   const scrollRef = useRef(null);
 
   const scroll = (direction) => {
@@ -126,11 +148,24 @@ const Products = () => {
   };
 
   useEffect(() => {
+    if (initialProducts.length > 0) {
+      setProducts(initialProducts);
+      setLoading(false);
+      return;
+    }
+
     const fetchProducts = async () => {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
-        setProducts(data);
+        
+        // Pastikan data adalah array
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else {
+          console.error('API did not return an array:', data);
+          setProducts([]);
+        }
       } catch (err) {
         console.error('Failed to fetch products:', err);
       } finally {
@@ -138,7 +173,7 @@ const Products = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [initialProducts]);
 
   const handleReset = () => {
     setSelectedCategory('Semua');
@@ -190,7 +225,26 @@ const Products = () => {
         // We'll give each a match status
         const nameMatch = fuzzyMatch(product.name, query);
         const categoryMatch = fuzzyMatch(product.category, query);
-        const specMatch = (product.specs || []).some(spec => fuzzyMatch(spec, query));
+        
+        // Safety check for specs - ensure it is an array
+        let specs = [];
+        try {
+          if (Array.isArray(product.specs)) {
+            specs = product.specs;
+          } else if (typeof product.specs === 'string' && product.specs.trim()) {
+            const trimmed = product.specs.trim();
+            if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+              specs = JSON.parse(trimmed);
+            } else {
+              specs = trimmed.split(',').map(s => s.trim());
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to parse specs for product:', product.id, e);
+          specs = [];
+        }
+        
+        const specMatch = Array.isArray(specs) && specs.some(spec => fuzzyMatch(String(spec), query));
 
         // Store match score for sorting later
         product._searchScore = 0;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { blogPosts } from '../data/blog';
 import { updateSEO } from '../utils/seo';
 

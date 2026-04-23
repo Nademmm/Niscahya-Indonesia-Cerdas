@@ -88,6 +88,7 @@ Atau jalankan secara terpisah:
 
 ## Cara ke admin panel
 ```
+/nsc-admin-panel-x9k2
 Email: admin@niscahya.id
 Password: n1scahya
 ```

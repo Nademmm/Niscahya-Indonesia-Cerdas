@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link, useLocation } from 'react-router';
 import { updateSEO } from '../utils/seo';
 
 const PageHero = ({ title, subtitle, icon }) => (
@@ -499,3 +500,17 @@ export const Careers = () => {
     </div>
   );
 };
+
+export default function ExtraPagesDispatcher() {
+  const { pathname } = useLocation();
+
+  if (pathname.includes('solutions')) return <Solutions />;
+  if (pathname.includes('impact')) return <Impact />;
+  if (pathname.includes('about')) return <About />;
+  if (pathname.includes('sustainability')) return <Sustainability />;
+  if (pathname.includes('projects')) return <Projects />;
+  if (pathname.includes('careers')) return <Careers />;
+  if (pathname.includes('contact')) return <Contact />;
+  
+  return <About />;
+}
