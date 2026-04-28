@@ -50,7 +50,6 @@ export default function ContactPage() {
       <PageHero 
         title="Hubungi Kami" 
         subtitle="Kami siap membantu mewujudkan solusi energi terbaik untuk Anda. Hubungi kami melalui berbagai saluran komunikasi."
-        icon="bx-message-square-detail"
       />
 
       {/* Contact Cards Grid */}

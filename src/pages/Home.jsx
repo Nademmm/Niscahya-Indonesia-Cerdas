@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLoaderData } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
@@ -154,6 +154,16 @@ const Home = () => {
 
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(!products.length);
+  const productsRef = useRef(null);
+  const blogRef = useRef(null);
+
+  const scroll = (ref, direction) => {
+    if (ref.current) {
+      const { scrollLeft } = ref.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 300 : scrollLeft + 300;
+      ref.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     if (products.length > 0) {
@@ -314,27 +324,46 @@ const Home = () => {
           </Link>
         </div>
         
-        {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-            {[1,2,3,4].map(i => (
-              <div key={i} className="h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]"></div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-4">
-            {featuredProducts.map((product, i) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="w-full"
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </div>
-        )}
+        <div className="relative group/nav">
+          {/* Nav Buttons */}
+          <button 
+            onClick={() => scroll(productsRef, 'left')}
+            className="absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
+          >
+            <i className="bx bx-chevron-left text-2xl"></i>
+          </button>
+          <button 
+            onClick={() => scroll(productsRef, 'right')}
+            className="absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
+          >
+            <i className="bx bx-chevron-right text-2xl"></i>
+          </button>
+
+          {loading ? (
+            <div className="flex flex-nowrap overflow-x-auto gap-4 md:gap-8 pb-4">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="min-w-[280px] md:min-w-0 md:flex-1 h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]"></div>
+              ))}
+            </div>
+          ) : (
+            <div 
+               ref={productsRef}
+               className="flex flex-nowrap overflow-x-auto no-scrollbar gap-4 md:gap-8 pb-4 md:grid md:grid-cols-4"
+             >
+              {featuredProducts.map((product, i) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="min-w-[280px] md:min-w-0 w-full"
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Latest Blog Section */}
@@ -349,48 +378,67 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pb-6">
-          {[...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => (
-            <motion.article
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col"
-            >
-              <Link to={`/blog/${post.slug}`} className="relative aspect-video overflow-hidden block">
-                <img 
-                  src={post.image} 
-                  alt={post.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1.5 bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-lg text-secondary shadow-lg">
-                    {post.category}
-                  </span>
-                </div>
-              </Link>
-              <div className="p-8 space-y-4 grow flex flex-col">
-                <p className="text-[9px] font-black text-text-secondary uppercase tracking-widest">{post.date}</p>
-                <Link to={`/blog/${post.slug}`}>
-                  <h3 className="text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2">
-                    {post.title}
-                  </h3>
+        <div className="relative group/nav">
+          {/* Nav Buttons */}
+          <button 
+            onClick={() => scroll(blogRef, 'left')}
+            className="absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
+          >
+            <i className="bx bx-chevron-left text-2xl"></i>
+          </button>
+          <button 
+            onClick={() => scroll(blogRef, 'right')}
+            className="absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
+          >
+            <i className="bx bx-chevron-right text-2xl"></i>
+          </button>
+
+          <div 
+             ref={blogRef}
+             className="flex flex-nowrap overflow-x-auto no-scrollbar gap-6 md:gap-8 pb-6 md:grid md:grid-cols-3"
+           >
+            {[...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => (
+              <motion.article
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="min-w-[300px] md:min-w-0 group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col"
+              >
+                <Link to={`/blog/${post.slug}`} className="relative aspect-video overflow-hidden block">
+                  <img 
+                    src={post.image} 
+                    alt={post.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1.5 bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-lg text-secondary shadow-lg">
+                      {post.category}
+                    </span>
+                  </div>
                 </Link>
-                <p className="text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed grow">
-                  {post.excerpt}
-                </p>
-                <div className="pt-4">
-                  <Link 
-                    to={`/blog/${post.slug}`}
-                    className="text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all"
-                  >
-                    Baca Selengkapnya <i className="bx bx-right-arrow-alt text-lg"></i>
+                <div className="p-8 space-y-4 grow flex flex-col">
+                  <p className="text-[9px] font-black text-text-secondary uppercase tracking-widest">{post.date}</p>
+                  <Link to={`/blog/${post.slug}`}>
+                    <h3 className="text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
                   </Link>
+                  <p className="text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed grow">
+                    {post.excerpt}
+                  </p>
+                  <div className="pt-4">
+                    <Link 
+                      to={`/blog/${post.slug}`}
+                      className="text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all"
+                    >
+                      Baca Selengkapnya <i className="bx bx-right-arrow-alt text-lg"></i>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </motion.article>
-          ))}
+              </motion.article>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo } from 'react';
+import { useState, useEffect, useMemo, memo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useLoaderData } from 'react-router';
 import ProductCard from '../components/ProductCard';
@@ -135,6 +135,15 @@ const Products = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState('Semua');
   const [products, setProducts] = useState(initialProducts);
   const [loading, setLoading] = useState(!initialProducts.length);
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 200 : scrollLeft + 200;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     if (initialProducts.length > 0) {
@@ -282,68 +291,77 @@ const Products = () => {
       </section>
 
       {/* Filter Navigation */}
-      <section className="sticky top-28 z-40 space-y-6 -mx-6 lg:-mx-10 px-6 lg:px-10">
-        <div className="relative group/nav max-w-5xl mx-auto">
-          <div 
-            className="glass p-2 rounded-3xl border-black/5 flex flex-wrap items-center justify-center gap-2 shadow-2xl shadow-black/5"
-          >
-            {categories.map((cat) => (
-              <button
+      <section className="sticky top-28 z-40 -mx-6 lg:-mx-10 px-6 lg:px-10 py-3 bg-background/95 backdrop-blur-xl border-b border-black/5">
+        <div className="max-w-7xl mx-auto space-y-3">
+          {/* Section Title */}
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1 h-3 bg-primary rounded-full" />
+            <span className="text-[15px] font-black uppercase tracking-widest text-text-secondary">Pilih Kategori</span>
+          </div>
+
+          {/* Main Category Container - Scroll on mobile, Wrap on desktop */}
+          <div className="flex flex-nowrap md:flex-wrap items-center gap-2 overflow-x-auto md:overflow-visible no-scrollbar scroll-smooth py-1.5 px-0.5 max-w-full lg:max-w-[90%]">
+            {categories.map((cat, idx) => (
+              <motion.button
                 key={cat}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.02 }}
                 onClick={() => {
                   setSelectedCategory(cat);
                   setSelectedSubCategory('Semua');
                 }}
-                className={`px-6 py-3 rounded-xl text-[10px] font-black tracking-widest uppercase transition-all duration-300 relative whitespace-nowrap shrink-0 ${
+                className={`px-5 py-2 rounded-full text-[10px] font-black tracking-wider uppercase transition-all whitespace-nowrap shrink-0 ${
                   selectedCategory === cat
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                    ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105 mx-0.5'
                     : 'bg-black/5 text-text-secondary hover:bg-black/10'
                 }`}
               >
                 {cat}
-              </button>
+              </motion.button>
             ))}
           </div>
-        </div>
 
-        {/* Sub-Category Navigation */}
-        <AnimatePresence>
-          {currentSubCategories.length > 0 && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden flex justify-start"
-            >
-              <div className="flex flex-wrap items-center justify-center gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[20px] border border-black/5 shadow-inner w-full">
-                <button
-                  onClick={() => setSelectedSubCategory('Semua')}
-                  className={`px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${
-                    selectedSubCategory === 'Semua'
-                      ? 'bg-secondary text-white shadow-md shadow-secondary/20'
-                      : 'text-text-secondary hover:text-primary bg-white/50'
-                  }`}
-                >
-                  Semua Tipe
-                </button>
-                <div className="w-px h-3 bg-black/10 shrink-0" />
-                {currentSubCategories.map((sub) => (
+          {/* Sub-Category Pills - Pas in space di mobile */}
+          <AnimatePresence mode="wait">
+            {currentSubCategories.length > 0 && (
+              <motion.div 
+                key={selectedCategory}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 5 }}
+                className="flex items-center py-1.5 px-0.5"
+              >
+                <div className="flex items-center gap-0.5 p-1 bg-black/5 rounded-full border border-black/5 w-full md:w-auto">
                   <button
-                    key={sub}
-                    onClick={() => setSelectedSubCategory(sub)}
-                    className={`px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${
-                      selectedSubCategory === sub
-                        ? 'bg-secondary text-white shadow-md shadow-secondary/20'
-                        : 'text-text-secondary hover:text-primary bg-white/50'
+                    onClick={() => setSelectedSubCategory('Semua')}
+                    className={`flex-1 md:flex-none px-2 md:px-4 py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all text-center whitespace-nowrap ${
+                      selectedSubCategory === 'Semua'
+                        ? 'bg-secondary text-white shadow-sm shadow-secondary/20'
+                        : 'text-text-secondary hover:text-primary'
                     }`}
                   >
-                    {sub}
+                    Semua Tipe
                   </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  <div className="w-px h-3 bg-black/10 shrink-0 hidden md:block" />
+                  {currentSubCategories.map((sub) => (
+                    <button
+                      key={sub}
+                      onClick={() => setSelectedSubCategory(sub)}
+                      className={`flex-1 md:flex-none px-2 md:px-4 py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all text-center whitespace-nowrap ${
+                        selectedSubCategory === sub
+                          ? 'bg-secondary text-white shadow-sm shadow-secondary/20'
+                          : 'text-text-secondary hover:text-primary'
+                      }`}
+                    >
+                      {sub}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </section>
 
       {/* Search Result Indicator */}

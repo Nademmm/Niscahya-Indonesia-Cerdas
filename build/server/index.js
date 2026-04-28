@@ -859,7 +859,7 @@ var blogPosts = [
 /**
 * Utility untuk mengelola SEO Meta Tags secara dinamis
 */
-var updateSEO$1 = ({ title, description, keywords, image = "/og-image.png", type = "website" }) => {
+var updateSEO = ({ title, description, keywords, image = "/og-image.png", type = "website" }) => {
 	if (typeof window === "undefined") return;
 	const siteName = "Niscahya Indonesia Cerdas";
 	const fullTitle = title ? `${title} | ${siteName}` : siteName;
@@ -1044,7 +1044,7 @@ var loader$2 = async ({ request }) => {
 var Home = () => {
 	const { products } = useLoaderData() || { products: [] };
 	useEffect(() => {
-		updateSEO$1({
+		updateSEO({
 			title: "Distributor Lampu PJU Tenaga Surya Terbaik 2026",
 			description: "Distributor resmi Lampu PJU Tenaga Surya (Solar Street Light) berkualitas di Indonesia. Tersedia model All In One, Two In One, dan Konvensional dengan harga kompetitif dan garansi terjamin.",
 			keywords: "lampu pju tenaga surya, solar street light indonesia, harga lampu jalan tenaga surya, distributor solar panel surabaya, pju all in one, pju two in one, energi terbarukan indonesia, niscahya indonesia cerdas"
@@ -1052,6 +1052,18 @@ var Home = () => {
 	}, []);
 	const [featuredProducts, setFeaturedProducts] = useState([]);
 	const [loading, setLoading] = useState(!products.length);
+	const productsRef = useRef(null);
+	const blogRef = useRef(null);
+	const scroll = (ref, direction) => {
+		if (ref.current) {
+			const { scrollLeft } = ref.current;
+			const scrollTo = direction === "left" ? scrollLeft - 300 : scrollLeft + 300;
+			ref.current.scrollTo({
+				left: scrollTo,
+				behavior: "smooth"
+			});
+		}
+	};
 	useEffect(() => {
 		if (products.length > 0) {
 			const targetIds = [
@@ -1295,29 +1307,45 @@ var Home = () => {
 						className: "px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all",
 						children: ["Lihat Semua Produk ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg align-middle ml-2" })]
 					})]
-				}), loading ? /* @__PURE__ */ jsx("div", {
-					className: "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8",
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "relative group/nav",
 					children: [
-						1,
-						2,
-						3,
-						4
-					].map((i) => /* @__PURE__ */ jsx("div", { className: "h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]" }, i))
-				}) : /* @__PURE__ */ jsx("div", {
-					className: "flex overflow-x-auto overflow-y-hidden lg:grid lg:grid-cols-4 gap-4 md:gap-8 pb-4 scrollbar-hide",
-					children: featuredProducts.map((product, i) => /* @__PURE__ */ jsx(motion.div, {
-						initial: {
-							opacity: 0,
-							y: 20
-						},
-						whileInView: {
-							opacity: 1,
-							y: 0
-						},
-						transition: { delay: i * .1 },
-						className: "min-w-70 lg:min-w-0",
-						children: /* @__PURE__ */ jsx(ProductCard, { product })
-					}, product.id))
+						/* @__PURE__ */ jsx("button", {
+							onClick: () => scroll(productsRef, "left"),
+							className: "absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
+							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-left text-2xl" })
+						}),
+						/* @__PURE__ */ jsx("button", {
+							onClick: () => scroll(productsRef, "right"),
+							className: "absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
+							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-right text-2xl" })
+						}),
+						loading ? /* @__PURE__ */ jsx("div", {
+							className: "flex flex-nowrap overflow-x-auto gap-4 md:gap-8 pb-4",
+							children: [
+								1,
+								2,
+								3,
+								4
+							].map((i) => /* @__PURE__ */ jsx("div", { className: "min-w-[280px] md:min-w-0 md:flex-1 h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]" }, i))
+						}) : /* @__PURE__ */ jsx("div", {
+							ref: productsRef,
+							className: "flex flex-nowrap overflow-x-auto no-scrollbar gap-4 md:gap-8 pb-4 md:grid md:grid-cols-4",
+							children: featuredProducts.map((product, i) => /* @__PURE__ */ jsx(motion.div, {
+								initial: {
+									opacity: 0,
+									y: 20
+								},
+								whileInView: {
+									opacity: 1,
+									y: 0
+								},
+								transition: { delay: i * .1 },
+								className: "min-w-[280px] md:min-w-0 w-full",
+								children: /* @__PURE__ */ jsx(ProductCard, { product })
+							}, product.id))
+						})
+					]
 				})]
 			}),
 			/* @__PURE__ */ jsxs("section", {
@@ -1338,62 +1366,78 @@ var Home = () => {
 						className: "px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all",
 						children: ["Jelajahi Semua Artikel ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg align-middle ml-2" })]
 					})]
-				}), /* @__PURE__ */ jsx("div", {
-					className: "flex flex-nowrap md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto overflow-y-hidden pb-6 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide no-scrollbar snap-x snap-mandatory",
-					children: [...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => /* @__PURE__ */ jsxs(motion.article, {
-						initial: {
-							opacity: 0,
-							y: 20
-						},
-						whileInView: {
-							opacity: 1,
-							y: 0
-						},
-						transition: { delay: i * .1 },
-						className: "min-w-70 w-[80vw] md:w-auto snap-center group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col shrink-0",
-						children: [/* @__PURE__ */ jsxs(Link, {
-							to: `/blog/${post.slug}`,
-							className: "relative aspect-video overflow-hidden block",
-							children: [/* @__PURE__ */ jsx("img", {
-								src: post.image,
-								alt: post.title,
-								className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-							}), /* @__PURE__ */ jsx("div", {
-								className: "absolute top-4 left-4",
-								children: /* @__PURE__ */ jsx("span", {
-									className: "px-3 py-1.5 bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-lg text-secondary shadow-lg",
-									children: post.category
-								})
-							})]
-						}), /* @__PURE__ */ jsxs("div", {
-							className: "p-8 space-y-4 grow flex flex-col",
-							children: [
-								/* @__PURE__ */ jsx("p", {
-									className: "text-[9px] font-black text-text-secondary uppercase tracking-widest",
-									children: post.date
-								}),
-								/* @__PURE__ */ jsx(Link, {
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "relative group/nav",
+					children: [
+						/* @__PURE__ */ jsx("button", {
+							onClick: () => scroll(blogRef, "left"),
+							className: "absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
+							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-left text-2xl" })
+						}),
+						/* @__PURE__ */ jsx("button", {
+							onClick: () => scroll(blogRef, "right"),
+							className: "absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
+							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-right text-2xl" })
+						}),
+						/* @__PURE__ */ jsx("div", {
+							ref: blogRef,
+							className: "flex flex-nowrap overflow-x-auto no-scrollbar gap-6 md:gap-8 pb-6 md:grid md:grid-cols-3",
+							children: [...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => /* @__PURE__ */ jsxs(motion.article, {
+								initial: {
+									opacity: 0,
+									y: 20
+								},
+								whileInView: {
+									opacity: 1,
+									y: 0
+								},
+								transition: { delay: i * .1 },
+								className: "min-w-[300px] md:min-w-0 group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col",
+								children: [/* @__PURE__ */ jsxs(Link, {
 									to: `/blog/${post.slug}`,
-									children: /* @__PURE__ */ jsx("h3", {
-										className: "text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2",
-										children: post.title
-									})
-								}),
-								/* @__PURE__ */ jsx("p", {
-									className: "text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed grow",
-									children: post.excerpt
-								}),
-								/* @__PURE__ */ jsx("div", {
-									className: "pt-4",
-									children: /* @__PURE__ */ jsxs(Link, {
-										to: `/blog/${post.slug}`,
-										className: "text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all",
-										children: ["Baca Selengkapnya ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg" })]
-									})
-								})
-							]
-						})]
-					}, post.id))
+									className: "relative aspect-video overflow-hidden block",
+									children: [/* @__PURE__ */ jsx("img", {
+										src: post.image,
+										alt: post.title,
+										className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+									}), /* @__PURE__ */ jsx("div", {
+										className: "absolute top-4 left-4",
+										children: /* @__PURE__ */ jsx("span", {
+											className: "px-3 py-1.5 bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-lg text-secondary shadow-lg",
+											children: post.category
+										})
+									})]
+								}), /* @__PURE__ */ jsxs("div", {
+									className: "p-8 space-y-4 grow flex flex-col",
+									children: [
+										/* @__PURE__ */ jsx("p", {
+											className: "text-[9px] font-black text-text-secondary uppercase tracking-widest",
+											children: post.date
+										}),
+										/* @__PURE__ */ jsx(Link, {
+											to: `/blog/${post.slug}`,
+											children: /* @__PURE__ */ jsx("h3", {
+												className: "text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2",
+												children: post.title
+											})
+										}),
+										/* @__PURE__ */ jsx("p", {
+											className: "text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed grow",
+											children: post.excerpt
+										}),
+										/* @__PURE__ */ jsx("div", {
+											className: "pt-4",
+											children: /* @__PURE__ */ jsxs(Link, {
+												to: `/blog/${post.slug}`,
+												className: "text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all",
+												children: ["Baca Selengkapnya ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg" })]
+											})
+										})
+									]
+								})]
+							}, post.id))
+						})
+					]
 				})]
 			}),
 			/* @__PURE__ */ jsxs("section", {
@@ -1637,17 +1681,7 @@ var Products = () => {
 	const [selectedSubCategory, setSelectedSubCategory] = useState("Semua");
 	const [products, setProducts] = useState(initialProducts);
 	const [loading, setLoading] = useState(!initialProducts.length);
-	const scrollRef = useRef(null);
-	const scroll = (direction) => {
-		if (scrollRef.current) {
-			const { scrollLeft } = scrollRef.current;
-			const scrollTo = direction === "left" ? scrollLeft - 200 : scrollLeft + 200;
-			scrollRef.current.scrollTo({
-				left: scrollTo,
-				behavior: "smooth"
-			});
-		}
-	};
+	useRef(null);
 	useEffect(() => {
 		if (initialProducts.length > 0) {
 			setProducts(initialProducts);
@@ -1772,65 +1806,74 @@ var Products = () => {
 					})]
 				})
 			}),
-			/* @__PURE__ */ jsxs("section", {
-				className: "sticky top-28 z-40 space-y-6 -mx-6 lg:-mx-10 px-6 lg:px-10",
-				children: [/* @__PURE__ */ jsxs("div", {
-					className: "relative group/nav",
+			/* @__PURE__ */ jsx("section", {
+				className: "sticky top-28 z-40 -mx-6 lg:-mx-10 px-6 lg:px-10 py-3 bg-background/95 backdrop-blur-xl border-b border-black/5",
+				children: /* @__PURE__ */ jsxs("div", {
+					className: "max-w-7xl mx-auto space-y-3",
 					children: [
-						/* @__PURE__ */ jsx("button", {
-							onClick: () => scroll("left"),
-							className: "absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-black/5 flex items-center justify-center text-primary z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-white",
-							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-left text-2xl" })
+						/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center gap-2 mb-1",
+							children: [/* @__PURE__ */ jsx("div", { className: "w-1 h-3 bg-primary rounded-full" }), /* @__PURE__ */ jsx("span", {
+								className: "text-[15px] font-black uppercase tracking-widest text-text-secondary",
+								children: "Pilih Kategori"
+							})]
 						}),
 						/* @__PURE__ */ jsx("div", {
-							ref: scrollRef,
-							className: "glass p-2 rounded-3xl border-black/5 flex flex-nowrap items-center justify-start gap-2 shadow-2xl shadow-black/5 overflow-x-auto scrollbar-hide no-scrollbar scroll-smooth",
-							children: categories.map((cat) => /* @__PURE__ */ jsx("button", {
+							className: "flex flex-nowrap md:flex-wrap items-center gap-2 overflow-x-auto md:overflow-visible no-scrollbar scroll-smooth py-1.5 px-0.5 max-w-full lg:max-w-[90%]",
+							children: categories.map((cat, idx) => /* @__PURE__ */ jsx(motion.button, {
+								initial: {
+									opacity: 0,
+									y: 5
+								},
+								animate: {
+									opacity: 1,
+									y: 0
+								},
+								transition: { delay: idx * .02 },
 								onClick: () => {
 									setSelectedCategory(cat);
 									setSelectedSubCategory("Semua");
 								},
-								className: `px-6 py-3 rounded-xl text-[10px] font-black tracking-widest uppercase transition-all duration-300 relative whitespace-nowrap shrink-0 ${selectedCategory === cat ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-black/5 text-text-secondary hover:bg-black/10"}`,
+								className: `px-5 py-2 rounded-full text-[10px] font-black tracking-wider uppercase transition-all whitespace-nowrap shrink-0 ${selectedCategory === cat ? "bg-primary text-white shadow-md shadow-primary/20 scale-105 mx-0.5" : "bg-black/5 text-text-secondary hover:bg-black/10"}`,
 								children: cat
 							}, cat))
 						}),
-						/* @__PURE__ */ jsx("button", {
-							onClick: () => scroll("right"),
-							className: "absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-black/5 flex items-center justify-center text-primary z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-white",
-							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-right text-2xl" })
+						/* @__PURE__ */ jsx(AnimatePresence, {
+							mode: "wait",
+							children: currentSubCategories.length > 0 && /* @__PURE__ */ jsx(motion.div, {
+								initial: {
+									opacity: 0,
+									y: 5
+								},
+								animate: {
+									opacity: 1,
+									y: 0
+								},
+								exit: {
+									opacity: 0,
+									y: 5
+								},
+								className: "flex items-center py-1.5 px-0.5",
+								children: /* @__PURE__ */ jsxs("div", {
+									className: "flex items-center gap-0.5 p-1 bg-black/5 rounded-full border border-black/5 w-full md:w-auto",
+									children: [
+										/* @__PURE__ */ jsx("button", {
+											onClick: () => setSelectedSubCategory("Semua"),
+											className: `flex-1 md:flex-none px-2 md:px-4 py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all text-center whitespace-nowrap ${selectedSubCategory === "Semua" ? "bg-secondary text-white shadow-sm shadow-secondary/20" : "text-text-secondary hover:text-primary"}`,
+											children: "Semua Tipe"
+										}),
+										/* @__PURE__ */ jsx("div", { className: "w-px h-3 bg-black/10 shrink-0 hidden md:block" }),
+										currentSubCategories.map((sub) => /* @__PURE__ */ jsx("button", {
+											onClick: () => setSelectedSubCategory(sub),
+											className: `flex-1 md:flex-none px-2 md:px-4 py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all text-center whitespace-nowrap ${selectedSubCategory === sub ? "bg-secondary text-white shadow-sm shadow-secondary/20" : "text-text-secondary hover:text-primary"}`,
+											children: sub
+										}, sub))
+									]
+								})
+							}, selectedCategory)
 						})
 					]
-				}), /* @__PURE__ */ jsx(AnimatePresence, { children: currentSubCategories.length > 0 && /* @__PURE__ */ jsx(motion.div, {
-					initial: {
-						height: 0,
-						opacity: 0
-					},
-					animate: {
-						height: "auto",
-						opacity: 1
-					},
-					exit: {
-						height: 0,
-						opacity: 0
-					},
-					className: "overflow-hidden flex justify-start",
-					children: /* @__PURE__ */ jsxs("div", {
-						className: "flex flex-nowrap items-center justify-start gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[20px] border border-black/5 shadow-inner overflow-x-auto scrollbar-hide no-scrollbar w-full",
-						children: [
-							/* @__PURE__ */ jsx("button", {
-								onClick: () => setSelectedSubCategory("Semua"),
-								className: `px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${selectedSubCategory === "Semua" ? "bg-secondary text-white shadow-md shadow-secondary/20" : "text-text-secondary hover:text-primary bg-white/50"}`,
-								children: "Semua Tipe"
-							}),
-							/* @__PURE__ */ jsx("div", { className: "w-px h-3 bg-black/10 shrink-0" }),
-							currentSubCategories.map((sub) => /* @__PURE__ */ jsx("button", {
-								onClick: () => setSelectedSubCategory(sub),
-								className: `px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${selectedSubCategory === sub ? "bg-secondary text-white shadow-md shadow-secondary/20" : "text-text-secondary hover:text-primary bg-white/50"}`,
-								children: sub
-							}, sub))
-						]
-					})
-				}) })]
+				})
 			}),
 			/* @__PURE__ */ jsx(AnimatePresence, { children: searchQuery && /* @__PURE__ */ jsxs(motion.div, {
 				initial: {
@@ -3267,8 +3310,7 @@ var Contact_default = UNSAFE_withComponentProps(function ContactPage() {
 		children: [
 			/* @__PURE__ */ jsx(PageHero, {
 				title: "Hubungi Kami",
-				subtitle: "Kami siap membantu mewujudkan solusi energi terbaik untuk Anda. Hubungi kami melalui berbagai saluran komunikasi.",
-				icon: "bx-message-square-detail"
+				subtitle: "Kami siap membantu mewujudkan solusi energi terbaik untuk Anda. Hubungi kami melalui berbagai saluran komunikasi."
 			}),
 			/* @__PURE__ */ jsxs("section", {
 				className: "grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8",
@@ -3608,7 +3650,6 @@ var Admin = () => {
 			price: 0,
 			images: formData.images.filter((img) => typeof img === "string" && img.trim() !== "" && !img.startsWith("blob:"))
 		};
-		console.log("Final payload before save:", payload);
 		if (!payload.image) {
 			setError("Gambar utama wajib diunggah.");
 			return;
@@ -4124,14 +4165,14 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": true,
-			"module": "/assets/root-B5f1BC3u.js",
+			"module": "/assets/root-BVO1-6xH.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/AnimatePresence-Bfk2ZeFT.js",
 				"/assets/proxy-B-hc-kX8.js",
 				"/assets/AppContext-CclEYKsb.js"
 			],
-			"css": ["/assets/root-BsSuRRBs.css"],
+			"css": ["/assets/root-BrNf--kA.css"],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
 			"clientMiddlewareModule": void 0,
@@ -4150,13 +4191,14 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Home-CoCw9Kj0.js",
+			"module": "/assets/Home-DlsaHq6v.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/AnimatePresence-Bfk2ZeFT.js",
 				"/assets/proxy-B-hc-kX8.js",
 				"/assets/ProductCard-CQSWl87V.js",
-				"/assets/blog-CXJOJeiy.js"
+				"/assets/blog-CXJOJeiy.js",
+				"/assets/seo-CYuARZcg.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4177,7 +4219,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Products-CSBnZ4dp.js",
+			"module": "/assets/Products-BlDlagef.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/AnimatePresence-Bfk2ZeFT.js",
@@ -4204,11 +4246,12 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/ProductDetail-B6bI1Nov.js",
+			"module": "/assets/ProductDetail-Drg1R2ci.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/AnimatePresence-Bfk2ZeFT.js",
-				"/assets/proxy-B-hc-kX8.js"
+				"/assets/proxy-B-hc-kX8.js",
+				"/assets/seo-CYuARZcg.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4321,7 +4364,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Contact-QZ8mBSxI.js",
+			"module": "/assets/Contact-Dhkj9998.js",
 			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4342,7 +4385,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Admin-pAHiEKsx.js",
+			"module": "/assets/Admin-DOi-2Xx4.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/proxy-B-hc-kX8.js",
@@ -4376,8 +4419,8 @@ var server_manifest_default = {
 			"hydrateFallbackModule": void 0
 		}
 	},
-	"url": "/assets/manifest-0560b9c6.js",
-	"version": "0560b9c6",
+	"url": "/assets/manifest-57f2b929.js",
+	"version": "57f2b929",
 	"sri": void 0
 };
 //#endregion

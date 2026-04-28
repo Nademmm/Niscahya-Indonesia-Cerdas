@@ -43,32 +43,15 @@ body {
   border: 1px solid rgba(16, 185, 129, 0.15);
 }
 
-/* Hide all scrollbars globally while keeping functionality */
-* {
-  -ms-overflow-style: none !important;  /* IE and Edge */
-  scrollbar-width: none !important;  /* Firefox */
+/* Scrollbar utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-*::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari and Opera */
-  width: 0 !important;
-  height: 0 !important;
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
-
-::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-::-webkit-scrollbar-thumb {
-  display: none !important;
-}
-
-::-webkit-scrollbar-track {
-  display: none !important;
-}
-
 
 /* Animations */
 @keyframes float {
