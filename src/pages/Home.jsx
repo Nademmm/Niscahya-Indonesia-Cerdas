@@ -321,14 +321,14 @@ const Home = () => {
             ))}
           </div>
         ) : (
-          <div className="flex overflow-x-auto overflow-y-hidden lg:grid lg:grid-cols-4 gap-4 md:gap-8 pb-4 scrollbar-hide">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-4">
             {featuredProducts.map((product, i) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="min-w-70 lg:min-w-0"
+                className="w-full"
               >
                 <ProductCard product={product} />
               </motion.div>
@@ -349,14 +349,14 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="flex flex-nowrap md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto overflow-y-hidden pb-6 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide no-scrollbar snap-x snap-mandatory">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pb-6">
           {[...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => (
             <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="min-w-70 w-[80vw] md:w-auto snap-center group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col shrink-0"
+              className="group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col"
             >
               <Link to={`/blog/${post.slug}`} className="relative aspect-video overflow-hidden block">
                 <img 

@@ -293,18 +293,10 @@ const Products = () => {
 
       {/* Filter Navigation */}
       <section className="sticky top-28 z-40 space-y-6 -mx-6 lg:-mx-10 px-6 lg:px-10">
-        <div className="relative group/nav">
-          {/* Scroll Buttons */}
-          <button 
-            onClick={() => scroll('left')}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-black/5 flex items-center justify-center text-primary z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-white"
-          >
-            <i className="bx bx-chevron-left text-2xl"></i>
-          </button>
-          
+        <div className="relative group/nav max-w-5xl mx-auto">
           <div 
             ref={scrollRef}
-            className="glass p-2 rounded-3xl border-black/5 flex flex-nowrap items-center justify-start gap-2 shadow-2xl shadow-black/5 overflow-x-auto scrollbar-hide no-scrollbar scroll-smooth"
+            className="glass p-2 rounded-3xl border-black/5 flex flex-wrap items-center justify-center gap-2 shadow-2xl shadow-black/5"
           >
             {categories.map((cat) => (
               <button
@@ -323,13 +315,6 @@ const Products = () => {
               </button>
             ))}
           </div>
-
-          <button 
-            onClick={() => scroll('right')}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-black/5 flex items-center justify-center text-primary z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-white"
-          >
-            <i className="bx bx-chevron-right text-2xl"></i>
-          </button>
         </div>
 
         {/* Sub-Category Navigation */}
@@ -341,7 +326,7 @@ const Products = () => {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden flex justify-start"
             >
-              <div className="flex flex-nowrap items-center justify-start gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[20px] border border-black/5 shadow-inner overflow-x-auto scrollbar-hide no-scrollbar w-full">
+              <div className="flex flex-wrap items-center justify-center gap-2 p-2 bg-black/5 backdrop-blur-xl rounded-[20px] border border-black/5 shadow-inner w-full">
                 <button
                   onClick={() => setSelectedSubCategory('Semua')}
                   className={`px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${
