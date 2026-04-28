@@ -15,13 +15,18 @@ const PORT = process.env.PORT || 3000;
 
 app.use(compression());
 app.use(express.json());
-app.use("/assets", express.static(path.join(root, "build/client/assets"), {
-  maxAge: "1h",
-  immutable: true,
-  fallthrough: false,
-}));
-app.use(express.static(path.join(root, "build/client"), { maxAge: "1h" }));
+
+// Static files
 app.use("/uploads", express.static(path.join(root, "server/uploads")));
+
+if (process.env.NODE_ENV === "production") {
+  app.use("/assets", express.static(path.join(root, "build/client/assets"), {
+    maxAge: "1h",
+    immutable: true,
+    fallthrough: false,
+  }));
+  app.use(express.static(path.join(root, "build/client"), { maxAge: "1h" }));
+}
 
 // Multer storage configuration
 const storage = multer.diskStorage({
@@ -147,20 +152,24 @@ async function startServer() {
     viteDevServer = await vite.createServer({
       root,
       server: { middlewareMode: true },
+      appType: 'custom',
     });
     app.use(viteDevServer.middlewares);
   }
 
   app.use(async (req, res, next) => {
     try {
-      await createRequestHandler({
-        build: viteDevServer 
-          ? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
-          : await import("../build/server/index.js"),
-      })(req, res, next);
+      const build = viteDevServer 
+        ? await viteDevServer.ssrLoadModule("virtual:react-router/server-build")
+        : await import("../build/server/index.js");
+      
+      const handler = createRequestHandler({ build });
+      await handler(req, res, next);
     } catch (error) {
       console.error("React Router Request Handler Error:", error);
-      res.status(500).send("Internal Server Error: " + error.message);
+      if (!res.headersSent) {
+        res.status(500).send("Internal Server Error: " + error.message);
+      }
     }
   });
 

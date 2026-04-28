@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLoaderData } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
@@ -154,16 +154,6 @@ const Home = () => {
 
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(!products.length);
-  const productsRef = useRef(null);
-  const blogRef = useRef(null);
-
-  const scroll = (ref, direction) => {
-    if (ref.current) {
-      const { scrollLeft } = ref.current;
-      const scrollTo = direction === 'left' ? scrollLeft - 300 : scrollLeft + 300;
-      ref.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-    }
-  };
 
   useEffect(() => {
     if (products.length > 0) {
@@ -324,21 +314,7 @@ const Home = () => {
           </Link>
         </div>
         
-        <div className="relative group/nav">
-          {/* Nav Buttons */}
-          <button 
-            onClick={() => scroll(productsRef, 'left')}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
-          >
-            <i className="bx bx-chevron-left text-2xl"></i>
-          </button>
-          <button 
-            onClick={() => scroll(productsRef, 'right')}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
-          >
-            <i className="bx bx-chevron-right text-2xl"></i>
-          </button>
-
+        <div className="relative">
           {loading ? (
             <div className="flex flex-nowrap overflow-x-auto gap-4 md:gap-8 pb-4">
               {[1,2,3,4].map(i => (
@@ -347,7 +323,6 @@ const Home = () => {
             </div>
           ) : (
             <div 
-               ref={productsRef}
                className="flex flex-nowrap overflow-x-auto no-scrollbar gap-4 md:gap-8 pb-4 md:grid md:grid-cols-4"
              >
               {featuredProducts.map((product, i) => (
@@ -378,23 +353,8 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="relative group/nav">
-          {/* Nav Buttons */}
-          <button 
-            onClick={() => scroll(blogRef, 'left')}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
-          >
-            <i className="bx bx-chevron-left text-2xl"></i>
-          </button>
-          <button 
-            onClick={() => scroll(blogRef, 'right')}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex"
-          >
-            <i className="bx bx-chevron-right text-2xl"></i>
-          </button>
-
+        <div className="relative">
           <div 
-             ref={blogRef}
              className="flex flex-nowrap overflow-x-auto no-scrollbar gap-6 md:gap-8 pb-6 md:grid md:grid-cols-3"
            >
             {[...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => (
