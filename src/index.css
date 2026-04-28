@@ -17,6 +17,19 @@
   color: #064e3b;
 }
 
+:focus-visible {
+  outline: 3px solid rgba(16, 185, 129, 0.65);
+  outline-offset: 3px;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   overflow-x: hidden;
@@ -71,6 +84,15 @@ body {
 
 .animate-glow {
   animation: glow 4s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }
 
 .bg-mesh {

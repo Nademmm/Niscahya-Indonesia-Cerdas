@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 
 const navLinks = [
@@ -58,43 +57,28 @@ const Navbar = () => {
         scrolled ? 'shadow-2xl shadow-primary/10 border-black/5' : 'bg-transparent border-transparent'
       }`}>
         {/* Logo - hides when mobile search is open */}
-        <AnimatePresence mode="wait">
-          {!mobileSearchOpen ? (
-            <motion.div
-              key="logo"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Link to="/" className="flex items-center gap-3 group">
-                <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
-                <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya</span>
-              </Link>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="mobile-search"
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: '100%' }}
-              exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="flex-1 lg:hidden mr-2"
-            >
-              <div className="flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-primary/30 rounded-2xl group focus-within:border-primary/50 transition-all">
-                <i className="bx bx-search text-xl text-primary"></i>
-                <input 
-                  type="text" 
-                  placeholder="Cari produk atau unit..."
-                  value={localSearch}
-                  onChange={handleSearch}
-                  autoFocus
-                  className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-full text-sm font-bold"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {!mobileSearchOpen ? (
+          <div>
+            <Link to="/" className="flex items-center gap-3 group">
+              <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
+              <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya</span>
+            </Link>
+          </div>
+        ) : (
+          <div className="flex-1 lg:hidden mr-2">
+            <div className="flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-primary/30 rounded-2xl group focus-within:border-primary/50 transition-all">
+              <i className="bx bx-search text-xl text-primary"></i>
+              <input 
+                type="text" 
+                placeholder="Cari produk atau unit..."
+                value={localSearch}
+                onChange={handleSearch}
+                autoFocus
+                className="bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-full text-sm font-bold"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-1 bg-black/5 rounded-2xl p-1 border border-black/5">
@@ -127,8 +111,11 @@ const Navbar = () => {
             </div>
             {/* Mobile Search Icon Button */}
             <button 
+              type="button"
+              aria-label={mobileSearchOpen ? 'Tutup pencarian' : 'Buka pencarian'}
+              aria-pressed={mobileSearchOpen}
               onClick={toggleMobileSearch}
-              className={`sm:hidden px-2.5 pt-[13px] pb-[13px] w-[45px] h-[48px] rounded-2xl border transition-all duration-300 ${
+              className={`sm:hidden px-2.5 py-3 w-11 h-12 rounded-2xl border transition-all duration-300 ${
                 mobileSearchOpen 
                   ? 'bg-primary text-background border-primary shadow-lg shadow-primary/20'
                   : 'bg-black/5 text-text-main border-black/10 hover:bg-black/10'
@@ -137,6 +124,10 @@ const Navbar = () => {
               <i className={`bx ${mobileSearchOpen ? 'bx-x' : 'bx-search'} text-xl`}></i>
             </button>
             <button 
+              type="button"
+              aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navigation"
               onClick={() => {
                 setMobileMenuOpen(!mobileMenuOpen);
                 if (mobileSearchOpen) setMobileSearchOpen(false);
@@ -150,28 +141,23 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 bg-background/95 backdrop-blur-2xl z-[-1] lg:hidden flex flex-col items-center justify-center gap-8"
-          >
-
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-4xl font-black tracking-tighter hover:text-primary transition-colors uppercase"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {mobileMenuOpen && (
+        <div
+          id="mobile-navigation"
+          className="fixed inset-0 bg-background/95 backdrop-blur-2xl z-[-1] lg:hidden flex flex-col items-center justify-center gap-8"
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.path}
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-4xl font-black tracking-tighter hover:text-primary transition-colors uppercase"
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
+      )}
     </nav>
   );
 };
@@ -183,21 +169,16 @@ const Layout = ({ children }) => {
   return (
     <div className="min-h-screen bg-background text-text-main selection:bg-primary/30 selection:text-primary relative overflow-x-hidden">
       {/* Notification Toast */}
-      <AnimatePresence>
-        {notification && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: '-50%' }}
-            animate={{ opacity: 1, y: 0, x: '-50%' }}
-            exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className="fixed bottom-10 left-1/2 z-100 glass-bright px-8 py-4 rounded-2xl border border-primary/30 shadow-2xl shadow-primary/10 flex items-center gap-4"
-          >
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <i className="bx bx-check text-background text-xl"></i>
-            </div>
-            <p className="font-black uppercase tracking-widest text-xs">{notification}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {notification && (
+        <div
+          className="fixed bottom-10 left-1/2 z-100 glass-bright px-8 py-4 rounded-2xl border border-primary/30 shadow-2xl shadow-primary/10 flex items-center gap-4 transform -translate-x-1/2 animate-fade-in"
+        >
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <i className="bx bx-check text-background text-xl"></i>
+          </div>
+          <p className="font-black uppercase tracking-widest text-xs">{notification}</p>
+        </div>
+      )}
 
       {/* Dynamic Background */}
       <div className="fixed inset-0 bg-mesh -z-10 opacity-70"></div>
@@ -206,15 +187,12 @@ const Layout = ({ children }) => {
 
       <Navbar />
       
-      <motion.main 
+      <main 
         key={location.pathname}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
         className="pt-32 pb-20 px-6 lg:px-10 max-w-7xl mx-auto w-full relative z-10"
       >
         {children}
-      </motion.main>
+      </main>
 
       <footer className="py-32 px-6 lg:px-10 max-w-7xl mx-auto border-t border-black/5 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
@@ -254,13 +232,13 @@ const Layout = ({ children }) => {
             <p className="text-[10px] font-bold text-text-secondary/50 uppercase tracking-[0.2em]">Penerangan Jalan Umum Tenaga Surya & PLN Terpercaya</p>
           </div>
           <div className="flex gap-8 text-2xl text-text-secondary">
-            <a href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
+            <a aria-label="Instagram Niscahya Indonesia Cerdas" href="https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
               <i className="bx bxl-instagram"></i>
             </a>
-            <a href="https://www.facebook.com/pjutenagasuryasurabaya" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
+            <a aria-label="Facebook Niscahya Indonesia Cerdas" href="https://www.facebook.com/pjutenagasuryasurabaya" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
               <i className="bx bxl-facebook-circle"></i>
             </a>
-            <a href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
+            <a aria-label="WhatsApp Niscahya Indonesia Cerdas" href="https://wa.me/6287853536124" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:scale-110 transition-all">
               <i className="bx bxl-whatsapp"></i>
             </a>
           </div>

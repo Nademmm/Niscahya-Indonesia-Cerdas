@@ -283,6 +283,11 @@ const ProductDetail = () => {
                 transition={{ duration: 0.4 }}
                 src={displayedImage} 
                 alt={`${product.name} - Lampu PJU Tenaga Surya Niscahya`} 
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                width="1600"
+                height="1600"
                 className="w-full h-full object-cover"
               />
             </AnimatePresence>
@@ -292,6 +297,8 @@ const ProductDetail = () => {
             {thumbnailSlots.map((img, i) => (
               <button 
                 key={i}
+                type="button"
+                aria-label={img ? `Pilih gambar produk ${i + 1}` : `Slot gambar ${i + 1} kosong`}
                 onClick={() => img && setSelectedImage(img)}
                 className={`aspect-square rounded-xl md:rounded-2xl overflow-hidden transition-all ${
                   selectedImage === img ? 'ring-2 md:ring-4 ring-primary' : 'opacity-60 hover:opacity-100'
@@ -301,6 +308,10 @@ const ProductDetail = () => {
                   <img 
                     src={img} 
                     alt={`${product.name} Gallery ${i + 1}`} 
+                    loading="lazy"
+                    decoding="async"
+                    width="240"
+                    height="240"
                     className="w-full h-full object-cover" 
                   />
                 )}
@@ -336,6 +347,8 @@ const ProductDetail = () => {
             <div className="flex items-center gap-6">
               <div className="flex items-center glass border border-black/10 rounded-2xl overflow-hidden h-12 md:h-14">
                 <button 
+                  type="button"
+                  aria-label="Kurangi jumlah"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="px-4 hover:bg-black/5 transition-colors h-full"
                 >
@@ -343,6 +356,8 @@ const ProductDetail = () => {
                 </button>
                 <span className="w-10 md:w-12 text-center font-black text-lg md:text-xl">{quantity}</span>
                 <button 
+                  type="button"
+                  aria-label="Tambah jumlah"
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-4 hover:bg-black/5 transition-colors h-full"
                 >
@@ -401,7 +416,7 @@ const ProductDetail = () => {
               className="group glass rounded-2xl md:rounded-4xl overflow-hidden hover:border-primary/30 transition-all border-black/5 shadow-xl shadow-black/5"
             >
               <div className="aspect-square relative overflow-hidden">
-                <img src={p.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={p.image} loading="lazy" decoding="async" width="1200" height="1500" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <Link to={`/products/${p.id}`} className="absolute inset-0 z-10"></Link>
               </div>
               <div className="p-4 md:p-6 space-y-1 md:space-y-2">
@@ -465,6 +480,7 @@ const ProductDetail = () => {
         {/* Lokasi Kami (Map) */}
         <div className="glass p-2 md:p-4 rounded-3xl md:rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-75 md:h-125 lg:h-auto">
           <iframe 
+            title="Peta lokasi showroom Niscahya Indonesia Cerdas"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
             width="100%" 
             height="100%" 

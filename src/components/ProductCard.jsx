@@ -16,8 +16,11 @@ const ProductCard = memo(({ product }) => {
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
           loading="lazy"
+          decoding="async"
+          width="1200"
+          height="1500"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
         />
         
         {/* Improved Overlay Gradient - Optimized for performance */}

@@ -143,64 +143,30 @@ var Navbar = () => {
 		children: [/* @__PURE__ */ jsxs("div", {
 			className: `max-w-7xl mx-auto glass rounded-4xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all duration-500 ${scrolled ? "shadow-2xl shadow-primary/10 border-black/5" : "bg-transparent border-transparent"}`,
 			children: [
-				/* @__PURE__ */ jsx(AnimatePresence, {
-					mode: "wait",
-					children: !mobileSearchOpen ? /* @__PURE__ */ jsx(motion.div, {
-						initial: {
-							opacity: 0,
-							x: -20
-						},
-						animate: {
-							opacity: 1,
-							x: 0
-						},
-						exit: {
-							opacity: 0,
-							x: -20
-						},
-						transition: { duration: .2 },
-						children: /* @__PURE__ */ jsxs(Link, {
-							to: "/",
-							className: "flex items-center gap-3 group",
-							children: [/* @__PURE__ */ jsx("img", {
-								src: "/logo.png",
-								alt: "Niscahya Indonesia Cerdas Logo",
-								className: "w-10 h-10 object-contain"
-							}), /* @__PURE__ */ jsx("span", {
-								className: "text-2xl font-black tracking-tighter text-text-main uppercase",
-								children: "Niscahya"
-							})]
-						})
-					}, "logo") : /* @__PURE__ */ jsx(motion.div, {
-						initial: {
-							opacity: 0,
-							width: 0
-						},
-						animate: {
-							opacity: 1,
-							width: "100%"
-						},
-						exit: {
-							opacity: 0,
-							width: 0
-						},
-						transition: {
-							duration: .3,
-							ease: "easeInOut"
-						},
-						className: "flex-1 lg:hidden mr-2",
-						children: /* @__PURE__ */ jsxs("div", {
-							className: "flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-primary/30 rounded-2xl group focus-within:border-primary/50 transition-all",
-							children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-primary" }), /* @__PURE__ */ jsx("input", {
-								type: "text",
-								placeholder: "Cari produk atau unit...",
-								value: localSearch,
-								onChange: handleSearch,
-								autoFocus: true,
-								className: "bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-full text-sm font-bold"
-							})]
-						})
-					}, "mobile-search")
+				!mobileSearchOpen ? /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs(Link, {
+					to: "/",
+					className: "flex items-center gap-3 group",
+					children: [/* @__PURE__ */ jsx("img", {
+						src: "/logo.png",
+						alt: "Niscahya Indonesia Cerdas Logo",
+						className: "w-10 h-10 object-contain"
+					}), /* @__PURE__ */ jsx("span", {
+						className: "text-2xl font-black tracking-tighter text-text-main uppercase",
+						children: "Niscahya"
+					})]
+				}) }) : /* @__PURE__ */ jsx("div", {
+					className: "flex-1 lg:hidden mr-2",
+					children: /* @__PURE__ */ jsxs("div", {
+						className: "flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-primary/30 rounded-2xl group focus-within:border-primary/50 transition-all",
+						children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-primary" }), /* @__PURE__ */ jsx("input", {
+							type: "text",
+							placeholder: "Cari produk atau unit...",
+							value: localSearch,
+							onChange: handleSearch,
+							autoFocus: true,
+							className: "bg-transparent border-none outline-none text-text-main placeholder-text-secondary/50 w-full text-sm font-bold"
+						})]
+					})
 				}),
 				/* @__PURE__ */ jsx("div", {
 					className: "hidden lg:flex items-center gap-1 bg-black/5 rounded-2xl p-1 border border-black/5",
@@ -224,11 +190,18 @@ var Navbar = () => {
 							})]
 						}),
 						/* @__PURE__ */ jsx("button", {
+							type: "button",
+							"aria-label": mobileSearchOpen ? "Tutup pencarian" : "Buka pencarian",
+							"aria-pressed": mobileSearchOpen,
 							onClick: toggleMobileSearch,
-							className: `sm:hidden px-2.5 pt-[13px] pb-[13px] w-[45px] h-[48px] rounded-2xl border transition-all duration-300 ${mobileSearchOpen ? "bg-primary text-background border-primary shadow-lg shadow-primary/20" : "bg-black/5 text-text-main border-black/10 hover:bg-black/10"}`,
+							className: `sm:hidden px-2.5 py-3 w-11 h-12 rounded-2xl border transition-all duration-300 ${mobileSearchOpen ? "bg-primary text-background border-primary shadow-lg shadow-primary/20" : "bg-black/5 text-text-main border-black/10 hover:bg-black/10"}`,
 							children: /* @__PURE__ */ jsx("i", { className: `bx ${mobileSearchOpen ? "bx-x" : "bx-search"} text-xl` })
 						}),
 						/* @__PURE__ */ jsx("button", {
+							type: "button",
+							"aria-label": mobileMenuOpen ? "Tutup menu" : "Buka menu",
+							"aria-expanded": mobileMenuOpen,
+							"aria-controls": "mobile-navigation",
 							onClick: () => {
 								setMobileMenuOpen(!mobileMenuOpen);
 								if (mobileSearchOpen) setMobileSearchOpen(false);
@@ -239,19 +212,8 @@ var Navbar = () => {
 					]
 				})
 			]
-		}), /* @__PURE__ */ jsx(AnimatePresence, { children: mobileMenuOpen && /* @__PURE__ */ jsx(motion.div, {
-			initial: {
-				opacity: 0,
-				y: -20
-			},
-			animate: {
-				opacity: 1,
-				y: 0
-			},
-			exit: {
-				opacity: 0,
-				y: -20
-			},
+		}), mobileMenuOpen && /* @__PURE__ */ jsx("div", {
+			id: "mobile-navigation",
 			className: "fixed inset-0 bg-background/95 backdrop-blur-2xl z-[-1] lg:hidden flex flex-col items-center justify-center gap-8",
 			children: navLinks.map((link) => /* @__PURE__ */ jsx(Link, {
 				to: link.path,
@@ -259,7 +221,7 @@ var Navbar = () => {
 				className: "text-4xl font-black tracking-tighter hover:text-primary transition-colors uppercase",
 				children: link.name
 			}, link.name))
-		}) })]
+		})]
 	});
 };
 var Layout$1 = ({ children }) => {
@@ -268,23 +230,8 @@ var Layout$1 = ({ children }) => {
 	return /* @__PURE__ */ jsxs("div", {
 		className: "min-h-screen bg-background text-text-main selection:bg-primary/30 selection:text-primary relative overflow-x-hidden",
 		children: [
-			/* @__PURE__ */ jsx(AnimatePresence, { children: notification && /* @__PURE__ */ jsxs(motion.div, {
-				initial: {
-					opacity: 0,
-					y: 50,
-					x: "-50%"
-				},
-				animate: {
-					opacity: 1,
-					y: 0,
-					x: "-50%"
-				},
-				exit: {
-					opacity: 0,
-					y: 50,
-					x: "-50%"
-				},
-				className: "fixed bottom-10 left-1/2 z-100 glass-bright px-8 py-4 rounded-2xl border border-primary/30 shadow-2xl shadow-primary/10 flex items-center gap-4",
+			notification && /* @__PURE__ */ jsxs("div", {
+				className: "fixed bottom-10 left-1/2 z-100 glass-bright px-8 py-4 rounded-2xl border border-primary/30 shadow-2xl shadow-primary/10 flex items-center gap-4 transform -translate-x-1/2 animate-fade-in",
 				children: [/* @__PURE__ */ jsx("div", {
 					className: "w-8 h-8 bg-primary rounded-lg flex items-center justify-center",
 					children: /* @__PURE__ */ jsx("i", { className: "bx bx-check text-background text-xl" })
@@ -292,21 +239,12 @@ var Layout$1 = ({ children }) => {
 					className: "font-black uppercase tracking-widest text-xs",
 					children: notification
 				})]
-			}) }),
+			}),
 			/* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-mesh -z-10 opacity-70" }),
 			/* @__PURE__ */ jsx("div", { className: "fixed top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[120px] -z-10" }),
 			/* @__PURE__ */ jsx("div", { className: "fixed bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[120px] -z-10" }),
 			/* @__PURE__ */ jsx(Navbar, {}),
-			/* @__PURE__ */ jsx(motion.main, {
-				initial: {
-					opacity: 0,
-					y: 20
-				},
-				animate: {
-					opacity: 1,
-					y: 0
-				},
-				transition: { duration: .5 },
+			/* @__PURE__ */ jsx("main", {
 				className: "pt-32 pb-20 px-6 lg:px-10 max-w-7xl mx-auto w-full relative z-10",
 				children
 			}, location.pathname),
@@ -416,6 +354,7 @@ var Layout$1 = ({ children }) => {
 						className: "flex gap-8 text-2xl text-text-secondary",
 						children: [
 							/* @__PURE__ */ jsx("a", {
+								"aria-label": "Instagram Niscahya Indonesia Cerdas",
 								href: "https://www.instagram.com/niscahya.id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
 								target: "_blank",
 								rel: "noopener noreferrer",
@@ -423,6 +362,7 @@ var Layout$1 = ({ children }) => {
 								children: /* @__PURE__ */ jsx("i", { className: "bx bxl-instagram" })
 							}),
 							/* @__PURE__ */ jsx("a", {
+								"aria-label": "Facebook Niscahya Indonesia Cerdas",
 								href: "https://www.facebook.com/pjutenagasuryasurabaya",
 								target: "_blank",
 								rel: "noopener noreferrer",
@@ -430,6 +370,7 @@ var Layout$1 = ({ children }) => {
 								children: /* @__PURE__ */ jsx("i", { className: "bx bxl-facebook-circle" })
 							}),
 							/* @__PURE__ */ jsx("a", {
+								"aria-label": "WhatsApp Niscahya Indonesia Cerdas",
 								href: "https://wa.me/6287853536124",
 								target: "_blank",
 								rel: "noopener noreferrer",
@@ -450,6 +391,23 @@ var root_exports = /* @__PURE__ */ __exportAll({
 	Layout: () => Layout,
 	default: () => root_default
 });
+var fontStylesheetHref = "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap";
+var boxiconsStylesheetHref = "https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css";
+var asyncStylesheetLoader = `
+(function () {
+  var hrefs = [
+    ${JSON.stringify(fontStylesheetHref)},
+    ${JSON.stringify(boxiconsStylesheetHref)}
+  ];
+
+  hrefs.forEach(function (href) {
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
+  });
+}());
+`;
 function ScrollToHash() {
 	const { hash, pathname } = useLocation();
 	useEffect(() => {
@@ -477,13 +435,26 @@ function Layout({ children }) {
 				href: "/logo.png"
 			}),
 			/* @__PURE__ */ jsx("link", {
-				href: "https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css",
-				rel: "stylesheet"
+				rel: "preconnect",
+				href: "https://fonts.googleapis.com"
 			}),
 			/* @__PURE__ */ jsx("link", {
-				href: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap",
-				rel: "stylesheet"
+				rel: "preconnect",
+				href: "https://fonts.gstatic.com",
+				crossOrigin: "anonymous"
 			}),
+			/* @__PURE__ */ jsx("link", {
+				rel: "preconnect",
+				href: "https://unpkg.com"
+			}),
+			/* @__PURE__ */ jsx("script", { dangerouslySetInnerHTML: { __html: asyncStylesheetLoader } }),
+			/* @__PURE__ */ jsxs("noscript", { children: [/* @__PURE__ */ jsx("link", {
+				href: fontStylesheetHref,
+				rel: "stylesheet"
+			}), /* @__PURE__ */ jsx("link", {
+				href: boxiconsStylesheetHref,
+				rel: "stylesheet"
+			})] }),
 			/* @__PURE__ */ jsx(Meta, {}),
 			/* @__PURE__ */ jsx(Links, {})
 		] }), /* @__PURE__ */ jsxs("body", { children: [
@@ -547,8 +518,11 @@ var ProductCard = memo(({ product }) => {
 				/* @__PURE__ */ jsx("img", {
 					src: product.image,
 					alt: product.name,
-					className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform",
-					loading: "lazy"
+					loading: "lazy",
+					decoding: "async",
+					width: "1200",
+					height: "1500",
+					className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
 				}),
 				/* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-80 transition-opacity duration-300" }),
 				/* @__PURE__ */ jsx("div", {
@@ -598,7 +572,7 @@ var blogPosts = [
 		title: "Harga Lampu Jalan Tenaga Surya 2025: Simak Dahulu Sebelum Membeli",
 		date: "Agustus 25, 2025",
 		category: "Panduan",
-		image: "/blog1.jpg",
+		image: "/blog1.webp",
 		excerpt: "Lampu jalan tenaga surya telah menjadi pilihan populer untuk penerangan jalan di berbagai daerah. Ketahui harga dan faktor pertimbangannya.",
 		content: `
       Lampu jalan tenaga surya telah menjadi pilihan populer untuk penerangan jalan di berbagai daerah, terutama karena keunggulannya dalam menghemat energi dan ramah lingkungan. Namun, sebelum membeli lampu jalan tenaga surya, ada beberapa hal yang perlu dipertimbangkan, termasuk harga, kualitas, dan fitur-fitur yang ditawarkan.
@@ -632,7 +606,7 @@ var blogPosts = [
 		title: "Lampu PJU Tenaga Surya Hybrid: Menggabungkan Listrik PLN dan Tenaga Surya",
 		date: "Januari 13, 2026",
 		category: "Teknologi",
-		image: "/PJU TENAGA SURYA.jpeg",
+		image: "/PJU TENAGA SURYA.webp",
 		excerpt: "Apa itu sistem hybrid? Simak bagaimana penggabungan dua sumber daya ini dapat meningkatkan efisiensi dan keandalan penerangan jalan Anda.",
 		content: `
       Sistem Hybrid pada PJU Tenaga Surya adalah terobosan terbaru dalam dunia energi terbarukan. Dengan menggabungkan listrik dari PLN dan panel surya, sistem ini menawarkan keandalan 100% tanpa takut kehabisan daya saat cuaca mendung berkepanjangan.
@@ -651,7 +625,7 @@ var blogPosts = [
 		title: "Lithium vs VRLA? Pilih yang Mana untuk Sistem Solar Anda?",
 		date: "Oktober 2, 2025",
 		category: "Komparasi",
-		image: "/blog6.jpg",
+		image: "/blog6.webp",
 		excerpt: "Masih bingung memilih jenis baterai? Kami bandingkan performa, harga, dan daya tahan antara baterai Lithium dan VRLA.",
 		content: `
       Memilih baterai adalah keputusan krusial dalam membangun sistem tenaga surya. Dua jenis yang paling populer adalah Lithium (LiFePO4) dan VRLA (Lead Acid). Mana yang lebih baik?
@@ -676,7 +650,7 @@ var blogPosts = [
 		title: "Jenis-Jenis Tiang Lampu Jalan Tenaga Surya dan Fungsinya",
 		date: "Agustus 28, 2025",
 		category: "Edukasi",
-		image: "/blog5.jpg",
+		image: "/blog5.webp",
 		excerpt: "Dari tiang oktagonal hingga galvanis, ketahui jenis tiang yang paling cocok untuk kebutuhan proyek Anda.",
 		content: `
       Tiang bukan sekadar penyangga. Desain dan material tiang menentukan keamanan dan estetika sistem PJU Anda.
@@ -695,7 +669,7 @@ var blogPosts = [
 		title: "Aetheria 100W vs Nebula High-Bay: Mana yang Lebih Terang?",
 		date: "Juni 2, 2025",
 		category: "Produk",
-		image: "/blog4.jpg",
+		image: "/blog4.webp",
 		excerpt: "Perbandingan mendalam antara dua produk unggulan kami untuk kebutuhan penerangan area luas.",
 		content: `
       Banyak pelanggan bertanya, mana yang lebih baik antara Aetheria 100W dan Nebula High-Bay? Jawabannya tergantung lokasi pemasangan Anda.
@@ -719,7 +693,7 @@ var blogPosts = [
 		title: "All-in-One vs Two-in-One vs Konvensional: Mana yang Paling Untung?",
 		date: "April 10, 2026",
 		category: "Hot Topic",
-		image: "/blog3.jpg",
+		image: "/blog3.webp",
 		excerpt: "Bingung memilih model PJU Tenaga Surya? Simak kelebihan dan kekurangan masing-masing model untuk proyek Anda.",
 		content: `
       Pasar PJU Tenaga Surya saat ini didominasi oleh tiga model utama. Memilih yang salah bisa berarti pemborosan anggaran atau biaya perawatan yang membengkak.
@@ -748,7 +722,7 @@ var blogPosts = [
 		title: "5 Tips Perawatan PJU Tenaga Surya Agar Awet Hingga 10 Tahun",
 		date: "Maret 15, 2026",
 		category: "Tips",
-		image: "/blog2.jpg",
+		image: "/blog2.webp",
 		excerpt: "Jangan biarkan investasi Anda rusak karena kurang perawatan. Ikuti langkah sederhana ini agar sistem solar Anda tetap prima.",
 		content: `
       Investasi PJU Tenaga Surya tidak murah, jadi pastikan Anda merawatnya dengan benar. Sistem yang dirawat bisa bertahan 2-3 kali lebih lama.
@@ -788,7 +762,7 @@ var blogPosts = [
 		title: "Cara Memilih Lampu Panel Surya Terbaik untuk Kebutuhan Anda",
 		date: "April 21, 2026",
 		category: "Panduan",
-		image: "/blog1.jpg",
+		image: "/blog1.webp",
 		excerpt: "Jangan salah pilih! Simak panduan lengkap memilih lampu panel surya dengan efisiensi tinggi dan durabilitas jangka panjang.",
 		content: `
       Memilih lampu panel surya (PJU) bukan hanya soal harga murah, tapi soal ketahanan sistem untuk penggunaan bertahun-tahun. Di pasar Indonesia yang ekstrem cuacanya, Anda butuh spesifikasi yang tepat.
@@ -809,7 +783,7 @@ var blogPosts = [
 		title: "Perbandingan Lampu Tenaga Surya vs Listrik Biasa (PLN)",
 		date: "April 21, 2026",
 		category: "Komparasi",
-		image: "/blog2.jpg",
+		image: "/blog2.webp",
 		excerpt: "Mana yang lebih hemat? Kami bedah perbandingan biaya investasi awal hingga biaya operasional antara sistem Solar dan PLN.",
 		content: `
       Banyak calon pengguna ragu beralih ke tenaga surya karena investasi awal yang terlihat mahal. Mari kita bedah faktanya dibanding sistem listrik PLN konvensional.
@@ -835,7 +809,7 @@ var blogPosts = [
 		title: "Apakah Lampu Solar Cocok untuk Rumah? Ini Penjelasannya",
 		date: "April 21, 2026",
 		category: "Edukasi",
-		image: "/blog3.jpg",
+		image: "/blog3.webp",
 		excerpt: "Tenaga surya bukan hanya untuk jalan raya. Pelajari bagaimana sistem solar dapat diaplikasikan untuk hunian pribadi Anda.",
 		content: `
       Banyak yang mengira panel surya hanya untuk proyek pemerintah atau jalan raya. Faktanya, tren Solar Home System (SHS) kini sangat populer untuk hunian modern.
@@ -900,9 +874,16 @@ var updateSEO = ({ title, description, keywords, image = "/og-image.png", type =
 //#region src/pages/Home.jsx
 var Home_exports = /* @__PURE__ */ __exportAll({
 	default: () => Home_default,
+	links: () => links,
 	loader: () => loader$2,
 	meta: () => meta$7
 });
+var links = () => [{
+	rel: "preload",
+	as: "image",
+	href: "/hero-1.webp",
+	type: "image/webp"
+}];
 var meta$7 = () => {
 	return [
 		{ title: "Distributor Lampu PJU Tenaga Surya Terbaik 2026 | Niscahya Indonesia Cerdas" },
@@ -938,23 +919,23 @@ var HeroSlider = () => {
 	const slides = [
 		{
 			id: 1,
-			image: "/hero-1.png",
+			image: "/hero-1.webp",
 			title: "Infrastruktur PJU Tenaga Surya Terintegrasi"
 		},
 		{
 			id: 2,
-			image: "/hero-2.png",
+			image: "/hero-2.webp",
 			title: "Unit Unggulan All In One Series"
 		},
 		{
 			id: 3,
-			image: "/hero-3.png",
+			image: "/hero-3.webp",
 			title: "Solusi Energi Terbarukan Berkelanjutan"
 		}
 	];
 	const slideVariants = {
-		enter: (direction) => ({
-			x: direction > 0 ? 1e3 : -1e3,
+		enter: (slideDirection) => ({
+			x: slideDirection > 0 ? 1e3 : -1e3,
 			opacity: 0
 		}),
 		center: {
@@ -962,9 +943,9 @@ var HeroSlider = () => {
 			x: 0,
 			opacity: 1
 		},
-		exit: (direction) => ({
+		exit: (slideDirection) => ({
 			zIndex: 0,
-			x: direction < 0 ? 1e3 : -1e3,
+			x: slideDirection < 0 ? 1e3 : -1e3,
 			opacity: 0
 		})
 	};
@@ -1008,6 +989,9 @@ var HeroSlider = () => {
 			/* @__PURE__ */ jsx("div", {
 				className: "absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-10",
 				children: slides.map((_, index) => /* @__PURE__ */ jsx("button", {
+					type: "button",
+					"aria-label": `Buka slide ${index + 1}`,
+					"aria-pressed": currentSlide === index,
 					onClick: () => {
 						setDirection(index > currentSlide ? 1 : -1);
 						setCurrentSlide(index);
@@ -1016,11 +1000,15 @@ var HeroSlider = () => {
 				}, index))
 			}),
 			/* @__PURE__ */ jsx("button", {
+				type: "button",
+				"aria-label": "Slide sebelumnya",
 				onClick: () => paginate(-1),
 				className: "absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-white/30 z-10",
 				children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-left text-2xl md:text-3xl" })
 			}),
 			/* @__PURE__ */ jsx("button", {
+				type: "button",
+				"aria-label": "Slide berikutnya",
 				onClick: () => paginate(1),
 				className: "absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-white/30 z-10",
 				children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-right text-2xl md:text-3xl" })
@@ -1052,18 +1040,6 @@ var Home = () => {
 	}, []);
 	const [featuredProducts, setFeaturedProducts] = useState([]);
 	const [loading, setLoading] = useState(!products.length);
-	const productsRef = useRef(null);
-	const blogRef = useRef(null);
-	const scroll = (ref, direction) => {
-		if (ref.current) {
-			const { scrollLeft } = ref.current;
-			const scrollTo = direction === "left" ? scrollLeft - 300 : scrollLeft + 300;
-			ref.current.scrollTo({
-				left: scrollTo,
-				behavior: "smooth"
-			});
-		}
-	};
 	useEffect(() => {
 		if (products.length > 0) {
 			const targetIds = [
@@ -1209,8 +1185,12 @@ var Home = () => {
 					className: "relative h-64 md:h-125 rounded-3xl md:rounded-[48px] overflow-hidden shadow-2xl shadow-black/5",
 					children: [
 						/* @__PURE__ */ jsx("img", {
-							src: "/PJU TENAGA SURYA.jpeg",
+							src: "/PJU TENAGA SURYA.webp",
 							alt: "Industri Energi Surya",
+							loading: "lazy",
+							decoding: "async",
+							width: "1200",
+							height: "900",
 							className: "w-full h-full object-cover"
 						}),
 						/* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-linear-to-t from-black/60 to-transparent" }),
@@ -1307,45 +1287,32 @@ var Home = () => {
 						className: "px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all",
 						children: ["Lihat Semua Produk ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg align-middle ml-2" })]
 					})]
-				}), /* @__PURE__ */ jsxs("div", {
-					className: "relative group/nav",
-					children: [
-						/* @__PURE__ */ jsx("button", {
-							onClick: () => scroll(productsRef, "left"),
-							className: "absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
-							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-left text-2xl" })
-						}),
-						/* @__PURE__ */ jsx("button", {
-							onClick: () => scroll(productsRef, "right"),
-							className: "absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
-							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-right text-2xl" })
-						}),
-						loading ? /* @__PURE__ */ jsx("div", {
-							className: "flex flex-nowrap overflow-x-auto gap-4 md:gap-8 pb-4",
-							children: [
-								1,
-								2,
-								3,
-								4
-							].map((i) => /* @__PURE__ */ jsx("div", { className: "min-w-[280px] md:min-w-0 md:flex-1 h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]" }, i))
-						}) : /* @__PURE__ */ jsx("div", {
-							ref: productsRef,
-							className: "flex flex-nowrap overflow-x-auto no-scrollbar gap-4 md:gap-8 pb-4 md:grid md:grid-cols-4",
-							children: featuredProducts.map((product, i) => /* @__PURE__ */ jsx(motion.div, {
-								initial: {
-									opacity: 0,
-									y: 20
-								},
-								whileInView: {
-									opacity: 1,
-									y: 0
-								},
-								transition: { delay: i * .1 },
-								className: "min-w-[280px] md:min-w-0 w-full",
-								children: /* @__PURE__ */ jsx(ProductCard, { product })
-							}, product.id))
-						})
-					]
+				}), /* @__PURE__ */ jsx("div", {
+					className: "relative",
+					children: loading ? /* @__PURE__ */ jsx("div", {
+						className: "flex flex-nowrap overflow-x-auto gap-4 md:gap-8 pb-4",
+						children: [
+							1,
+							2,
+							3,
+							4
+						].map((i) => /* @__PURE__ */ jsx("div", { className: "min-w-70 md:min-w-0 md:flex-1 h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]" }, i))
+					}) : /* @__PURE__ */ jsx("div", {
+						className: "flex flex-nowrap overflow-x-auto no-scrollbar gap-4 md:gap-8 pb-4 md:grid md:grid-cols-4",
+						children: featuredProducts.map((product, i) => /* @__PURE__ */ jsx(motion.div, {
+							initial: {
+								opacity: 0,
+								y: 20
+							},
+							whileInView: {
+								opacity: 1,
+								y: 0
+							},
+							transition: { delay: i * .1 },
+							className: "min-w-70 md:min-w-0 w-full",
+							children: /* @__PURE__ */ jsx(ProductCard, { product })
+						}, product.id))
+					})
 				})]
 			}),
 			/* @__PURE__ */ jsxs("section", {
@@ -1366,78 +1333,69 @@ var Home = () => {
 						className: "px-8 py-4 glass border border-black/10 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black/5 transition-all",
 						children: ["Jelajahi Semua Artikel ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg align-middle ml-2" })]
 					})]
-				}), /* @__PURE__ */ jsxs("div", {
-					className: "relative group/nav",
-					children: [
-						/* @__PURE__ */ jsx("button", {
-							onClick: () => scroll(blogRef, "left"),
-							className: "absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
-							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-left text-2xl" })
-						}),
-						/* @__PURE__ */ jsx("button", {
-							onClick: () => scroll(blogRef, "right"),
-							className: "absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-black/5 flex items-center justify-center z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden md:flex",
-							children: /* @__PURE__ */ jsx("i", { className: "bx bx-chevron-right text-2xl" })
-						}),
-						/* @__PURE__ */ jsx("div", {
-							ref: blogRef,
-							className: "flex flex-nowrap overflow-x-auto no-scrollbar gap-6 md:gap-8 pb-6 md:grid md:grid-cols-3",
-							children: [...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => /* @__PURE__ */ jsxs(motion.article, {
-								initial: {
-									opacity: 0,
-									y: 20
-								},
-								whileInView: {
-									opacity: 1,
-									y: 0
-								},
-								transition: { delay: i * .1 },
-								className: "min-w-[300px] md:min-w-0 group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col",
-								children: [/* @__PURE__ */ jsxs(Link, {
-									to: `/blog/${post.slug}`,
-									className: "relative aspect-video overflow-hidden block",
-									children: [/* @__PURE__ */ jsx("img", {
-										src: post.image,
-										alt: post.title,
-										className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-									}), /* @__PURE__ */ jsx("div", {
-										className: "absolute top-4 left-4",
-										children: /* @__PURE__ */ jsx("span", {
-											className: "px-3 py-1.5 bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-lg text-secondary shadow-lg",
-											children: post.category
-										})
-									})]
-								}), /* @__PURE__ */ jsxs("div", {
-									className: "p-8 space-y-4 grow flex flex-col",
-									children: [
-										/* @__PURE__ */ jsx("p", {
-											className: "text-[9px] font-black text-text-secondary uppercase tracking-widest",
-											children: post.date
-										}),
-										/* @__PURE__ */ jsx(Link, {
-											to: `/blog/${post.slug}`,
-											children: /* @__PURE__ */ jsx("h3", {
-												className: "text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2",
-												children: post.title
-											})
-										}),
-										/* @__PURE__ */ jsx("p", {
-											className: "text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed grow",
-											children: post.excerpt
-										}),
-										/* @__PURE__ */ jsx("div", {
-											className: "pt-4",
-											children: /* @__PURE__ */ jsxs(Link, {
-												to: `/blog/${post.slug}`,
-												className: "text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all",
-												children: ["Baca Selengkapnya ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg" })]
-											})
-										})
-									]
+				}), /* @__PURE__ */ jsx("div", {
+					className: "relative",
+					children: /* @__PURE__ */ jsx("div", {
+						className: "flex flex-nowrap overflow-x-auto no-scrollbar gap-6 md:gap-8 pb-6 md:grid md:grid-cols-3",
+						children: [...blogPosts].sort((a, b) => b.id - a.id).slice(0, 3).map((post, i) => /* @__PURE__ */ jsxs(motion.article, {
+							initial: {
+								opacity: 0,
+								y: 20
+							},
+							whileInView: {
+								opacity: 1,
+								y: 0
+							},
+							transition: { delay: i * .1 },
+							className: "min-w-75 md:min-w-0 group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col",
+							children: [/* @__PURE__ */ jsxs(Link, {
+								to: `/blog/${post.slug}`,
+								className: "relative aspect-video overflow-hidden block",
+								children: [/* @__PURE__ */ jsx("img", {
+									src: post.image,
+									alt: post.title,
+									loading: "lazy",
+									decoding: "async",
+									width: "1200",
+									height: "675",
+									className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+								}), /* @__PURE__ */ jsx("div", {
+									className: "absolute top-4 left-4",
+									children: /* @__PURE__ */ jsx("span", {
+										className: "px-3 py-1.5 bg-white/90 backdrop-blur-md text-[8px] font-black uppercase tracking-widest rounded-lg text-secondary shadow-lg",
+										children: post.category
+									})
 								})]
-							}, post.id))
-						})
-					]
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "p-8 space-y-4 grow flex flex-col",
+								children: [
+									/* @__PURE__ */ jsx("p", {
+										className: "text-[9px] font-black text-text-secondary uppercase tracking-widest",
+										children: post.date
+									}),
+									/* @__PURE__ */ jsx(Link, {
+										to: `/blog/${post.slug}`,
+										children: /* @__PURE__ */ jsx("h3", {
+											className: "text-xl font-black tracking-tight uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-2",
+											children: post.title
+										})
+									}),
+									/* @__PURE__ */ jsx("p", {
+										className: "text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed grow",
+										children: post.excerpt
+									}),
+									/* @__PURE__ */ jsx("div", {
+										className: "pt-4",
+										children: /* @__PURE__ */ jsxs(Link, {
+											to: `/blog/${post.slug}`,
+											className: "text-[10px] font-black uppercase tracking-widest text-secondary flex items-center gap-2 hover:gap-3 transition-all",
+											children: ["Baca Selengkapnya ", /* @__PURE__ */ jsx("i", { className: "bx bx-right-arrow-alt text-lg" })]
+										})
+									})
+								]
+							})]
+						}, post.id))
+					})
 				})]
 			}),
 			/* @__PURE__ */ jsxs("section", {
@@ -1536,6 +1494,7 @@ var Home = () => {
 				}), /* @__PURE__ */ jsx("div", {
 					className: "glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-125 lg:h-auto",
 					children: /* @__PURE__ */ jsx("iframe", {
+						title: "Peta lokasi marketing office Niscahya Indonesia Cerdas",
 						src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid",
 						width: "100%",
 						height: "100%",
@@ -2205,17 +2164,28 @@ var ProductDetail = () => {
 								transition: { duration: .4 },
 								src: displayedImage,
 								alt: `${product.name} - Lampu PJU Tenaga Surya Niscahya`,
+								loading: "eager",
+								fetchPriority: "high",
+								decoding: "async",
+								width: "1600",
+								height: "1600",
 								className: "w-full h-full object-cover"
 							}, displayedImage)
 						})
 					}), /* @__PURE__ */ jsx("div", {
 						className: "grid grid-cols-5 gap-2 md:gap-3",
 						children: thumbnailSlots.map((img, i) => /* @__PURE__ */ jsx("button", {
+							type: "button",
+							"aria-label": img ? `Pilih gambar produk ${i + 1}` : `Slot gambar ${i + 1} kosong`,
 							onClick: () => img && setSelectedImage(img),
 							className: `aspect-square rounded-xl md:rounded-2xl overflow-hidden transition-all ${selectedImage === img ? "ring-2 md:ring-4 ring-primary" : "opacity-60 hover:opacity-100"} ${!img ? "bg-black/5" : ""}`,
 							children: img && /* @__PURE__ */ jsx("img", {
 								src: img,
 								alt: `${product.name} Gallery ${i + 1}`,
+								loading: "lazy",
+								decoding: "async",
+								width: "240",
+								height: "240",
 								className: "w-full h-full object-cover"
 							})
 						}, i))
@@ -2267,6 +2237,8 @@ var ProductDetail = () => {
 									className: "flex items-center glass border border-black/10 rounded-2xl overflow-hidden h-12 md:h-14",
 									children: [
 										/* @__PURE__ */ jsx("button", {
+											type: "button",
+											"aria-label": "Kurangi jumlah",
 											onClick: () => setQuantity(Math.max(1, quantity - 1)),
 											className: "px-4 hover:bg-black/5 transition-colors h-full",
 											children: /* @__PURE__ */ jsx("i", { className: "bx bx-minus font-bold" })
@@ -2276,6 +2248,8 @@ var ProductDetail = () => {
 											children: quantity
 										}),
 										/* @__PURE__ */ jsx("button", {
+											type: "button",
+											"aria-label": "Tambah jumlah",
 											onClick: () => setQuantity(quantity + 1),
 											className: "px-4 hover:bg-black/5 transition-colors h-full",
 											children: /* @__PURE__ */ jsx("i", { className: "bx bx-plus font-bold" })
@@ -2345,6 +2319,10 @@ var ProductDetail = () => {
 							className: "aspect-square relative overflow-hidden",
 							children: [/* @__PURE__ */ jsx("img", {
 								src: p.image,
+								loading: "lazy",
+								decoding: "async",
+								width: "1200",
+								height: "1500",
 								className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
 							}), /* @__PURE__ */ jsx(Link, {
 								to: `/products/${p.id}`,
@@ -2459,6 +2437,7 @@ var ProductDetail = () => {
 				}), /* @__PURE__ */ jsxs("div", {
 					className: "glass p-2 md:p-4 rounded-3xl md:rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-75 md:h-125 lg:h-auto",
 					children: [/* @__PURE__ */ jsx("iframe", {
+						title: "Peta lokasi showroom Niscahya Indonesia Cerdas",
 						src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid",
 						width: "100%",
 						height: "100%",
@@ -2567,6 +2546,7 @@ var Blog = () => {
 			/* @__PURE__ */ jsx("section", {
 				className: "flex flex-wrap gap-2 md:gap-3",
 				children: categories.map((cat, idx) => /* @__PURE__ */ jsx(motion.button, {
+					type: "button",
 					initial: {
 						opacity: 0,
 						scale: .9
@@ -2577,6 +2557,7 @@ var Blog = () => {
 					},
 					transition: { delay: .3 + idx * .05 },
 					onClick: () => setActiveCategory(cat),
+					"aria-pressed": activeCategory === cat,
 					className: `px-6 py-2.5 rounded-xl text-[10px] font-black tracking-widest uppercase transition-all ${activeCategory === cat ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-black/5 text-text-secondary hover:bg-black/10"}`,
 					children: cat
 				}, cat))
@@ -2600,6 +2581,10 @@ var Blog = () => {
 						children: [/* @__PURE__ */ jsx("img", {
 							src: post.image,
 							alt: post.title,
+							loading: "lazy",
+							decoding: "async",
+							width: "1200",
+							height: "675",
 							className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 						}), /* @__PURE__ */ jsx("div", {
 							className: "absolute top-6 left-6",
@@ -2662,10 +2647,12 @@ var Blog = () => {
 							className: "pt-4 flex flex-col sm:flex-row justify-center gap-4",
 							children: [/* @__PURE__ */ jsx("a", {
 								href: "https://wa.me/6287853536124",
+								"aria-label": "Konsultasi via WhatsApp",
 								className: "px-10 py-4 bg-white text-primary font-black rounded-2xl hover:scale-105 transition-all uppercase tracking-widest text-xs",
 								children: "Konsultasi via WhatsApp"
 							}), /* @__PURE__ */ jsx(Link, {
 								to: "/products",
+								"aria-label": "Lihat katalog produk",
 								className: "px-10 py-4 bg-primary-dark/20 border border-white/20 text-white font-black rounded-2xl hover:scale-105 transition-all uppercase tracking-widest text-xs",
 								children: "Lihat Katalog Produk"
 							})]
@@ -2817,6 +2804,11 @@ var BlogDetail = () => {
 					children: /* @__PURE__ */ jsx("img", {
 						src: post.image,
 						alt: post.title,
+						loading: "eager",
+						fetchPriority: "high",
+						decoding: "async",
+						width: "1600",
+						height: "900",
 						className: "w-full h-full object-cover"
 					})
 				})]
@@ -2852,6 +2844,10 @@ var BlogDetail = () => {
 									children: /* @__PURE__ */ jsx("img", {
 										src: related.image,
 										alt: related.title,
+										loading: "lazy",
+										decoding: "async",
+										width: "240",
+										height: "240",
 										className: "w-full h-full object-cover transition-transform group-hover:scale-110"
 									})
 								}), /* @__PURE__ */ jsxs("div", {
@@ -3203,18 +3199,18 @@ var Projects_default = UNSAFE_withComponentProps(function ProjectsPage() {
 		}), /* @__PURE__ */ jsx("section", {
 			className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6",
 			children: [
-				{ img: "/galeri/galeri1.jpg" },
-				{ img: "/galeri/galeri2.jpg" },
-				{ img: "/galeri/galeri3.jpg" },
-				{ img: "/galeri/galeri4.jpg" },
-				{ img: "/galeri/galeri5.jpg" },
-				{ img: "/galeri/galeri6.jpg" },
-				{ img: "/galeri/galeri7.jpg" },
-				{ img: "/galeri/galeri8.jpg" },
-				{ img: "/galeri/galeri9.jpg" },
-				{ img: "/galeri/galeri10.jpg" },
-				{ img: "/galeri/galeri11.jpg" },
-				{ img: "/galeri/galeri12.jpg" }
+				{ img: "/galeri/galeri1.webp" },
+				{ img: "/galeri/galeri2.webp" },
+				{ img: "/galeri/galeri3.webp" },
+				{ img: "/galeri/galeri4.webp" },
+				{ img: "/galeri/galeri5.webp" },
+				{ img: "/galeri/galeri6.webp" },
+				{ img: "/galeri/galeri7.webp" },
+				{ img: "/galeri/galeri8.webp" },
+				{ img: "/galeri/galeri9.webp" },
+				{ img: "/galeri/galeri10.webp" },
+				{ img: "/galeri/galeri11.webp" },
+				{ img: "/galeri/galeri12.webp" }
 			].map((proj, i) => /* @__PURE__ */ jsx(motion.div, {
 				initial: {
 					opacity: 0,
@@ -3229,6 +3225,10 @@ var Projects_default = UNSAFE_withComponentProps(function ProjectsPage() {
 				children: /* @__PURE__ */ jsx("img", {
 					src: proj.img,
 					alt: `Project ${i + 1}`,
+					loading: "lazy",
+					decoding: "async",
+					width: "900",
+					height: "1600",
 					className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
 				})
 			}, i))
@@ -3476,6 +3476,7 @@ var Contact_default = UNSAFE_withComponentProps(function ContactPage() {
 				children: /* @__PURE__ */ jsx("div", {
 					className: "glass p-2 md:p-4 rounded-3xl md:rounded-[64px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-75 md:h-125",
 					children: /* @__PURE__ */ jsx("iframe", {
+						title: "Peta lokasi marketing office Niscahya Indonesia Cerdas",
 						src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid",
 						width: "100%",
 						height: "100%",
@@ -4165,14 +4166,9 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": true,
-			"module": "/assets/root-BVO1-6xH.js",
-			"imports": [
-				"/assets/jsx-runtime-iNLlZvXa.js",
-				"/assets/AnimatePresence-Bfk2ZeFT.js",
-				"/assets/proxy-B-hc-kX8.js",
-				"/assets/AppContext-CclEYKsb.js"
-			],
-			"css": ["/assets/root-BrNf--kA.css"],
+			"module": "/assets/root-k1kbxc-u.js",
+			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/AppContext-CclEYKsb.js"],
+			"css": ["/assets/root-BFdDJXsn.css"],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
 			"clientMiddlewareModule": void 0,
@@ -4191,13 +4187,13 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Home-DlsaHq6v.js",
+			"module": "/assets/Home-CraX1LP_.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/AnimatePresence-Bfk2ZeFT.js",
 				"/assets/proxy-B-hc-kX8.js",
-				"/assets/ProductCard-CQSWl87V.js",
-				"/assets/blog-CXJOJeiy.js",
+				"/assets/ProductCard-TyPWBkI_.js",
+				"/assets/blog-CnsOiMos.js",
 				"/assets/seo-CYuARZcg.js"
 			],
 			"css": [],
@@ -4219,12 +4215,12 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Products-BlDlagef.js",
+			"module": "/assets/Products-CjzxgSEh.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/AnimatePresence-Bfk2ZeFT.js",
 				"/assets/proxy-B-hc-kX8.js",
-				"/assets/ProductCard-CQSWl87V.js",
+				"/assets/ProductCard-TyPWBkI_.js",
 				"/assets/AppContext-CclEYKsb.js"
 			],
 			"css": [],
@@ -4246,7 +4242,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/ProductDetail-Drg1R2ci.js",
+			"module": "/assets/ProductDetail-B3IMHQdc.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/AnimatePresence-Bfk2ZeFT.js",
@@ -4272,11 +4268,11 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Blog-IYAndUaz.js",
+			"module": "/assets/Blog-DDBzwNpw.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/proxy-B-hc-kX8.js",
-				"/assets/blog-CXJOJeiy.js"
+				"/assets/blog-CnsOiMos.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4297,11 +4293,11 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/BlogDetail-C9H6bJav.js",
+			"module": "/assets/BlogDetail-Di8UOOAg.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/proxy-B-hc-kX8.js",
-				"/assets/blog-CXJOJeiy.js"
+				"/assets/blog-CnsOiMos.js"
 			],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4343,7 +4339,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Projects-C3BhtIZX.js",
+			"module": "/assets/Projects-CFX2L6s-.js",
 			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4364,7 +4360,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Contact-Dhkj9998.js",
+			"module": "/assets/Contact-C171H-a_.js",
 			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4419,8 +4415,8 @@ var server_manifest_default = {
 			"hydrateFallbackModule": void 0
 		}
 	},
-	"url": "/assets/manifest-57f2b929.js",
-	"version": "57f2b929",
+	"url": "/assets/manifest-eaa25f31.js",
+	"version": "eaa25f31",
 	"sri": void 0
 };
 //#endregion

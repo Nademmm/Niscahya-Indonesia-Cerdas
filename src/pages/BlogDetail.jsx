@@ -99,6 +99,11 @@ const BlogDetail = () => {
           <img 
             src={post.image} 
             alt={post.title} 
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            width="1600"
+            height="900"
             className="w-full h-full object-cover"
           />
         </motion.div>
@@ -135,6 +140,10 @@ const BlogDetail = () => {
                     <img 
                       src={related.image} 
                       alt={related.title} 
+                      loading="lazy"
+                      decoding="async"
+                      width="240"
+                      height="240"
                       className="w-full h-full object-cover transition-transform group-hover:scale-110"
                     />
                   </div>

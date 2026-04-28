@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import pool, { initializeDatabase } from "./db.js";
 import multer from "multer";
 import fs from "fs";
+import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -13,19 +14,71 @@ const root = path.resolve(__dirname, "..");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const sourceImageExtensions = new Set([".png", ".jpg", ".jpeg"]);
+
+function toWebpUrl(imageUrl) {
+  if (!imageUrl || typeof imageUrl !== "string") return imageUrl;
+  if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
+
+  const extension = path.extname(imageUrl).toLowerCase();
+  if (!sourceImageExtensions.has(extension)) return imageUrl;
+
+  const webpUrl = imageUrl.slice(0, -extension.length) + ".webp";
+  const publicCandidate = path.join(root, "public", webpUrl.replace(/^\//, ""));
+  const uploadCandidate = path.join(root, "server", webpUrl.replace(/^\//, ""));
+  const buildCandidate = path.join(root, "build/client", webpUrl.replace(/^\//, ""));
+
+  if (fs.existsSync(publicCandidate) || fs.existsSync(uploadCandidate) || fs.existsSync(buildCandidate)) {
+    return webpUrl;
+  }
+
+  return imageUrl;
+}
+
+function optimizeProductRecord(product) {
+  if (!product || typeof product !== "object") return product;
+
+  const optimized = { ...product };
+  optimized.image = toWebpUrl(optimized.image);
+
+  ["image2", "image3", "image4", "image5"].forEach((key) => {
+    if (optimized[key]) {
+      optimized[key] = toWebpUrl(optimized[key]);
+    }
+  });
+
+  if (Array.isArray(optimized.images)) {
+    optimized.images = optimized.images.map((image) => toWebpUrl(image));
+  } else if (typeof optimized.images === "string") {
+    try {
+      const parsedImages = JSON.parse(optimized.images);
+      if (Array.isArray(parsedImages)) {
+        optimized.images = JSON.stringify(parsedImages.map((image) => toWebpUrl(image)));
+      }
+    } catch {
+      optimized.images = optimized.images;
+    }
+  }
+
+  return optimized;
+}
+
 app.use(compression());
 app.use(express.json());
 
 // Static files
-app.use("/uploads", express.static(path.join(root, "server/uploads")));
+app.use("/uploads", express.static(path.join(root, "server/uploads"), {
+  maxAge: "1y",
+  immutable: true,
+}));
 
 if (process.env.NODE_ENV === "production") {
   app.use("/assets", express.static(path.join(root, "build/client/assets"), {
-    maxAge: "1h",
+    maxAge: "1y",
     immutable: true,
     fallthrough: false,
   }));
-  app.use(express.static(path.join(root, "build/client"), { maxAge: "1h" }));
+  app.use(express.static(path.join(root, "build/client"), { maxAge: "1d" }));
 }
 
 // Multer storage configuration
@@ -49,7 +102,7 @@ const upload = multer({ storage: storage });
 app.get("/api/products", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM products ORDER BY created_at DESC");
-    res.json(rows);
+    res.json(rows.map(optimizeProductRecord));
   } catch (error) {
     console.error("Fetch products error:", error);
     res.status(500).json({ error: "Gagal mengambil data produk" });
@@ -66,7 +119,7 @@ app.get("/api/products/:slugOrId", async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: "Produk tidak ditemukan" });
     }
-    res.json(rows[0]);
+    res.json(optimizeProductRecord(rows[0]));
   } catch (error) {
     console.error("Fetch product detail error:", error);
     res.status(500).json({ error: "Gagal mengambil detail produk" });
@@ -87,8 +140,22 @@ app.post("/api/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "Tidak ada file yang diunggah" });
   }
-  const imageUrl = `/uploads/${req.file.filename}`;
-  res.json({ imageUrl });
+  const originalPath = req.file.path;
+  const optimizedFilename = `${path.parse(req.file.filename).name}.webp`;
+  const optimizedPath = path.join(path.dirname(originalPath), optimizedFilename);
+
+  sharp(originalPath)
+    .rotate()
+    .resize({ width: 1600, withoutEnlargement: true, fit: "inside" })
+    .webp({ quality: 82 })
+    .toFile(optimizedPath)
+    .then(() => {
+      res.json({ imageUrl: `/uploads/${optimizedFilename}` });
+    })
+    .catch((error) => {
+      console.error("Image optimization failed:", error);
+      res.json({ imageUrl: `/uploads/${req.file.filename}` });
+    });
 });
 
 app.post("/api/products", async (req, res) => {

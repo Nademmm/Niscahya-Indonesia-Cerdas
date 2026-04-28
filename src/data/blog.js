@@ -10,7 +10,7 @@ const rawBlogPosts = [
     title: "Harga Lampu Jalan Tenaga Surya 2025: Simak Dahulu Sebelum Membeli",
     date: "Agustus 25, 2025",
     category: "Panduan",
-    image: "/blog1.jpg",
+    image: "/blog1.webp",
     excerpt: "Lampu jalan tenaga surya telah menjadi pilihan populer untuk penerangan jalan di berbagai daerah. Ketahui harga dan faktor pertimbangannya.",
     content: `
       Lampu jalan tenaga surya telah menjadi pilihan populer untuk penerangan jalan di berbagai daerah, terutama karena keunggulannya dalam menghemat energi dan ramah lingkungan. Namun, sebelum membeli lampu jalan tenaga surya, ada beberapa hal yang perlu dipertimbangkan, termasuk harga, kualitas, dan fitur-fitur yang ditawarkan.
@@ -44,7 +44,7 @@ const rawBlogPosts = [
     title: "Lampu PJU Tenaga Surya Hybrid: Menggabungkan Listrik PLN dan Tenaga Surya",
     date: "Januari 13, 2026",
     category: "Teknologi",
-    image: "/PJU TENAGA SURYA.jpeg",
+    image: "/PJU TENAGA SURYA.webp",
     excerpt: "Apa itu sistem hybrid? Simak bagaimana penggabungan dua sumber daya ini dapat meningkatkan efisiensi dan keandalan penerangan jalan Anda.",
     content: `
       Sistem Hybrid pada PJU Tenaga Surya adalah terobosan terbaru dalam dunia energi terbarukan. Dengan menggabungkan listrik dari PLN dan panel surya, sistem ini menawarkan keandalan 100% tanpa takut kehabisan daya saat cuaca mendung berkepanjangan.
@@ -63,7 +63,7 @@ const rawBlogPosts = [
     title: "Lithium vs VRLA? Pilih yang Mana untuk Sistem Solar Anda?",
     date: "Oktober 2, 2025",
     category: "Komparasi",
-    image: "/blog6.jpg",
+    image: "/blog6.webp",
     excerpt: "Masih bingung memilih jenis baterai? Kami bandingkan performa, harga, dan daya tahan antara baterai Lithium dan VRLA.",
     content: `
       Memilih baterai adalah keputusan krusial dalam membangun sistem tenaga surya. Dua jenis yang paling populer adalah Lithium (LiFePO4) dan VRLA (Lead Acid). Mana yang lebih baik?
@@ -88,7 +88,7 @@ const rawBlogPosts = [
     title: "Jenis-Jenis Tiang Lampu Jalan Tenaga Surya dan Fungsinya",
     date: "Agustus 28, 2025",
     category: "Edukasi",
-    image: "/blog5.jpg",
+    image: "/blog5.webp",
     excerpt: "Dari tiang oktagonal hingga galvanis, ketahui jenis tiang yang paling cocok untuk kebutuhan proyek Anda.",
     content: `
       Tiang bukan sekadar penyangga. Desain dan material tiang menentukan keamanan dan estetika sistem PJU Anda.
@@ -107,7 +107,7 @@ const rawBlogPosts = [
     title: "Aetheria 100W vs Nebula High-Bay: Mana yang Lebih Terang?",
     date: "Juni 2, 2025",
     category: "Produk",
-    image: "/blog4.jpg",
+    image: "/blog4.webp",
     excerpt: "Perbandingan mendalam antara dua produk unggulan kami untuk kebutuhan penerangan area luas.",
     content: `
       Banyak pelanggan bertanya, mana yang lebih baik antara Aetheria 100W dan Nebula High-Bay? Jawabannya tergantung lokasi pemasangan Anda.
@@ -131,7 +131,7 @@ const rawBlogPosts = [
     title: "All-in-One vs Two-in-One vs Konvensional: Mana yang Paling Untung?",
     date: "April 10, 2026",
     category: "Hot Topic",
-    image: "/blog3.jpg",
+    image: "/blog3.webp",
     excerpt: "Bingung memilih model PJU Tenaga Surya? Simak kelebihan dan kekurangan masing-masing model untuk proyek Anda.",
     content: `
       Pasar PJU Tenaga Surya saat ini didominasi oleh tiga model utama. Memilih yang salah bisa berarti pemborosan anggaran atau biaya perawatan yang membengkak.
@@ -160,7 +160,7 @@ const rawBlogPosts = [
     title: "5 Tips Perawatan PJU Tenaga Surya Agar Awet Hingga 10 Tahun",
     date: "Maret 15, 2026",
     category: "Tips",
-    image: "/blog2.jpg",
+    image: "/blog2.webp",
     excerpt: "Jangan biarkan investasi Anda rusak karena kurang perawatan. Ikuti langkah sederhana ini agar sistem solar Anda tetap prima.",
     content: `
       Investasi PJU Tenaga Surya tidak murah, jadi pastikan Anda merawatnya dengan benar. Sistem yang dirawat bisa bertahan 2-3 kali lebih lama.
@@ -200,7 +200,7 @@ const rawBlogPosts = [
     title: "Cara Memilih Lampu Panel Surya Terbaik untuk Kebutuhan Anda",
     date: "April 21, 2026",
     category: "Panduan",
-    image: "/blog1.jpg",
+    image: "/blog1.webp",
     excerpt: "Jangan salah pilih! Simak panduan lengkap memilih lampu panel surya dengan efisiensi tinggi dan durabilitas jangka panjang.",
     content: `
       Memilih lampu panel surya (PJU) bukan hanya soal harga murah, tapi soal ketahanan sistem untuk penggunaan bertahun-tahun. Di pasar Indonesia yang ekstrem cuacanya, Anda butuh spesifikasi yang tepat.
@@ -221,7 +221,7 @@ const rawBlogPosts = [
     title: "Perbandingan Lampu Tenaga Surya vs Listrik Biasa (PLN)",
     date: "April 21, 2026",
     category: "Komparasi",
-    image: "/blog2.jpg",
+    image: "/blog2.webp",
     excerpt: "Mana yang lebih hemat? Kami bedah perbandingan biaya investasi awal hingga biaya operasional antara sistem Solar dan PLN.",
     content: `
       Banyak calon pengguna ragu beralih ke tenaga surya karena investasi awal yang terlihat mahal. Mari kita bedah faktanya dibanding sistem listrik PLN konvensional.
@@ -247,7 +247,7 @@ const rawBlogPosts = [
     title: "Apakah Lampu Solar Cocok untuk Rumah? Ini Penjelasannya",
     date: "April 21, 2026",
     category: "Edukasi",
-    image: "/blog3.jpg",
+    image: "/blog3.webp",
     excerpt: "Tenaga surya bukan hanya untuk jalan raya. Pelajari bagaimana sistem solar dapat diaplikasikan untuk hunian pribadi Anda.",
     content: `
       Banyak yang mengira panel surya hanya untuk proyek pemerintah atau jalan raya. Faktanya, tren Solar Home System (SHS) kini sangat populer untuk hunian modern.

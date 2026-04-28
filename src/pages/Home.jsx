@@ -5,6 +5,10 @@ import ProductCard from '../components/ProductCard';
 import { blogPosts } from '../data/blog';
 import { updateSEO } from '../utils/seo';
 
+export const links = () => [
+  { rel: 'preload', as: 'image', href: '/hero-1.webp', type: 'image/webp' },
+];
+
 export const meta = () => {
   return [
     { title: "Distributor Lampu PJU Tenaga Surya Terbaik 2026 | Niscahya Indonesia Cerdas" },
@@ -19,29 +23,29 @@ export const meta = () => {
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState(0); // 1 for right, -1 for left
+  const [direction, setDirection] = useState(0);
 
   const slides = [
     {
       id: 1,
-      image: "/hero-1.png",
+      image: "/hero-1.webp",
       title: "Infrastruktur PJU Tenaga Surya Terintegrasi"
     },
     {
       id: 2,
-      image: "/hero-2.png",
+      image: "/hero-2.webp",
       title: "Unit Unggulan All In One Series"
     },
     {
       id: 3,
-      image: "/hero-3.png",
+      image: "/hero-3.webp",
       title: "Solusi Energi Terbarukan Berkelanjutan"
     }
   ];
 
   const slideVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 1000 : -1000,
+    enter: (slideDirection) => ({
+      x: slideDirection > 0 ? 1000 : -1000,
       opacity: 0
     }),
     center: {
@@ -49,9 +53,9 @@ const HeroSlider = () => {
       x: 0,
       opacity: 1
     },
-    exit: (direction) => ({
+    exit: (slideDirection) => ({
       zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
+      x: slideDirection < 0 ? 1000 : -1000,
       opacity: 0
     })
   };
@@ -60,7 +64,7 @@ const HeroSlider = () => {
     const timer = setInterval(() => {
       setDirection(1);
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 8000); // Diperlama menjadi 8 detik
+    }, 8000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
@@ -97,6 +101,9 @@ const HeroSlider = () => {
         {slides.map((_, index) => (
           <button
             key={index}
+            type="button"
+            aria-label={`Buka slide ${index + 1}`}
+            aria-pressed={currentSlide === index}
             onClick={() => {
               setDirection(index > currentSlide ? 1 : -1);
               setCurrentSlide(index);
@@ -110,12 +117,16 @@ const HeroSlider = () => {
       
       {/* Prev/Next buttons */}
       <button 
+        type="button"
+        aria-label="Slide sebelumnya"
         onClick={() => paginate(-1)}
         className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
       >
         <i className="bx bx-chevron-left text-2xl md:text-3xl"></i>
       </button>
       <button 
+        type="button"
+        aria-label="Slide berikutnya"
         onClick={() => paginate(1)}
         className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-white/30 z-10"
       >
@@ -249,8 +260,12 @@ const Home = () => {
           className="relative h-64 md:h-125 rounded-3xl md:rounded-[48px] overflow-hidden shadow-2xl shadow-black/5"
         >
           <img 
-            src="/PJU TENAGA SURYA.jpeg" 
+            src="/PJU TENAGA SURYA.webp" 
             alt="Industri Energi Surya" 
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="900"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
@@ -318,7 +333,7 @@ const Home = () => {
           {loading ? (
             <div className="flex flex-nowrap overflow-x-auto gap-4 md:gap-8 pb-4">
               {[1,2,3,4].map(i => (
-                <div key={i} className="min-w-[280px] md:min-w-0 md:flex-1 h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]"></div>
+                <div key={i} className="min-w-70 md:min-w-0 md:flex-1 h-48 md:h-100 glass animate-pulse rounded-3xl md:rounded-[48px]"></div>
               ))}
             </div>
           ) : (
@@ -331,7 +346,7 @@ const Home = () => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="min-w-[280px] md:min-w-0 w-full"
+                  className="min-w-70 md:min-w-0 w-full"
                 >
                   <ProductCard product={product} />
                 </motion.div>
@@ -363,12 +378,16 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="min-w-[300px] md:min-w-0 group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col"
+                className="min-w-75 md:min-w-0 group glass rounded-[40px] overflow-hidden border-black/5 hover:border-secondary/20 transition-all flex flex-col"
               >
                 <Link to={`/blog/${post.slug}`} className="relative aspect-video overflow-hidden block">
                   <img 
                     src={post.image} 
                     alt={post.title} 
+                    loading="lazy"
+                    decoding="async"
+                    width="1200"
+                    height="675"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute top-4 left-4">
@@ -449,6 +468,7 @@ const Home = () => {
         {/* Lokasi Kami (Map) */}
         <div className="glass p-4 rounded-[48px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-125 lg:h-auto">
           <iframe 
+            title="Peta lokasi marketing office Niscahya Indonesia Cerdas"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
             width="100%" 
             height="100%" 

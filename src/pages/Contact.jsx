@@ -40,7 +40,9 @@ const PageHero = ({ title, subtitle, icon }) => (
           {subtitle}
         </motion.p>
       )}
+
     </div>
+
   </section>
 );
 
@@ -147,6 +149,7 @@ export default function ContactPage() {
       <section className="space-y-6 md:space-y-10">
         <div className="glass p-2 md:p-4 rounded-3xl md:rounded-[64px] border-black/5 shadow-xl shadow-black/5 relative overflow-hidden h-75 md:h-125">
           <iframe 
+              title="Peta lokasi marketing office Niscahya Indonesia Cerdas"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.047714009534!2d112.75474949999999!3d-7.373135199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e5e072a76abf%3A0xe5803d1aaf72795b!2sLampu%20PJU%20SinarSurya%20EnergiKu!5e1!3m2!1sid!2sid!4v1776048109065!5m2!1sid!2sid" 
             width="100%" 
             height="100%" 

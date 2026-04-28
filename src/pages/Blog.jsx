@@ -59,10 +59,12 @@ const Blog = () => {
         {categories.map((cat, idx) => (
           <motion.button
             key={cat}
+            type="button"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 + idx * 0.05 }}
             onClick={() => setActiveCategory(cat)}
+            aria-pressed={activeCategory === cat}
             className={`px-6 py-2.5 rounded-xl text-[10px] font-black tracking-widest uppercase transition-all ${
               activeCategory === cat
                 ? 'bg-primary text-white shadow-lg shadow-primary/20'
@@ -88,6 +90,10 @@ const Blog = () => {
               <img 
                 src={post.image} 
                 alt={post.title} 
+                loading="lazy"
+                decoding="async"
+                width="1200"
+                height="675"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute top-6 left-6">
@@ -143,12 +149,14 @@ const Blog = () => {
           <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
             <a 
               href="https://wa.me/6287853536124" 
+              aria-label="Konsultasi via WhatsApp"
               className="px-10 py-4 bg-white text-primary font-black rounded-2xl hover:scale-105 transition-all uppercase tracking-widest text-xs"
             >
               Konsultasi via WhatsApp
             </a>
             <Link 
               to="/products"
+              aria-label="Lihat katalog produk"
               className="px-10 py-4 bg-primary-dark/20 border border-white/20 text-white font-black rounded-2xl hover:scale-105 transition-all uppercase tracking-widest text-xs"
             >
               Lihat Katalog Produk
