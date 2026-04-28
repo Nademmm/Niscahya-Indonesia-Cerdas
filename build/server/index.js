@@ -157,8 +157,8 @@ var Navbar = () => {
 				}) }) : /* @__PURE__ */ jsx("div", {
 					className: "flex-1 lg:hidden mr-2",
 					children: /* @__PURE__ */ jsxs("div", {
-						className: "flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-primary/30 rounded-2xl group focus-within:border-primary/50 transition-all",
-						children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-primary" }), /* @__PURE__ */ jsx("input", {
+						className: "flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-black/10 rounded-2xl group transition-all",
+						children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-text-secondary" }), /* @__PURE__ */ jsx("input", {
 							type: "text",
 							placeholder: "Cari produk atau unit...",
 							value: localSearch,
@@ -180,8 +180,8 @@ var Navbar = () => {
 					className: "flex items-center gap-2 sm:gap-3 shrink-0",
 					children: [
 						/* @__PURE__ */ jsxs("div", {
-							className: "hidden sm:flex items-center gap-2 px-5 py-2.5 bg-black/5 border border-black/10 rounded-2xl text-sm font-bold group focus-within:border-primary/50 transition-all",
-							children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-text-secondary group-focus-within:text-primary" }), /* @__PURE__ */ jsx("input", {
+							className: "hidden sm:flex items-center gap-2 px-5 py-2.5 bg-black/5 border border-black/10 rounded-2xl text-sm font-bold group transition-all",
+							children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-text-secondary" }), /* @__PURE__ */ jsx("input", {
 								type: "text",
 								placeholder: "Cari unit...",
 								value: localSearch,
@@ -3194,8 +3194,7 @@ var Projects_default = UNSAFE_withComponentProps(function ProjectsPage() {
 		className: "space-y-12 md:space-y-16",
 		children: [/* @__PURE__ */ jsx(PageHero$1, {
 			title: "Galeri Projek",
-			subtitle: "Dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia.",
-			icon: "bx-images"
+			subtitle: "Dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia."
 		}), /* @__PURE__ */ jsx("section", {
 			className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6",
 			children: [
@@ -4166,9 +4165,9 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": true,
-			"module": "/assets/root-k1kbxc-u.js",
+			"module": "/assets/root-DsS5SEc_.js",
 			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/AppContext-CclEYKsb.js"],
-			"css": ["/assets/root-BFdDJXsn.css"],
+			"css": ["/assets/root-Bshtkg9p.css"],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
 			"clientMiddlewareModule": void 0,
@@ -4339,7 +4338,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Projects-CFX2L6s-.js",
+			"module": "/assets/Projects-OHf_UmnQ.js",
 			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
@@ -4415,8 +4414,8 @@ var server_manifest_default = {
 			"hydrateFallbackModule": void 0
 		}
 	},
-	"url": "/assets/manifest-eaa25f31.js",
-	"version": "eaa25f31",
+	"url": "/assets/manifest-e7f8d513.js",
+	"version": "e7f8d513",
 	"sri": void 0
 };
 //#endregion

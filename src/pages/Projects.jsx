@@ -50,7 +50,6 @@ export default function ProjectsPage() {
       <PageHero 
         title="Galeri Projek" 
         subtitle="Dokumentasi implementasi nyata sistem energi surya Niscahya di berbagai wilayah Indonesia."
-        icon="bx-images"
       />
       
       {/* Project Grid */}
