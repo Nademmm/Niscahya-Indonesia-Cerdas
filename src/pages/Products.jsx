@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo, useRef } from 'react';
+import { useState, useEffect, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useLoaderData } from 'react-router';
 import ProductCard from '../components/ProductCard';
@@ -135,15 +135,6 @@ const Products = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState('Semua');
   const [products, setProducts] = useState(initialProducts);
   const [loading, setLoading] = useState(!initialProducts.length);
-  const scrollRef = useRef(null);
-
-  const scroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - 200 : scrollLeft + 200;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-    }
-  };
 
   useEffect(() => {
     if (initialProducts.length > 0) {
@@ -157,7 +148,6 @@ const Products = () => {
         const res = await fetch('/api/products');
         const data = await res.json();
         
-        // Pastikan data adalah array
         if (Array.isArray(data)) {
           setProducts(data);
         } else {
@@ -295,7 +285,6 @@ const Products = () => {
       <section className="sticky top-28 z-40 space-y-6 -mx-6 lg:-mx-10 px-6 lg:px-10">
         <div className="relative group/nav max-w-5xl mx-auto">
           <div 
-            ref={scrollRef}
             className="glass p-2 rounded-3xl border-black/5 flex flex-wrap items-center justify-center gap-2 shadow-2xl shadow-black/5"
           >
             {categories.map((cat) => (

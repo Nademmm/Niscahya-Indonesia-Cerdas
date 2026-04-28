@@ -159,8 +159,6 @@ const Admin = () => {
       ) 
     };
 
-    console.log('Final payload before save:', payload);
-
     if (!payload.image) {
       setError('Gambar utama wajib diunggah.');
       return;

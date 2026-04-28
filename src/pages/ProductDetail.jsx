@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useLoaderData } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
+import { updateSEO } from '../utils/seo';
 
 export const meta = ({ data }) => {
   if (!data || !data.product) {
