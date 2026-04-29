@@ -63,6 +63,52 @@ function optimizeProductRecord(product) {
   return optimized;
 }
 
+function parseImageList(images) {
+  if (!images) return [];
+  if (Array.isArray(images)) return images.filter(Boolean);
+  if (typeof images === "string") {
+    try {
+      const parsedImages = JSON.parse(images);
+      if (Array.isArray(parsedImages)) {
+        return parsedImages.filter(Boolean);
+      }
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
+function collectProductImageUrls(product) {
+  if (!product || typeof product !== "object") return [];
+
+  const imageUrls = [product.image, product.image2, product.image3, product.image4, product.image5];
+  const galleryUrls = parseImageList(product.images);
+
+  return [...imageUrls, ...galleryUrls].filter((imageUrl, index, array) => {
+    return typeof imageUrl === "string" && imageUrl.trim() !== "" && array.indexOf(imageUrl) === index;
+  });
+}
+
+async function deleteLocalImageFile(imageUrl) {
+  if (!imageUrl || typeof imageUrl !== "string") return;
+  if (/^https?:\/\//i.test(imageUrl)) return;
+
+  const normalizedPath = imageUrl.startsWith("/") ? imageUrl.slice(1) : imageUrl;
+  if (!normalizedPath.startsWith("uploads/")) return;
+
+  const filePath = path.join(root, normalizedPath);
+
+  try {
+    await fs.promises.unlink(filePath);
+  } catch (error) {
+    if (error?.code !== "ENOENT") {
+      throw error;
+    }
+  }
+}
+
 app.use(compression());
 app.use(express.json());
 
@@ -184,10 +230,33 @@ app.put("/api/products/:id", async (req, res) => {
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   try {
+    const [existingRows] = await pool.query("SELECT * FROM products WHERE id = ?", [id]);
+    if (existingRows.length === 0) {
+      return res.status(404).json({ error: "Produk tidak ditemukan" });
+    }
+
+    const existingProduct = existingRows[0];
+    const previousImageUrls = collectProductImageUrls(existingProduct);
+
     await pool.query(
       "UPDATE products SET name = ?, category = ?, image = ?, images = ?, description = ?, slug = ? WHERE id = ?",
       [name, category, image, JSON.stringify(images || []), description, slug, id]
     );
+
+    const updatedProduct = {
+      ...existingProduct,
+      name,
+      category,
+      image,
+      images: images || [],
+      description,
+      slug,
+    };
+    const nextImageUrls = collectProductImageUrls(updatedProduct);
+    const removedImageUrls = previousImageUrls.filter((imageUrl) => !nextImageUrls.includes(imageUrl));
+
+    await Promise.allSettled(removedImageUrls.map((imageUrl) => deleteLocalImageFile(imageUrl)));
+
     res.json({ message: "Produk berhasil diperbarui" });
   } catch (error) {
     console.error("Update product error:", error);
@@ -198,6 +267,16 @@ app.put("/api/products/:id", async (req, res) => {
 app.delete("/api/products/:id", async (req, res) => {
   const { id } = req.params;
   try {
+    const [rows] = await pool.query("SELECT * FROM products WHERE id = ?", [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Produk tidak ditemukan" });
+    }
+
+    const product = rows[0];
+    const imageUrls = collectProductImageUrls(product);
+
+    await Promise.allSettled(imageUrls.map((imageUrl) => deleteLocalImageFile(imageUrl)));
+
     await pool.query("DELETE FROM products WHERE id = ?", [id]);
     res.json({ message: "Produk berhasil dihapus" });
   } catch (error) {
