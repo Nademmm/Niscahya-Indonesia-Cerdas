@@ -182,6 +182,14 @@ app.post("/api/admin-auth", (req, res) => {
   }
 });
 
+// Simple admin middleware: expect header `x-admin-auth` matching ADMIN_SECRET env or default password
+function requireAdmin(req, res, next) {
+  const provided = req.headers['x-admin-auth'] || '';
+  const secret = process.env.ADMIN_SECRET || 'n1scahya';
+  if (provided === secret) return next();
+  return res.status(401).json({ error: 'Unauthorized' });
+}
+
 app.post("/api/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "Tidak ada file yang diunggah" });
@@ -221,6 +229,116 @@ app.post("/api/products", async (req, res) => {
   } catch (error) {
     console.error("Add product error:", error);
     res.status(500).json({ error: "Gagal menambahkan produk" });
+  }
+});
+
+// --- Blog CRUD endpoints ---
+function localSlugify(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const { category, page = 1, limit = 20 } = req.query;
+    const offset = (Number(page) - 1) * Number(limit);
+
+    let sql = 'SELECT * FROM blogs';
+    const params = [];
+    if (category) {
+      sql += ' WHERE category = ?';
+      params.push(category);
+    }
+    sql += ' ORDER BY id DESC LIMIT ? OFFSET ?';
+    params.push(Number(limit), Number(offset));
+
+    const [rows] = await pool.query(sql, params);
+    res.json(rows);
+  } catch (error) {
+    console.error('Fetch blogs error:', error);
+    res.status(500).json({ error: 'Gagal mengambil daftar blog' });
+  }
+});
+
+app.get('/api/blogs/:slugOrId', async (req, res) => {
+  const { slugOrId } = req.params;
+  try {
+    const [rows] = await pool.query('SELECT * FROM blogs WHERE slug = ? OR id = ?', [slugOrId, slugOrId]);
+    if (rows.length === 0) return res.status(404).json({ error: 'Blog tidak ditemukan' });
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('Fetch blog detail error:', error);
+    res.status(500).json({ error: 'Gagal mengambil detail blog' });
+  }
+});
+
+app.post('/api/blogs', requireAdmin, async (req, res) => {
+  const { title, date, category, image, excerpt, content, author } = req.body;
+  const slug = localSlugify(title || '');
+  try {
+    const [result] = await pool.query(
+      'INSERT INTO blogs (title, slug, date, category, image, excerpt, content, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [title, slug, date, category, image, excerpt, content, author]
+    );
+    res.status(201).json({ id: result.insertId, message: 'Blog berhasil dibuat' });
+  } catch (error) {
+    console.error('Create blog error:', error);
+    res.status(500).json({ error: 'Gagal membuat blog' });
+  }
+});
+
+app.put('/api/blogs/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { title, date, category, image, excerpt, content, author } = req.body;
+  const slug = localSlugify(title || '');
+  try {
+    const [existing] = await pool.query('SELECT * FROM blogs WHERE id = ?', [id]);
+    if (existing.length === 0) return res.status(404).json({ error: 'Blog tidak ditemukan' });
+    const prev = existing[0];
+
+    await pool.query(
+      'UPDATE blogs SET title = ?, slug = ?, date = ?, category = ?, image = ?, excerpt = ?, content = ?, author = ? WHERE id = ?',
+      [title, slug, date, category, image, excerpt, content, author, id]
+    );
+
+    // If image was local and changed, delete previous local image
+    if (prev.image && prev.image !== image) {
+      try {
+        await deleteLocalImageFile(prev.image);
+      } catch (err) {
+        console.error('Failed to delete previous blog image:', err);
+      }
+    }
+
+    res.json({ message: 'Blog berhasil diperbarui' });
+  } catch (error) {
+    console.error('Update blog error:', error);
+    res.status(500).json({ error: 'Gagal memperbarui blog' });
+  }
+});
+
+app.delete('/api/blogs/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [rows] = await pool.query('SELECT * FROM blogs WHERE id = ?', [id]);
+    if (rows.length === 0) return res.status(404).json({ error: 'Blog tidak ditemukan' });
+    const blog = rows[0];
+
+    if (blog.image) {
+      try {
+        await deleteLocalImageFile(blog.image);
+      } catch (err) {
+        console.error('Failed to delete blog image:', err);
+      }
+    }
+
+    await pool.query('DELETE FROM blogs WHERE id = ?', [id]);
+    res.json({ message: 'Blog berhasil dihapus' });
+  } catch (error) {
+    console.error('Delete blog error:', error);
+    res.status(500).json({ error: 'Gagal menghapus blog' });
   }
 });
 

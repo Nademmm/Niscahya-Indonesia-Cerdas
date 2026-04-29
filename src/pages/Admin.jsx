@@ -7,6 +7,8 @@ const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [adminAuth, setAdminAuth] = useState('');
+  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'blogs'
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
@@ -24,6 +26,7 @@ const Admin = () => {
     gallery2: false,
     gallery3: false
   });
+  const [uploadingBlog, setUploadingBlog] = useState(false);
   const [error, setError] = useState('');
   const [selectedMainCategory, setSelectedMainCategory] = useState('');
 
@@ -45,6 +48,13 @@ const Admin = () => {
       fetchProducts();
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (isLoggedIn && activeTab === 'blogs') {
+      fetchBlogs();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, activeTab]);
 
   const handleFileUpload = async (e, type, index = null) => {
     const file = e.target.files[0];
@@ -100,6 +110,32 @@ const Admin = () => {
     }
   };
 
+  const handleBlogFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const localPreview = URL.createObjectURL(file);
+    setBlogForm(prev => ({ ...prev, image: localPreview }));
+    setUploadingBlog(true);
+
+    const formDataUpload = new FormData();
+    formDataUpload.append('image', file);
+
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formDataUpload });
+      const data = await res.json();
+      if (res.ok && data.imageUrl) {
+        setBlogForm(prev => ({ ...prev, image: data.imageUrl }));
+      } else {
+        setError(data.error || 'Gagal mengunggah gambar blog');
+      }
+    } catch (err) {
+      setError('Error koneksi saat mengunggah gambar blog');
+    } finally {
+      setUploadingBlog(false);
+    }
+  };
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -110,6 +146,76 @@ const Admin = () => {
       setError('Gagal memuat produk');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const [blogs, setBlogs] = useState([]);
+  const [editingBlog, setEditingBlog] = useState(null);
+  const [blogForm, setBlogForm] = useState({ title: '', date: '', category: '', image: '', excerpt: '', content: '', author: '' });
+
+  const fetchBlogs = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/blogs');
+      const data = await res.json();
+      setBlogs(data);
+    } catch (err) {
+      setError('Gagal memuat blog');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBlogSubmit = async (e) => {
+    e.preventDefault();
+    if (uploadingBlog) {
+      setError('Upload gambar blog masih berjalan');
+      return;
+    }
+    if (!blogForm.title || !blogForm.content) {
+      setError('Judul dan konten wajib diisi');
+      return;
+    }
+
+    const payload = { ...blogForm };
+    const method = editingBlog ? 'PUT' : 'POST';
+    const url = editingBlog ? `/api/blogs/${editingBlog.id}` : '/api/blogs';
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'x-admin-auth': adminAuth },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        fetchBlogs();
+        setEditingBlog(null);
+        setBlogForm({ title: '', date: '', category: '', image: '', excerpt: '', content: '', author: '' });
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || data.message || 'Gagal menyimpan blog');
+      }
+    } catch (err) {
+      setError('Gagal menyimpan blog');
+    }
+  };
+
+  const handleEditBlog = (post) => {
+    setEditingBlog(post);
+    setBlogForm({ title: post.title || '', date: post.date || '', category: post.category || '', image: post.image || '', excerpt: post.excerpt || '', content: post.content || '', author: post.author || '' });
+  };
+
+  const handleDeleteBlog = async (id) => {
+    if (!window.confirm('Hapus artikel ini?')) return;
+    try {
+      const res = await fetch(`/api/blogs/${id}`, { method: 'DELETE', headers: { 'x-admin-auth': adminAuth } });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || data.message || 'Gagal menghapus blog');
+        return;
+      }
+      fetchBlogs();
+    } catch (err) {
+      setError('Gagal menghapus blog');
     }
   };
 
@@ -125,6 +231,7 @@ const Admin = () => {
       const data = await res.json();
       if (data.success) {
         setIsLoggedIn(true);
+        setAdminAuth(password);
       } else {
         setError(data.message);
       }
@@ -325,6 +432,32 @@ const Admin = () => {
         </button>
       </header>
 
+      {/* Tabs */}
+      <div className="flex gap-4 border-b border-black/10">
+        <button
+          onClick={() => setActiveTab('products')}
+          className={`px-6 py-3 font-bold uppercase tracking-widest text-sm border-b-2 transition-colors ${
+            activeTab === 'products'
+              ? 'border-secondary text-secondary'
+              : 'border-transparent text-text-secondary hover:text-text-main'
+          }`}
+        >
+          <i className="bx bx-box mr-2"></i>Produk
+        </button>
+        <button
+          onClick={() => setActiveTab('blogs')}
+          className={`px-6 py-3 font-bold uppercase tracking-widest text-sm border-b-2 transition-colors ${
+            activeTab === 'blogs'
+              ? 'border-secondary text-secondary'
+              : 'border-transparent text-text-secondary hover:text-text-main'
+          }`}
+        >
+          <i className="bx bx-news mr-2"></i>Blog
+        </button>
+      </div>
+
+      {/* Products Tab */}
+      {activeTab === 'products' && (
       <div className="grid lg:grid-cols-3 gap-12">
         {/* Form Section */}
         <div className="lg:col-span-1">
@@ -543,6 +676,189 @@ const Admin = () => {
           )}
         </div>
       </div>
+      )}
+
+      {/* Blogs Tab */}
+      {activeTab === 'blogs' && (
+      <div className="grid lg:grid-cols-3 gap-12">
+        {/* Blog Form Section */}
+        <div className="lg:col-span-1">
+          <motion.div 
+            layout
+            className="glass p-8 rounded-[32px] border-black/5 sticky top-32"
+          >
+            <h2 className="text-2xl font-black mb-6">{editingBlog ? 'Edit Artikel' : 'Tulis Artikel Baru'}</h2>
+            {error && (
+              <p className="mb-4 rounded-xl bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm font-bold text-red-600">
+                {error}
+              </p>
+            )}
+            <form onSubmit={handleBlogSubmit} className="space-y-4">
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Judul Artikel</label>
+                <input 
+                  type="text" 
+                  required
+                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none"
+                  value={blogForm.title}
+                  onChange={(e) => setBlogForm({...blogForm, title: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Tanggal</label>
+                <input 
+                  type="text"
+                  placeholder="Contoh: April 21, 2026"
+                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none"
+                  value={blogForm.date}
+                  onChange={(e) => setBlogForm({...blogForm, date: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Kategori</label>
+                <input 
+                  type="text"
+                  placeholder="Contoh: Teknologi, Tips, Panduan"
+                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none"
+                  value={blogForm.category}
+                  onChange={(e) => setBlogForm({...blogForm, category: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Gambar</label>
+                <div className="space-y-3">
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-black file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20 cursor-pointer"
+                    onChange={handleBlogFileUpload}
+                  />
+                  {uploadingBlog && <p className="text-xs font-bold text-secondary animate-pulse ml-1">Mengunggah gambar...</p>}
+                  {blogForm.image && !blogForm.image.startsWith('blob:') && (
+                    <div className="relative group aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5">
+                      <img src={blogForm.image} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Excerpt (Ringkasan Singkat)</label>
+                <textarea 
+                  rows="2"
+                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none"
+                  value={blogForm.excerpt}
+                  onChange={(e) => setBlogForm({...blogForm, excerpt: e.target.value})}
+                  placeholder="Deskripsi singkat untuk preview artikel"
+                ></textarea>
+              </div>
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Konten Lengkap</label>
+                <textarea 
+                  rows="6"
+                  required
+                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm"
+                  value={blogForm.content}
+                  onChange={(e) => setBlogForm({...blogForm, content: e.target.value})}
+                  placeholder="Tulis konten artikel di sini"
+                ></textarea>
+              </div>
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block">Penulis</label>
+                <input 
+                  type="text"
+                  placeholder="Nama penulis"
+                  className="w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none"
+                  value={blogForm.author}
+                  onChange={(e) => setBlogForm({...blogForm, author: e.target.value})}
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button 
+                  type="submit"
+                  className="flex-1 py-4 bg-secondary text-white rounded-2xl font-bold shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  {editingBlog ? 'Update' : 'Terbitkan'}
+                </button>
+                {editingBlog && (
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setEditingBlog(null);
+                      setBlogForm({ title: '', date: '', category: '', image: '', excerpt: '', content: '', author: '' });
+                    }}
+                    className="px-6 py-4 bg-black/5 rounded-2xl font-bold"
+                  >
+                    Batal
+                  </button>
+                )}
+              </div>
+            </form>
+          </motion.div>
+        </div>
+
+        {/* Blog List Section */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-2xl font-black uppercase tracking-tighter">Artikel Terbit</h2>
+            <span className="text-xs font-black uppercase tracking-widest text-text-secondary">
+              {blogs.length} Artikel
+            </span>
+          </div>
+          {loading ? (
+            <div className="py-20 text-center text-text-secondary font-medium animate-pulse">Memuat artikel...</div>
+          ) : (
+            <div className="grid gap-4">
+              {blogs.map((post) => (
+                <motion.div 
+                  key={post.id}
+                  layout
+                  className="glass p-6 rounded-[24px] border-black/5 flex items-center gap-6"
+                >
+                  {post.image && (
+                    <img 
+                      src={post.image} 
+                      alt={post.title} 
+                      className="w-20 h-20 object-cover rounded-2xl bg-black/5"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-secondary bg-secondary/10 px-2 py-0.5 rounded-full">
+                        {post.category || 'Umum'}
+                      </span>
+                      <span className="text-[8px] text-text-secondary">{post.date}</span>
+                    </div>
+                    <h3 className="font-bold truncate">{post.title}</h3>
+                    <p className="text-xs text-text-secondary line-clamp-1 mt-1">Oleh {post.author || 'Admin'}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => handleEditBlog(post)}
+                      className="p-3 bg-secondary/10 text-secondary rounded-xl hover:bg-secondary hover:text-white transition-all"
+                    >
+                      <i className="bx bx-edit-alt text-xl"></i>
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteBlog(post.id)}
+                      className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                    >
+                      <i className="bx bx-trash text-xl"></i>
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+              {blogs.length === 0 && (
+                <div className="glass p-8 rounded-[24px] border-black/5 text-center">
+                  <p className="font-bold text-text-secondary">
+                    Belum ada artikel. Mulai tulis artikel baru.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      )}
     </div>
   );
 };

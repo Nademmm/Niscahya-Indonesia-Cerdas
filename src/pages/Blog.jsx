@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
-import { blogPosts } from '../data/blog';
+ 
 
 export const meta = () => {
   const title = 'Wawasan & Edukasi Energi Terbarukan | Niscahya Indonesia Cerdas';
@@ -21,13 +21,22 @@ export const meta = () => {
 
 const Blog = () => {
   const [activeCategory, setActiveCategory] = useState('Semua');
-  const categories = ['Semua', ...new Set(blogPosts.map(post => post.category))];
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const sortedPosts = [...blogPosts].sort((a, b) => b.id - a.id);
+  useEffect(() => {
+    let mounted = true;
+    fetch('/api/blogs')
+      .then(r => r.json())
+      .then(data => { if (mounted) setPosts(data); })
+      .catch(() => { if (mounted) setPosts([]); })
+      .finally(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
+  }, []);
 
-  const filteredPosts = activeCategory === 'Semua' 
-    ? sortedPosts 
-    : sortedPosts.filter(post => post.category === activeCategory);
+  const categories = ['Semua', ...new Set(posts.map(post => post.category))];
+  const sortedPosts = [...posts].sort((a, b) => (b.id || 0) - (a.id || 0));
+  const filteredPosts = activeCategory === 'Semua' ? sortedPosts : sortedPosts.filter(post => post.category === activeCategory);
 
   return (
     <div className="space-y-8 md:space-y-12">

@@ -157,8 +157,8 @@ var Navbar = () => {
 				}) }) : /* @__PURE__ */ jsx("div", {
 					className: "flex-1 lg:hidden mr-2",
 					children: /* @__PURE__ */ jsxs("div", {
-						className: "flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-black/10 rounded-2xl group transition-all",
-						children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-text-secondary" }), /* @__PURE__ */ jsx("input", {
+						className: "flex items-center gap-3 px-4 py-2.5 bg-black/5 border border-primary/30 rounded-2xl group focus-within:border-primary/50 transition-all",
+						children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-primary" }), /* @__PURE__ */ jsx("input", {
 							type: "text",
 							placeholder: "Cari produk atau unit...",
 							value: localSearch,
@@ -180,8 +180,8 @@ var Navbar = () => {
 					className: "flex items-center gap-2 sm:gap-3 shrink-0",
 					children: [
 						/* @__PURE__ */ jsxs("div", {
-							className: "hidden sm:flex items-center gap-2 px-5 py-2.5 bg-black/5 border border-black/10 rounded-2xl text-sm font-bold group transition-all",
-							children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-text-secondary" }), /* @__PURE__ */ jsx("input", {
+							className: "hidden sm:flex items-center gap-2 px-5 py-2.5 bg-black/5 border border-black/10 rounded-2xl text-sm font-bold group focus-within:border-primary/50 transition-all",
+							children: [/* @__PURE__ */ jsx("i", { className: "bx bx-search text-xl text-text-secondary group-focus-within:text-primary" }), /* @__PURE__ */ jsx("input", {
 								type: "text",
 								placeholder: "Cari unit...",
 								value: localSearch,
@@ -2506,8 +2506,23 @@ var meta$4 = () => {
 };
 var Blog = () => {
 	const [activeCategory, setActiveCategory] = useState("Semua");
-	const categories = ["Semua", ...new Set(blogPosts.map((post) => post.category))];
-	const sortedPosts = [...blogPosts].sort((a, b) => b.id - a.id);
+	const [posts, setPosts] = useState([]);
+	const [loading, setLoading] = useState(true);
+	useEffect(() => {
+		let mounted = true;
+		fetch("/api/blogs").then((r) => r.json()).then((data) => {
+			if (mounted) setPosts(data);
+		}).catch(() => {
+			if (mounted) setPosts([]);
+		}).finally(() => {
+			if (mounted) setLoading(false);
+		});
+		return () => {
+			mounted = false;
+		};
+	}, []);
+	const categories = ["Semua", ...new Set(posts.map((post) => post.category))];
+	const sortedPosts = [...posts].sort((a, b) => (b.id || 0) - (a.id || 0));
 	const filteredPosts = activeCategory === "Semua" ? sortedPosts : sortedPosts.filter((post) => post.category === activeCategory);
 	return /* @__PURE__ */ jsxs("div", {
 		className: "space-y-8 md:space-y-12",
@@ -2725,147 +2740,165 @@ var meta$3 = ({ params }) => {
 };
 var BlogDetail = () => {
 	const { slug } = useParams();
-	const navigate = useNavigate();
-	const post = blogPosts.find((p) => p.slug === slug) || blogPosts.find((p) => p.id === parseInt(slug));
+	const [post, setPost] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [notFound, setNotFound] = useState(false);
 	useEffect(() => {
-		if (!post) navigate("/blog");
-		else if (post.slug !== slug) navigate(`/blog/${post.slug}`, { replace: true });
-	}, [
-		post,
-		navigate,
-		slug
-	]);
-	if (!post) return null;
+		let mounted = true;
+		setLoading(true);
+		setNotFound(false);
+		fetch(`/api/blogs/${slug}`).then((r) => {
+			if (!r.ok) throw new Error("not found");
+			return r.json();
+		}).then((data) => {
+			if (!mounted) return;
+			setPost(data);
+		}).catch(() => {
+			if (!mounted) return;
+			setPost(null);
+			setNotFound(true);
+		}).finally(() => {
+			if (!mounted) return;
+			setLoading(false);
+		});
+		return () => {
+			mounted = false;
+		};
+	}, [slug]);
+	if (loading) return /* @__PURE__ */ jsx("div", {
+		className: "py-20 text-center text-text-secondary font-medium animate-pulse",
+		children: "Memuat artikel..."
+	});
+	if (notFound || !post) return /* @__PURE__ */ jsxs("div", {
+		className: "space-y-6 py-16 text-center",
+		children: [
+			/* @__PURE__ */ jsx("h1", {
+				className: "text-3xl font-black uppercase tracking-tight",
+				children: "Artikel tidak ditemukan"
+			}),
+			/* @__PURE__ */ jsx("p", {
+				className: "text-text-secondary font-medium",
+				children: "Artikel yang kamu cari mungkin sudah dihapus atau URL tidak valid."
+			}),
+			/* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, {
+				to: "/blog",
+				className: "inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl",
+				children: "Kembali ke Blog"
+			}) })
+		]
+	});
 	return /* @__PURE__ */ jsxs("div", {
 		className: "space-y-12 md:space-y-16",
-		children: [
-			/* @__PURE__ */ jsx(motion.div, {
+		children: [/* @__PURE__ */ jsxs("section", {
+			className: "relative space-y-8 md:space-y-10",
+			children: [/* @__PURE__ */ jsxs("div", {
+				className: "max-w-4xl space-y-6 md:space-y-8",
+				children: [
+					/* @__PURE__ */ jsxs("div", {
+						className: "flex items-center gap-3 md:gap-4",
+						children: [/* @__PURE__ */ jsx("span", {
+							className: "px-4 py-2 md:px-5 md:py-2.5 bg-primary/10 border border-primary/20 text-primary text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] rounded-xl md:rounded-2xl",
+							children: post.category
+						}), /* @__PURE__ */ jsx("span", {
+							className: "text-text-secondary font-black text-[8px] md:text-[10px] uppercase tracking-widest",
+							children: post.date
+						})]
+					}),
+					/* @__PURE__ */ jsx("h1", {
+						className: "text-3xl md:text-7xl font-black tracking-tighter uppercase leading-tight md:leading-none text-text-main drop-shadow-sm",
+						children: post.title
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "flex items-center gap-4",
+						children: [/* @__PURE__ */ jsx("div", {
+							className: "w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center text-white text-lg md:text-xl font-black",
+							children: post.author[0]
+						}), /* @__PURE__ */ jsxs("div", {
+							className: "space-y-0.5",
+							children: [/* @__PURE__ */ jsx("p", {
+								className: "text-[8px] md:text-[10px] font-black uppercase tracking-widest text-text-secondary leading-none",
+								children: "Ditulis Oleh"
+							}), /* @__PURE__ */ jsx("p", {
+								className: "text-sm md:text-base font-black uppercase tracking-tight text-text-main",
+								children: post.author
+							})]
+						})]
+					})
+				]
+			}), /* @__PURE__ */ jsx(motion.div, {
 				initial: {
-					x: -20,
+					scale: .95,
 					opacity: 0
 				},
 				animate: {
-					x: 0,
+					scale: 1,
 					opacity: 1
 				},
-				children: /* @__PURE__ */ jsxs(Link, {
-					to: "/blog",
-					className: "inline-flex items-center gap-3 px-6 py-3 bg-black/5 hover:bg-black/10 text-text-secondary font-black text-[10px] uppercase tracking-widest rounded-xl transition-all",
-					children: [/* @__PURE__ */ jsx("i", { className: "bx bx-left-arrow-alt text-xl" }), "Kembali ke Blog"]
+				transition: { duration: .8 },
+				className: "aspect-video md:aspect-21/9 rounded-3xl md:rounded-[64px] overflow-hidden shadow-2xl shadow-black/10 border-4 md:border-8 border-white/50",
+				children: /* @__PURE__ */ jsx("img", {
+					src: post.image,
+					alt: post.title,
+					loading: "eager",
+					fetchPriority: "high",
+					decoding: "async",
+					width: "1600",
+					height: "900",
+					className: "w-full h-full object-cover"
 				})
-			}),
-			/* @__PURE__ */ jsxs("section", {
-				className: "relative space-y-8 md:space-y-10",
-				children: [/* @__PURE__ */ jsxs("div", {
-					className: "max-w-4xl space-y-6 md:space-y-8",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "flex items-center gap-3 md:gap-4",
-							children: [/* @__PURE__ */ jsx("span", {
-								className: "px-4 py-2 md:px-5 md:py-2.5 bg-primary/10 border border-primary/20 text-primary text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] rounded-xl md:rounded-2xl",
-								children: post.category
-							}), /* @__PURE__ */ jsx("span", {
-								className: "text-text-secondary font-black text-[8px] md:text-[10px] uppercase tracking-widest",
-								children: post.date
-							})]
-						}),
-						/* @__PURE__ */ jsx("h1", {
-							className: "text-3xl md:text-7xl font-black tracking-tighter uppercase leading-tight md:leading-none text-text-main drop-shadow-sm",
-							children: post.title
-						}),
-						/* @__PURE__ */ jsxs("div", {
-							className: "flex items-center gap-4",
-							children: [/* @__PURE__ */ jsx("div", {
-								className: "w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center text-white text-lg md:text-xl font-black",
-								children: post.author[0]
-							}), /* @__PURE__ */ jsxs("div", {
-								className: "space-y-0.5",
-								children: [/* @__PURE__ */ jsx("p", {
-									className: "text-[8px] md:text-[10px] font-black uppercase tracking-widest text-text-secondary leading-none",
-									children: "Ditulis Oleh"
-								}), /* @__PURE__ */ jsx("p", {
-									className: "text-sm md:text-base font-black uppercase tracking-tight text-text-main",
-									children: post.author
-								})]
-							})]
-						})
-					]
-				}), /* @__PURE__ */ jsx(motion.div, {
-					initial: {
-						scale: .95,
-						opacity: 0
-					},
-					animate: {
-						scale: 1,
-						opacity: 1
-					},
-					transition: { duration: .8 },
-					className: "aspect-video md:aspect-21/9 rounded-3xl md:rounded-[64px] overflow-hidden shadow-2xl shadow-black/10 border-4 md:border-8 border-white/50",
-					children: /* @__PURE__ */ jsx("img", {
-						src: post.image,
-						alt: post.title,
-						loading: "eager",
-						fetchPriority: "high",
-						decoding: "async",
-						width: "1600",
-						height: "900",
-						className: "w-full h-full object-cover"
-					})
-				})]
-			}),
-			/* @__PURE__ */ jsxs("section", {
-				className: "grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16",
-				children: [/* @__PURE__ */ jsx("div", {
-					className: "lg:col-span-8 space-y-8 md:space-y-12",
+			})]
+		}), /* @__PURE__ */ jsxs("section", {
+			className: "grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16",
+			children: [/* @__PURE__ */ jsx("div", {
+				className: "lg:col-span-8 space-y-8 md:space-y-12",
+				children: /* @__PURE__ */ jsx("div", {
+					className: "glass p-6 md:p-16 rounded-3xl md:rounded-[64px] border-black/5 space-y-6 md:space-y-8",
 					children: /* @__PURE__ */ jsx("div", {
-						className: "glass p-6 md:p-16 rounded-3xl md:rounded-[64px] border-black/5 space-y-6 md:space-y-8",
-						children: /* @__PURE__ */ jsx("div", {
-							className: "prose prose-lg md:prose-xl prose-primary max-w-none text-text-secondary font-medium leading-relaxed",
-							children: post.content.split("\n").map((para, i) => para.trim() && /* @__PURE__ */ jsx("p", {
-								className: "mb-6 whitespace-pre-line",
-								children: para.trim()
-							}, i))
-						})
+						className: "prose prose-lg md:prose-xl prose-primary max-w-none text-text-secondary font-medium leading-relaxed",
+						children: post.content.split("\n").map((para, i) => para.trim() && /* @__PURE__ */ jsx("p", {
+							className: "mb-6 whitespace-pre-line",
+							children: para.trim()
+						}, i))
 					})
-				}), /* @__PURE__ */ jsx("aside", {
-					className: "lg:col-span-4 space-y-8 md:space-y-10",
-					children: /* @__PURE__ */ jsxs("div", {
-						className: "glass p-6 md:p-10 rounded-3xl md:rounded-[48px] border-black/5 space-y-6 md:space-y-8 sticky top-32",
-						children: [/* @__PURE__ */ jsx("h3", {
-							className: "text-lg md:text-xl font-black uppercase tracking-tighter",
-							children: "Artikel Terkait"
-						}), /* @__PURE__ */ jsx("div", {
-							className: "space-y-6 md:space-y-8",
-							children: blogPosts.filter((p) => p.slug !== post.slug).slice(0, 3).map((related) => /* @__PURE__ */ jsxs(Link, {
-								to: `/blog/${related.slug}`,
-								className: "group flex gap-4",
-								children: [/* @__PURE__ */ jsx("div", {
-									className: "w-20 h-20 md:w-24 md:h-24 shrink-0 rounded-xl md:rounded-2xl overflow-hidden bg-black/5",
-									children: /* @__PURE__ */ jsx("img", {
-										src: related.image,
-										alt: related.title,
-										loading: "lazy",
-										decoding: "async",
-										width: "240",
-										height: "240",
-										className: "w-full h-full object-cover transition-transform group-hover:scale-110"
-									})
-								}), /* @__PURE__ */ jsxs("div", {
-									className: "space-y-1.5 md:space-y-2",
-									children: [/* @__PURE__ */ jsx("p", {
-										className: "text-[8px] md:text-[9px] font-black uppercase tracking-widest text-primary leading-none",
-										children: related.category
-									}), /* @__PURE__ */ jsx("h4", {
-										className: "text-xs md:text-sm font-black uppercase tracking-tight leading-tight group-hover:text-primary transition-colors line-clamp-2",
-										children: related.title
-									})]
+				})
+			}), /* @__PURE__ */ jsx("aside", {
+				className: "lg:col-span-4 space-y-8 md:space-y-10",
+				children: /* @__PURE__ */ jsxs("div", {
+					className: "glass p-6 md:p-10 rounded-3xl md:rounded-[48px] border-black/5 space-y-6 md:space-y-8 sticky top-32",
+					children: [/* @__PURE__ */ jsx("h3", {
+						className: "text-lg md:text-xl font-black uppercase tracking-tighter",
+						children: "Artikel Terkait"
+					}), /* @__PURE__ */ jsx("div", {
+						className: "space-y-6 md:space-y-8",
+						children: blogPosts.filter((p) => p.slug !== post.slug).slice(0, 3).map((related) => /* @__PURE__ */ jsxs(Link, {
+							to: `/blog/${related.slug}`,
+							className: "group flex gap-4",
+							children: [/* @__PURE__ */ jsx("div", {
+								className: "w-20 h-20 md:w-24 md:h-24 shrink-0 rounded-xl md:rounded-2xl overflow-hidden bg-black/5",
+								children: /* @__PURE__ */ jsx("img", {
+									src: related.image,
+									alt: related.title,
+									loading: "lazy",
+									decoding: "async",
+									width: "240",
+									height: "240",
+									className: "w-full h-full object-cover transition-transform group-hover:scale-110"
+								})
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "space-y-1.5 md:space-y-2",
+								children: [/* @__PURE__ */ jsx("p", {
+									className: "text-[8px] md:text-[9px] font-black uppercase tracking-widest text-primary leading-none",
+									children: related.category
+								}), /* @__PURE__ */ jsx("h4", {
+									className: "text-xs md:text-sm font-black uppercase tracking-tight leading-tight group-hover:text-primary transition-colors line-clamp-2",
+									children: related.title
 								})]
-							}, related.id))
-						})]
-					})
-				})]
-			})
-		]
+							})]
+						}, related.id))
+					})]
+				})
+			})]
+		})]
 	});
 };
 var BlogDetail_default = UNSAFE_withComponentProps(BlogDetail);
@@ -3498,6 +3531,8 @@ var Admin = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [adminAuth, setAdminAuth] = useState("");
+	const [activeTab, setActiveTab] = useState("products");
 	const [products, setProducts] = useState([]);
 	const [editingProduct, setEditingProduct] = useState(null);
 	const [formData, setFormData] = useState({
@@ -3520,6 +3555,7 @@ var Admin = () => {
 		gallery2: false,
 		gallery3: false
 	});
+	const [uploadingBlog, setUploadingBlog] = useState(false);
 	const [error, setError] = useState("");
 	const [selectedMainCategory, setSelectedMainCategory] = useState("");
 	const categoryStructure = {
@@ -3545,6 +3581,9 @@ var Admin = () => {
 	useEffect(() => {
 		if (isLoggedIn) fetchProducts();
 	}, [isLoggedIn]);
+	useEffect(() => {
+		if (isLoggedIn && activeTab === "blogs") fetchBlogs();
+	}, [isLoggedIn, activeTab]);
 	const handleFileUpload = async (e, type, index = null) => {
 		const file = e.target.files[0];
 		if (!file) return;
@@ -3607,6 +3646,34 @@ var Admin = () => {
 			}));
 		}
 	};
+	const handleBlogFileUpload = async (e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+		const localPreview = URL.createObjectURL(file);
+		setBlogForm((prev) => ({
+			...prev,
+			image: localPreview
+		}));
+		setUploadingBlog(true);
+		const formDataUpload = new FormData();
+		formDataUpload.append("image", file);
+		try {
+			const res = await fetch("/api/upload", {
+				method: "POST",
+				body: formDataUpload
+			});
+			const data = await res.json();
+			if (res.ok && data.imageUrl) setBlogForm((prev) => ({
+				...prev,
+				image: data.imageUrl
+			}));
+			else setError(data.error || "Gagal mengunggah gambar blog");
+		} catch (err) {
+			setError("Error koneksi saat mengunggah gambar blog");
+		} finally {
+			setUploadingBlog(false);
+		}
+	};
 	const fetchProducts = async () => {
 		setLoading(true);
 		try {
@@ -3615,6 +3682,98 @@ var Admin = () => {
 			setError("Gagal memuat produk");
 		} finally {
 			setLoading(false);
+		}
+	};
+	const [blogs, setBlogs] = useState([]);
+	const [editingBlog, setEditingBlog] = useState(null);
+	const [blogForm, setBlogForm] = useState({
+		title: "",
+		date: "",
+		category: "",
+		image: "",
+		excerpt: "",
+		content: "",
+		author: ""
+	});
+	const fetchBlogs = async () => {
+		setLoading(true);
+		try {
+			setBlogs(await (await fetch("/api/blogs")).json());
+		} catch (err) {
+			setError("Gagal memuat blog");
+		} finally {
+			setLoading(false);
+		}
+	};
+	const handleBlogSubmit = async (e) => {
+		e.preventDefault();
+		if (uploadingBlog) {
+			setError("Upload gambar blog masih berjalan");
+			return;
+		}
+		if (!blogForm.title || !blogForm.content) {
+			setError("Judul dan konten wajib diisi");
+			return;
+		}
+		const payload = { ...blogForm };
+		const method = editingBlog ? "PUT" : "POST";
+		const url = editingBlog ? `/api/blogs/${editingBlog.id}` : "/api/blogs";
+		try {
+			const res = await fetch(url, {
+				method,
+				headers: {
+					"Content-Type": "application/json",
+					"x-admin-auth": adminAuth
+				},
+				body: JSON.stringify(payload)
+			});
+			if (res.ok) {
+				fetchBlogs();
+				setEditingBlog(null);
+				setBlogForm({
+					title: "",
+					date: "",
+					category: "",
+					image: "",
+					excerpt: "",
+					content: "",
+					author: ""
+				});
+			} else {
+				const data = await res.json().catch(() => ({}));
+				setError(data.error || data.message || "Gagal menyimpan blog");
+			}
+		} catch (err) {
+			setError("Gagal menyimpan blog");
+		}
+	};
+	const handleEditBlog = (post) => {
+		setEditingBlog(post);
+		setBlogForm({
+			title: post.title || "",
+			date: post.date || "",
+			category: post.category || "",
+			image: post.image || "",
+			excerpt: post.excerpt || "",
+			content: post.content || "",
+			author: post.author || ""
+		});
+	};
+	const handleDeleteBlog = async (id) => {
+		if (!window.confirm("Hapus artikel ini?")) return;
+		try {
+			const res = await fetch(`/api/blogs/${id}`, {
+				method: "DELETE",
+				headers: { "x-admin-auth": adminAuth }
+			});
+			if (!res.ok) {
+				const data = await res.json().catch(() => ({}));
+				setError(data.error || data.message || "Gagal menghapus blog");
+				return;
+			}
+			fetchBlogs();
+		} catch (err) {
+			setError("Gagal menghapus blog");
 		}
 	};
 	const handleLogin = async (e) => {
@@ -3629,8 +3788,10 @@ var Admin = () => {
 					password
 				})
 			})).json();
-			if (data.success) setIsLoggedIn(true);
-			else setError(data.message);
+			if (data.success) {
+				setIsLoggedIn(true);
+				setAdminAuth(password);
+			} else setError(data.message);
 		} catch (err) {
 			setError("Gagal login. Pastikan server berjalan.");
 		}
@@ -3809,293 +3970,532 @@ var Admin = () => {
 	});
 	return /* @__PURE__ */ jsxs("div", {
 		className: "pt-20 pb-40 space-y-12",
-		children: [/* @__PURE__ */ jsxs("header", {
-			className: "flex justify-between items-end",
-			children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h1", {
-				className: "text-5xl font-black tracking-tighter uppercase",
-				children: "Panel Admin"
-			}), /* @__PURE__ */ jsx("p", {
-				className: "text-text-secondary font-medium",
-				children: "Kelola katalog produk Anda"
-			})] }), /* @__PURE__ */ jsx("button", {
-				onClick: () => setIsLoggedIn(false),
-				className: "px-6 py-2 bg-black/5 rounded-xl font-bold hover:bg-black/10 transition-colors",
-				children: "Keluar"
-			})]
-		}), /* @__PURE__ */ jsxs("div", {
-			className: "grid lg:grid-cols-3 gap-12",
-			children: [/* @__PURE__ */ jsx("div", {
-				className: "lg:col-span-1",
-				children: /* @__PURE__ */ jsxs(motion.div, {
-					layout: true,
-					className: "glass p-8 rounded-[32px] border-black/5 sticky top-32",
-					children: [
-						/* @__PURE__ */ jsx("h2", {
-							className: "text-2xl font-black mb-6",
-							children: editingProduct ? "Edit Produk" : "Tambah Produk Baru"
-						}),
-						error && /* @__PURE__ */ jsx("p", {
-							className: "mb-4 rounded-xl bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm font-bold text-red-600",
-							children: error
-						}),
-						/* @__PURE__ */ jsxs("form", {
-							onSubmit: handleSubmit,
-							className: "space-y-4",
-							children: [
-								/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
-									className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
-									children: "Nama Produk"
-								}), /* @__PURE__ */ jsx("input", {
-									type: "text",
-									required: true,
-									className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
-									value: formData.name,
-									onChange: (e) => setFormData({
-										...formData,
-										name: e.target.value
-									})
-								})] }),
-								/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
-									className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
-									children: "Kategori Utama"
-								}), /* @__PURE__ */ jsxs("select", {
-									className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none appearance-none",
-									value: selectedMainCategory,
-									onChange: (e) => {
-										setSelectedMainCategory(e.target.value);
-										setFormData({
+		children: [
+			/* @__PURE__ */ jsxs("header", {
+				className: "flex justify-between items-end",
+				children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h1", {
+					className: "text-5xl font-black tracking-tighter uppercase",
+					children: "Panel Admin"
+				}), /* @__PURE__ */ jsx("p", {
+					className: "text-text-secondary font-medium",
+					children: "Kelola katalog produk Anda"
+				})] }), /* @__PURE__ */ jsx("button", {
+					onClick: () => setIsLoggedIn(false),
+					className: "px-6 py-2 bg-black/5 rounded-xl font-bold hover:bg-black/10 transition-colors",
+					children: "Keluar"
+				})]
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				className: "flex gap-4 border-b border-black/10",
+				children: [/* @__PURE__ */ jsxs("button", {
+					onClick: () => setActiveTab("products"),
+					className: `px-6 py-3 font-bold uppercase tracking-widest text-sm border-b-2 transition-colors ${activeTab === "products" ? "border-secondary text-secondary" : "border-transparent text-text-secondary hover:text-text-main"}`,
+					children: [/* @__PURE__ */ jsx("i", { className: "bx bx-box mr-2" }), "Produk"]
+				}), /* @__PURE__ */ jsxs("button", {
+					onClick: () => setActiveTab("blogs"),
+					className: `px-6 py-3 font-bold uppercase tracking-widest text-sm border-b-2 transition-colors ${activeTab === "blogs" ? "border-secondary text-secondary" : "border-transparent text-text-secondary hover:text-text-main"}`,
+					children: [/* @__PURE__ */ jsx("i", { className: "bx bx-news mr-2" }), "Blog"]
+				})]
+			}),
+			activeTab === "products" && /* @__PURE__ */ jsxs("div", {
+				className: "grid lg:grid-cols-3 gap-12",
+				children: [/* @__PURE__ */ jsx("div", {
+					className: "lg:col-span-1",
+					children: /* @__PURE__ */ jsxs(motion.div, {
+						layout: true,
+						className: "glass p-8 rounded-[32px] border-black/5 sticky top-32",
+						children: [
+							/* @__PURE__ */ jsx("h2", {
+								className: "text-2xl font-black mb-6",
+								children: editingProduct ? "Edit Produk" : "Tambah Produk Baru"
+							}),
+							error && /* @__PURE__ */ jsx("p", {
+								className: "mb-4 rounded-xl bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm font-bold text-red-600",
+								children: error
+							}),
+							/* @__PURE__ */ jsxs("form", {
+								onSubmit: handleSubmit,
+								className: "space-y-4",
+								children: [
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Nama Produk"
+									}), /* @__PURE__ */ jsx("input", {
+										type: "text",
+										required: true,
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
+										value: formData.name,
+										onChange: (e) => setFormData({
 											...formData,
-											category: e.target.value
-										});
-									},
-									required: true,
-									children: [/* @__PURE__ */ jsx("option", {
-										value: "",
-										children: "Pilih Kategori Utama"
-									}), mainCategories.map((c) => /* @__PURE__ */ jsx("option", {
-										value: c,
-										children: c
-									}, c))]
-								})] }),
-								selectedMainCategory && categoryStructure[selectedMainCategory]?.length > 0 && /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
-									className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
-									children: "Sub-Kategori"
-								}), /* @__PURE__ */ jsxs("select", {
-									className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none appearance-none",
-									value: formData.category.includes(" - ") ? formData.category.split(" - ")[1] : "",
-									onChange: (e) => {
-										const fullCategory = `${selectedMainCategory} - ${e.target.value}`;
-										setFormData({
-											...formData,
-											category: fullCategory
-										});
-									},
-									required: true,
-									children: [/* @__PURE__ */ jsx("option", {
-										value: "",
-										children: "Pilih Sub-Kategori"
-									}), categoryStructure[selectedMainCategory].map((sub) => /* @__PURE__ */ jsx("option", {
-										value: sub,
-										children: sub
-									}, sub))]
-								})] }),
-								/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
-									className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
-									children: "Gambar Utama"
-								}), /* @__PURE__ */ jsxs("div", {
-									className: "space-y-3",
-									children: [
-										/* @__PURE__ */ jsx("input", {
-											type: "file",
-											accept: "image/*",
-											className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-black file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20 cursor-pointer",
-											onChange: (e) => handleFileUpload(e, "primary")
-										}),
-										uploading.primary && /* @__PURE__ */ jsx("p", {
-											className: "text-xs font-bold text-secondary animate-pulse ml-1",
-											children: "Mengunggah Utama..."
-										}),
-										formData.image && /* @__PURE__ */ jsx("div", {
-											className: "relative group aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5",
-											children: /* @__PURE__ */ jsx("img", {
-												src: formData.image,
-												alt: "Preview",
-												className: "w-full h-full object-cover"
-											})
+											name: e.target.value
 										})
-									]
-								})] }),
-								/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
-									className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
-									children: "Gambar Galeri (4 Slot Terpisah)"
-								}), /* @__PURE__ */ jsx("div", {
-									className: "grid grid-cols-2 gap-4",
-									children: [
-										0,
-										1,
-										2,
-										3
-									].map((idx) => /* @__PURE__ */ jsxs("div", {
-										className: "space-y-2",
-										children: [/* @__PURE__ */ jsxs("div", {
-											className: "relative aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5",
-											children: [formData.images[idx] ? /* @__PURE__ */ jsx("img", {
-												src: formData.images[idx],
-												alt: `Gallery ${idx}`,
-												className: "w-full h-full object-cover"
-											}) : /* @__PURE__ */ jsxs("div", {
-												className: "w-full h-full flex items-center justify-center text-[10px] font-black uppercase text-text-secondary/30",
-												children: ["Slot ", idx + 1]
-											}), uploading[`gallery${idx}`] && /* @__PURE__ */ jsx("div", {
-												className: "absolute inset-0 bg-black/20 flex items-center justify-center",
-												children: /* @__PURE__ */ jsx("i", { className: "bx bx-loader-alt animate-spin text-white text-xl" })
-											})]
-										}), /* @__PURE__ */ jsx("input", {
-											type: "file",
-											accept: "image/*",
-											className: "w-full text-[10px] file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-black/5 file:text-text-secondary hover:file:bg-black/10 cursor-pointer",
-											onChange: (e) => handleFileUpload(e, "gallery", idx)
-										})]
-									}, idx))
-								})] }),
-								/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsxs("div", {
-									className: "flex items-center justify-between ml-1 mb-1",
-									children: [/* @__PURE__ */ jsx("label", {
-										className: "text-xs font-black uppercase tracking-widest text-text-secondary",
-										children: "Deskripsi"
-									}), /* @__PURE__ */ jsxs("div", {
-										className: "flex items-center gap-1",
-										children: [/* @__PURE__ */ jsx("span", {
-											className: "text-[9px] text-text-secondary/50",
-											children: "Ctrl+B bold"
-										}), /* @__PURE__ */ jsx("button", {
-											type: "button",
-											onClick: applyBold,
-											className: "w-7 h-7 rounded-lg bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors",
-											title: "Bold (Ctrl+B)",
-											children: /* @__PURE__ */ jsx("i", { className: "bx bx-bold text-xs" })
-										})]
-									})]
-								}), /* @__PURE__ */ jsx("textarea", {
-									ref: descriptionRef,
-									rows: "3",
-									onKeyDown: handleKeyDown,
-									className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
-									value: formData.description,
-									onChange: (e) => setFormData({
-										...formData,
-										description: e.target.value
-									}),
-									placeholder: "Gunakan Ctrl+B untuk memilih teks dan membuat judul/sub-judul bold. Contoh: **Nama Produk**"
-								})] }),
-								/* @__PURE__ */ jsxs("div", {
-									className: "flex gap-3 pt-2",
-									children: [/* @__PURE__ */ jsx("button", {
-										type: "submit",
-										className: "flex-1 py-4 bg-secondary text-white rounded-2xl font-bold shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all",
-										children: editingProduct ? "Update" : "Simpan"
-									}), editingProduct && /* @__PURE__ */ jsx("button", {
-										type: "button",
-										onClick: () => {
-											setEditingProduct(null);
-											setSelectedMainCategory("");
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Kategori Utama"
+									}), /* @__PURE__ */ jsxs("select", {
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none appearance-none",
+										value: selectedMainCategory,
+										onChange: (e) => {
+											setSelectedMainCategory(e.target.value);
 											setFormData({
-												name: "",
-												category: "",
-												image: "",
-												images: [
-													"",
-													"",
-													"",
-													""
-												],
-												description: ""
+												...formData,
+												category: e.target.value
 											});
 										},
-										className: "px-6 py-4 bg-black/5 rounded-2xl font-bold",
-										children: "Batal"
-									})]
-								})
+										required: true,
+										children: [/* @__PURE__ */ jsx("option", {
+											value: "",
+											children: "Pilih Kategori Utama"
+										}), mainCategories.map((c) => /* @__PURE__ */ jsx("option", {
+											value: c,
+											children: c
+										}, c))]
+									})] }),
+									selectedMainCategory && categoryStructure[selectedMainCategory]?.length > 0 && /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Sub-Kategori"
+									}), /* @__PURE__ */ jsxs("select", {
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none appearance-none",
+										value: formData.category.includes(" - ") ? formData.category.split(" - ")[1] : "",
+										onChange: (e) => {
+											const fullCategory = `${selectedMainCategory} - ${e.target.value}`;
+											setFormData({
+												...formData,
+												category: fullCategory
+											});
+										},
+										required: true,
+										children: [/* @__PURE__ */ jsx("option", {
+											value: "",
+											children: "Pilih Sub-Kategori"
+										}), categoryStructure[selectedMainCategory].map((sub) => /* @__PURE__ */ jsx("option", {
+											value: sub,
+											children: sub
+										}, sub))]
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Gambar Utama"
+									}), /* @__PURE__ */ jsxs("div", {
+										className: "space-y-3",
+										children: [
+											/* @__PURE__ */ jsx("input", {
+												type: "file",
+												accept: "image/*",
+												className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-black file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20 cursor-pointer",
+												onChange: (e) => handleFileUpload(e, "primary")
+											}),
+											uploading.primary && /* @__PURE__ */ jsx("p", {
+												className: "text-xs font-bold text-secondary animate-pulse ml-1",
+												children: "Mengunggah Utama..."
+											}),
+											formData.image && /* @__PURE__ */ jsx("div", {
+												className: "relative group aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5",
+												children: /* @__PURE__ */ jsx("img", {
+													src: formData.image,
+													alt: "Preview",
+													className: "w-full h-full object-cover"
+												})
+											})
+										]
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Gambar Galeri (4 Slot Terpisah)"
+									}), /* @__PURE__ */ jsx("div", {
+										className: "grid grid-cols-2 gap-4",
+										children: [
+											0,
+											1,
+											2,
+											3
+										].map((idx) => /* @__PURE__ */ jsxs("div", {
+											className: "space-y-2",
+											children: [/* @__PURE__ */ jsxs("div", {
+												className: "relative aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5",
+												children: [formData.images[idx] ? /* @__PURE__ */ jsx("img", {
+													src: formData.images[idx],
+													alt: `Gallery ${idx}`,
+													className: "w-full h-full object-cover"
+												}) : /* @__PURE__ */ jsxs("div", {
+													className: "w-full h-full flex items-center justify-center text-[10px] font-black uppercase text-text-secondary/30",
+													children: ["Slot ", idx + 1]
+												}), uploading[`gallery${idx}`] && /* @__PURE__ */ jsx("div", {
+													className: "absolute inset-0 bg-black/20 flex items-center justify-center",
+													children: /* @__PURE__ */ jsx("i", { className: "bx bx-loader-alt animate-spin text-white text-xl" })
+												})]
+											}), /* @__PURE__ */ jsx("input", {
+												type: "file",
+												accept: "image/*",
+												className: "w-full text-[10px] file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-black/5 file:text-text-secondary hover:file:bg-black/10 cursor-pointer",
+												onChange: (e) => handleFileUpload(e, "gallery", idx)
+											})]
+										}, idx))
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsxs("div", {
+										className: "flex items-center justify-between ml-1 mb-1",
+										children: [/* @__PURE__ */ jsx("label", {
+											className: "text-xs font-black uppercase tracking-widest text-text-secondary",
+											children: "Deskripsi"
+										}), /* @__PURE__ */ jsxs("div", {
+											className: "flex items-center gap-1",
+											children: [/* @__PURE__ */ jsx("span", {
+												className: "text-[9px] text-text-secondary/50",
+												children: "Ctrl+B bold"
+											}), /* @__PURE__ */ jsx("button", {
+												type: "button",
+												onClick: applyBold,
+												className: "w-7 h-7 rounded-lg bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors",
+												title: "Bold (Ctrl+B)",
+												children: /* @__PURE__ */ jsx("i", { className: "bx bx-bold text-xs" })
+											})]
+										})]
+									}), /* @__PURE__ */ jsx("textarea", {
+										ref: descriptionRef,
+										rows: "3",
+										onKeyDown: handleKeyDown,
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
+										value: formData.description,
+										onChange: (e) => setFormData({
+											...formData,
+											description: e.target.value
+										}),
+										placeholder: "Gunakan Ctrl+B untuk memilih teks dan membuat judul/sub-judul bold. Contoh: **Nama Produk**"
+									})] }),
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex gap-3 pt-2",
+										children: [/* @__PURE__ */ jsx("button", {
+											type: "submit",
+											className: "flex-1 py-4 bg-secondary text-white rounded-2xl font-bold shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all",
+											children: editingProduct ? "Update" : "Simpan"
+										}), editingProduct && /* @__PURE__ */ jsx("button", {
+											type: "button",
+											onClick: () => {
+												setEditingProduct(null);
+												setSelectedMainCategory("");
+												setFormData({
+													name: "",
+													category: "",
+													image: "",
+													images: [
+														"",
+														"",
+														"",
+														""
+													],
+													description: ""
+												});
+											},
+											className: "px-6 py-4 bg-black/5 rounded-2xl font-bold",
+											children: "Batal"
+										})]
+									})
+								]
+							})
+						]
+					})
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "lg:col-span-2 space-y-6",
+					children: [
+						/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center justify-between px-2",
+							children: [/* @__PURE__ */ jsx("h2", {
+								className: "text-2xl font-black uppercase tracking-tighter",
+								children: "Daftar Produk"
+							}), /* @__PURE__ */ jsxs("span", {
+								className: "text-xs font-black uppercase tracking-widest text-text-secondary",
+								children: [
+									filteredProducts.length,
+									searchQuery.trim() ? ` / ${products.length}` : "",
+									" Unit Terdaftar"
+								]
+							})]
+						}),
+						searchQuery.trim() && /* @__PURE__ */ jsxs("p", {
+							className: "px-2 text-xs font-bold tracking-wide text-text-secondary",
+							children: [
+								"Hasil pencarian admin untuk \"",
+								searchQuery,
+								"\"."
 							]
+						}),
+						loading ? /* @__PURE__ */ jsx("div", {
+							className: "py-20 text-center text-text-secondary font-medium animate-pulse",
+							children: "Memuat produk..."
+						}) : /* @__PURE__ */ jsxs("div", {
+							className: "grid gap-4",
+							children: [filteredProducts.map((product) => /* @__PURE__ */ jsxs(motion.div, {
+								layout: true,
+								className: "glass p-6 rounded-[24px] border-black/5 flex items-center gap-6",
+								children: [
+									/* @__PURE__ */ jsx("img", {
+										src: product.image,
+										alt: product.name,
+										className: "w-20 h-20 object-cover rounded-2xl bg-black/5"
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex-1 min-w-0",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "flex items-center gap-2 mb-1",
+											children: /* @__PURE__ */ jsx("span", {
+												className: "text-[10px] font-black uppercase tracking-widest text-secondary bg-secondary/10 px-2 py-0.5 rounded-full",
+												children: product.category
+											})
+										}), /* @__PURE__ */ jsx("h3", {
+											className: "font-bold truncate",
+											children: product.name
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex gap-2",
+										children: [/* @__PURE__ */ jsx("button", {
+											onClick: () => handleEdit(product),
+											className: "p-3 bg-secondary/10 text-secondary rounded-xl hover:bg-secondary hover:text-white transition-all",
+											children: /* @__PURE__ */ jsx("i", { className: "bx bx-edit-alt text-xl" })
+										}), /* @__PURE__ */ jsx("button", {
+											onClick: () => handleDelete(product.id),
+											className: "p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all",
+											children: /* @__PURE__ */ jsx("i", { className: "bx bx-trash text-xl" })
+										})]
+									})
+								]
+							}, product.id)), filteredProducts.length === 0 && /* @__PURE__ */ jsx("div", {
+								className: "glass p-8 rounded-[24px] border-black/5 text-center",
+								children: /* @__PURE__ */ jsx("p", {
+									className: "font-bold text-text-secondary",
+									children: "Produk tidak ditemukan. Coba kata kunci lain untuk edit produk."
+								})
+							})]
 						})
 					]
-				})
-			}), /* @__PURE__ */ jsxs("div", {
-				className: "lg:col-span-2 space-y-6",
-				children: [
-					/* @__PURE__ */ jsxs("div", {
+				})]
+			}),
+			activeTab === "blogs" && /* @__PURE__ */ jsxs("div", {
+				className: "grid lg:grid-cols-3 gap-12",
+				children: [/* @__PURE__ */ jsx("div", {
+					className: "lg:col-span-1",
+					children: /* @__PURE__ */ jsxs(motion.div, {
+						layout: true,
+						className: "glass p-8 rounded-[32px] border-black/5 sticky top-32",
+						children: [
+							/* @__PURE__ */ jsx("h2", {
+								className: "text-2xl font-black mb-6",
+								children: editingBlog ? "Edit Artikel" : "Tulis Artikel Baru"
+							}),
+							error && /* @__PURE__ */ jsx("p", {
+								className: "mb-4 rounded-xl bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm font-bold text-red-600",
+								children: error
+							}),
+							/* @__PURE__ */ jsxs("form", {
+								onSubmit: handleBlogSubmit,
+								className: "space-y-4",
+								children: [
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Judul Artikel"
+									}), /* @__PURE__ */ jsx("input", {
+										type: "text",
+										required: true,
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
+										value: blogForm.title,
+										onChange: (e) => setBlogForm({
+											...blogForm,
+											title: e.target.value
+										})
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Tanggal"
+									}), /* @__PURE__ */ jsx("input", {
+										type: "text",
+										placeholder: "Contoh: April 21, 2026",
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
+										value: blogForm.date,
+										onChange: (e) => setBlogForm({
+											...blogForm,
+											date: e.target.value
+										})
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Kategori"
+									}), /* @__PURE__ */ jsx("input", {
+										type: "text",
+										placeholder: "Contoh: Teknologi, Tips, Panduan",
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
+										value: blogForm.category,
+										onChange: (e) => setBlogForm({
+											...blogForm,
+											category: e.target.value
+										})
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Gambar"
+									}), /* @__PURE__ */ jsxs("div", {
+										className: "space-y-3",
+										children: [
+											/* @__PURE__ */ jsx("input", {
+												type: "file",
+												accept: "image/*",
+												className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-black file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20 cursor-pointer",
+												onChange: handleBlogFileUpload
+											}),
+											uploadingBlog && /* @__PURE__ */ jsx("p", {
+												className: "text-xs font-bold text-secondary animate-pulse ml-1",
+												children: "Mengunggah gambar..."
+											}),
+											blogForm.image && !blogForm.image.startsWith("blob:") && /* @__PURE__ */ jsx("div", {
+												className: "relative group aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/5",
+												children: /* @__PURE__ */ jsx("img", {
+													src: blogForm.image,
+													alt: "Preview",
+													className: "w-full h-full object-cover"
+												})
+											})
+										]
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Excerpt (Ringkasan Singkat)"
+									}), /* @__PURE__ */ jsx("textarea", {
+										rows: "2",
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
+										value: blogForm.excerpt,
+										onChange: (e) => setBlogForm({
+											...blogForm,
+											excerpt: e.target.value
+										}),
+										placeholder: "Deskripsi singkat untuk preview artikel"
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Konten Lengkap"
+									}), /* @__PURE__ */ jsx("textarea", {
+										rows: "6",
+										required: true,
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none text-sm",
+										value: blogForm.content,
+										onChange: (e) => setBlogForm({
+											...blogForm,
+											content: e.target.value
+										}),
+										placeholder: "Tulis konten artikel di sini"
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "text-xs font-black uppercase tracking-widest text-text-secondary ml-1 mb-1 block",
+										children: "Penulis"
+									}), /* @__PURE__ */ jsx("input", {
+										type: "text",
+										placeholder: "Nama penulis",
+										className: "w-full p-3 rounded-xl bg-black/5 border-none focus:ring-2 focus:ring-secondary outline-none",
+										value: blogForm.author,
+										onChange: (e) => setBlogForm({
+											...blogForm,
+											author: e.target.value
+										})
+									})] }),
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex gap-3 pt-2",
+										children: [/* @__PURE__ */ jsx("button", {
+											type: "submit",
+											className: "flex-1 py-4 bg-secondary text-white rounded-2xl font-bold shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all",
+											children: editingBlog ? "Update" : "Terbitkan"
+										}), editingBlog && /* @__PURE__ */ jsx("button", {
+											type: "button",
+											onClick: () => {
+												setEditingBlog(null);
+												setBlogForm({
+													title: "",
+													date: "",
+													category: "",
+													image: "",
+													excerpt: "",
+													content: "",
+													author: ""
+												});
+											},
+											className: "px-6 py-4 bg-black/5 rounded-2xl font-bold",
+											children: "Batal"
+										})]
+									})
+								]
+							})
+						]
+					})
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "lg:col-span-2 space-y-6",
+					children: [/* @__PURE__ */ jsxs("div", {
 						className: "flex items-center justify-between px-2",
 						children: [/* @__PURE__ */ jsx("h2", {
 							className: "text-2xl font-black uppercase tracking-tighter",
-							children: "Daftar Produk"
+							children: "Artikel Terbit"
 						}), /* @__PURE__ */ jsxs("span", {
 							className: "text-xs font-black uppercase tracking-widest text-text-secondary",
-							children: [
-								filteredProducts.length,
-								searchQuery.trim() ? ` / ${products.length}` : "",
-								" Unit Terdaftar"
-							]
+							children: [blogs.length, " Artikel"]
 						})]
-					}),
-					searchQuery.trim() && /* @__PURE__ */ jsxs("p", {
-						className: "px-2 text-xs font-bold tracking-wide text-text-secondary",
-						children: [
-							"Hasil pencarian admin untuk \"",
-							searchQuery,
-							"\"."
-						]
-					}),
-					loading ? /* @__PURE__ */ jsx("div", {
+					}), loading ? /* @__PURE__ */ jsx("div", {
 						className: "py-20 text-center text-text-secondary font-medium animate-pulse",
-						children: "Memuat produk..."
+						children: "Memuat artikel..."
 					}) : /* @__PURE__ */ jsxs("div", {
 						className: "grid gap-4",
-						children: [filteredProducts.map((product) => /* @__PURE__ */ jsxs(motion.div, {
+						children: [blogs.map((post) => /* @__PURE__ */ jsxs(motion.div, {
 							layout: true,
 							className: "glass p-6 rounded-[24px] border-black/5 flex items-center gap-6",
 							children: [
-								/* @__PURE__ */ jsx("img", {
-									src: product.image,
-									alt: product.name,
+								post.image && /* @__PURE__ */ jsx("img", {
+									src: post.image,
+									alt: post.title,
 									className: "w-20 h-20 object-cover rounded-2xl bg-black/5"
 								}),
 								/* @__PURE__ */ jsxs("div", {
 									className: "flex-1 min-w-0",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "flex items-center gap-2 mb-1",
-										children: /* @__PURE__ */ jsx("span", {
-											className: "text-[10px] font-black uppercase tracking-widest text-secondary bg-secondary/10 px-2 py-0.5 rounded-full",
-											children: product.category
+									children: [
+										/* @__PURE__ */ jsxs("div", {
+											className: "flex items-center gap-2 mb-1",
+											children: [/* @__PURE__ */ jsx("span", {
+												className: "text-[10px] font-black uppercase tracking-widest text-secondary bg-secondary/10 px-2 py-0.5 rounded-full",
+												children: post.category || "Umum"
+											}), /* @__PURE__ */ jsx("span", {
+												className: "text-[8px] text-text-secondary",
+												children: post.date
+											})]
+										}),
+										/* @__PURE__ */ jsx("h3", {
+											className: "font-bold truncate",
+											children: post.title
+										}),
+										/* @__PURE__ */ jsxs("p", {
+											className: "text-xs text-text-secondary line-clamp-1 mt-1",
+											children: ["Oleh ", post.author || "Admin"]
 										})
-									}), /* @__PURE__ */ jsx("h3", {
-										className: "font-bold truncate",
-										children: product.name
-									})]
+									]
 								}),
 								/* @__PURE__ */ jsxs("div", {
 									className: "flex gap-2",
 									children: [/* @__PURE__ */ jsx("button", {
-										onClick: () => handleEdit(product),
+										onClick: () => handleEditBlog(post),
 										className: "p-3 bg-secondary/10 text-secondary rounded-xl hover:bg-secondary hover:text-white transition-all",
 										children: /* @__PURE__ */ jsx("i", { className: "bx bx-edit-alt text-xl" })
 									}), /* @__PURE__ */ jsx("button", {
-										onClick: () => handleDelete(product.id),
+										onClick: () => handleDeleteBlog(post.id),
 										className: "p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all",
 										children: /* @__PURE__ */ jsx("i", { className: "bx bx-trash text-xl" })
 									})]
 								})
 							]
-						}, product.id)), filteredProducts.length === 0 && /* @__PURE__ */ jsx("div", {
+						}, post.id)), blogs.length === 0 && /* @__PURE__ */ jsx("div", {
 							className: "glass p-8 rounded-[24px] border-black/5 text-center",
 							children: /* @__PURE__ */ jsx("p", {
 								className: "font-bold text-text-secondary",
-								children: "Produk tidak ditemukan. Coba kata kunci lain untuk edit produk."
+								children: "Belum ada artikel. Mulai tulis artikel baru."
 							})
 						})]
-					})
-				]
-			})]
-		})]
+					})]
+				})]
+			})
+		]
 	});
 };
 var Admin_default = UNSAFE_withComponentProps(Admin);
@@ -4165,9 +4565,9 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": true,
-			"module": "/assets/root-DsS5SEc_.js",
+			"module": "/assets/root-tXK1C1qb.js",
 			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/AppContext-CclEYKsb.js"],
-			"css": ["/assets/root-Bshtkg9p.css"],
+			"css": ["/assets/root-DEoFzGt3.css"],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
 			"clientMiddlewareModule": void 0,
@@ -4267,12 +4667,8 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Blog-DDBzwNpw.js",
-			"imports": [
-				"/assets/jsx-runtime-iNLlZvXa.js",
-				"/assets/proxy-B-hc-kX8.js",
-				"/assets/blog-CnsOiMos.js"
-			],
+			"module": "/assets/Blog-C5rfyYv2.js",
+			"imports": ["/assets/jsx-runtime-iNLlZvXa.js", "/assets/proxy-B-hc-kX8.js"],
 			"css": [],
 			"clientActionModule": void 0,
 			"clientLoaderModule": void 0,
@@ -4292,7 +4688,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/BlogDetail-Di8UOOAg.js",
+			"module": "/assets/BlogDetail-Cz0vLnUt.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/proxy-B-hc-kX8.js",
@@ -4380,7 +4776,7 @@ var server_manifest_default = {
 			"hasClientMiddleware": false,
 			"hasDefaultExport": true,
 			"hasErrorBoundary": false,
-			"module": "/assets/Admin-DOi-2Xx4.js",
+			"module": "/assets/Admin-DmJ1M3C_.js",
 			"imports": [
 				"/assets/jsx-runtime-iNLlZvXa.js",
 				"/assets/proxy-B-hc-kX8.js",
@@ -4414,8 +4810,8 @@ var server_manifest_default = {
 			"hydrateFallbackModule": void 0
 		}
 	},
-	"url": "/assets/manifest-e7f8d513.js",
-	"version": "e7f8d513",
+	"url": "/assets/manifest-fe17fc0c.js",
+	"version": "fe17fc0c",
 	"sri": void 0
 };
 //#endregion

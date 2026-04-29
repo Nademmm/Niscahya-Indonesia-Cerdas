@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router';
 import { motion } from 'framer-motion';
 import { blogPosts } from '../data/blog';
 
@@ -34,35 +34,62 @@ export const meta = ({ params }) => {
 
 const BlogDetail = () => {
   const { slug } = useParams();
-  const navigate = useNavigate();
-  const post = blogPosts.find(p => p.slug === slug) || blogPosts.find(p => p.id === parseInt(slug));
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    if (!post) {
-      navigate('/blog');
-    } else if (post.slug !== slug) {
-      navigate(`/blog/${post.slug}`, { replace: true });
-    }
-  }, [post, navigate, slug]);
+    let mounted = true;
+    setLoading(true);
+    setNotFound(false);
 
-  if (!post) return null;
+    fetch(`/api/blogs/${slug}`)
+      .then(r => {
+        if (!r.ok) throw new Error('not found');
+        return r.json();
+      })
+      .then(data => {
+        if (!mounted) return;
+        setPost(data);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setPost(null);
+        setNotFound(true);
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
+
+    return () => { mounted = false; };
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="py-20 text-center text-text-secondary font-medium animate-pulse">Memuat artikel...</div>
+    );
+  }
+
+  if (notFound || !post) {
+    return (
+      <div className="space-y-6 py-16 text-center">
+        <h1 className="text-3xl font-black uppercase tracking-tight">Artikel tidak ditemukan</h1>
+        <p className="text-text-secondary font-medium">Artikel yang kamu cari mungkin sudah dihapus atau URL tidak valid.</p>
+        <div>
+          <Link
+            to="/blog"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl"
+          >
+            Kembali ke Blog
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12 md:space-y-16">
-      {/* Back Button */}
-      <motion.div
-        initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-      >
-        <Link 
-          to="/blog"
-          className="inline-flex items-center gap-3 px-6 py-3 bg-black/5 hover:bg-black/10 text-text-secondary font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
-        >
-          <i className="bx bx-left-arrow-alt text-xl"></i>
-          Kembali ke Blog
-        </Link>
-      </motion.div>
-
       {/* Hero Header */}
       <section className="relative space-y-8 md:space-y-10">
         <div className="max-w-4xl space-y-6 md:space-y-8">

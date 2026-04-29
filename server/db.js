@@ -36,6 +36,23 @@ export const initializeDatabase = async () => {
     `);
     
     console.log('[DB] Products table ready');
+    // Create blogs table
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS blogs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        date VARCHAR(100),
+        category VARCHAR(100),
+        image VARCHAR(255),
+        excerpt TEXT,
+        content LONGTEXT,
+        author VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+    console.log('[DB] Blogs table ready');
     connection.release();
   } catch (error) {
     console.error('[DB] Initialization error:', error);

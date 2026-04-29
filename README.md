@@ -93,4 +93,110 @@ Email: admin@niscahya.id
 Password: n1scahya
 ```
 
+### Panel Admin - Manajemen Produk & Blog
+
+#### Login Admin
+Akses admin panel di URL `/nsc-admin-panel-x9k2`. Masukkan:
+- **Email**: `admin@niscahya.id`
+- **Password**: `n1scahya`
+
+#### Fitur Admin Panel
+
+**Tab 1: Produk**
+- Tambah produk baru dengan kategori utama dan sub-kategori
+- Upload gambar utama + 4 slot gambar galeri
+- Edit produk yang sudah ada
+- Hapus produk (dan gambar lokal terhubung otomatis dihapus)
+- Semua gambar dioptimalkan menjadi format WebP saat upload
+
+**Tab 2: Blog**
+- Tulis artikel baru dengan judul, tanggal, kategori, gambar, ringkasan, dan konten
+- Edit artikel yang sudah terbit
+- Hapus artikel (dan gambar lokal terhubung dihapus)
+- Artikel disimpan di MySQL dan dapat diakses di halaman blog publik
+
+---
+
+## Migrasi Blog ke Database
+
+Saat pertama kali menjalankan aplikasi, blog statis dari `src/data/blog.js` harus dimigrasikan ke MySQL agar bisa dikelola via admin panel.
+
+### Langkah Migrasi
+
+1. **Pastikan MySQL aktif** dan `.env` sudah dikonfigurasi dengan benar.
+
+2. **Jalankan script migrasi**:
+   ```bash
+   node scripts/migrate-blog-to-db.mjs
+   ```
+   Output yang diharapkan:
+   ```
+   [MIGRATE] Table ensured
+   [MIGRATE] Upserted: [slug-artikel-1]
+   [MIGRATE] Upserted: [slug-artikel-2]
+   ...
+   [MIGRATE] Done
+   ```
+
+3. **Verifikasi migrasi berhasil**:
+   ```bash
+   node scripts/check-blogs-count.mjs
+   ```
+   Seharusnya menunjukkan: `Blogs count: 11` (atau jumlah artikel yang dimigrasikan)
+
+4. **Mulai dev server**:
+   ```bash
+   npm start
+   ```
+
+### Konfigurasi Environment Variable (Opsional)
+
+Untuk keamanan tambahan, set environment variable `ADMIN_SECRET`:
+
+```env
+ADMIN_SECRET=your-secret-password
+```
+
+Jika tidak diset, sistem default menggunakan password dari `/api/admin-auth` (`n1scahya`).
+
+Ketika admin panel login, password disimpan sementara dan digunakan sebagai header `x-admin-auth` untuk melindungi endpoint blog POST/PUT/DELETE.
+
+---
+
+## Struktur Database
+
+### Tabel `products`
+```sql
+id (INT) | name | category | image | images (JSON) | description | slug | price | created_at | updated_at
+```
+
+### Tabel `blogs`
+```sql
+id (INT) | title | slug (UNIQUE) | date | category | image | excerpt | content (LONGTEXT) | author | created_at | updated_at
+```
+
+---
+
+## API Endpoints
+
+### Produk
+- `GET /api/products` - Dapatkan semua produk
+- `GET /api/products/:slugOrId` - Dapatkan detail produk
+- `POST /api/products` - Tambah produk (Admin)
+- `PUT /api/products/:id` - Edit produk (Admin)
+- `DELETE /api/products/:id` - Hapus produk (Admin)
+
+### Blog
+- `GET /api/blogs` - Dapatkan semua artikel
+- `GET /api/blogs/:slugOrId` - Dapatkan detail artikel
+- `POST /api/blogs` - Tambah artikel (Admin, requires `x-admin-auth` header)
+- `PUT /api/blogs/:id` - Edit artikel (Admin, requires `x-admin-auth` header)
+- `DELETE /api/blogs/:id` - Hapus artikel (Admin, requires `x-admin-auth` header)
+
+### Upload
+- `POST /api/upload` - Upload gambar (otomatis convert ke WebP)
+
+### Auth
+- `POST /api/admin-auth` - Login admin
+
 © 2026 **CV NISCAHYA INDONESIA CERDAS**. Semua Sistem Beroperasi.
