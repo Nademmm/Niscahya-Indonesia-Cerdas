@@ -42,6 +42,9 @@ async function convertImage(filePath) {
     .webp({ quality: 82 })
     .toFile(outputPath);
 
+  // Delete original file after successful conversion
+  await fs.unlink(filePath);
+
   return outputPath;
 }
 

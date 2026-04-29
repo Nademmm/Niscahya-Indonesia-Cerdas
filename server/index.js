@@ -129,7 +129,7 @@ app.get("/api/products/:slugOrId", async (req, res) => {
 app.post("/api/admin-auth", (req, res) => {
   const { email, password } = req.body;
   // Simple auth for now - should be replaced with better auth in production
-  if (email === "admin@niscahya.com" && password === "niscahya2024") {
+  if (email === "admin@niscahya.id" && password === "n1scahya") {
     res.json({ success: true });
   } else {
     res.status(401).json({ success: false, message: "Email atau password salah" });
@@ -150,6 +150,10 @@ app.post("/api/upload", upload.single("image"), (req, res) => {
     .webp({ quality: 82 })
     .toFile(optimizedPath)
     .then(() => {
+      // Delete original file after successful conversion
+      fs.unlink(originalPath, (err) => {
+        if (err) console.error("Failed to delete original file:", err);
+      });
       res.json({ imageUrl: `/uploads/${optimizedFilename}` });
     })
     .catch((error) => {
