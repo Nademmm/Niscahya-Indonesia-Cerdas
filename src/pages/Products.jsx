@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useLoaderData } from 'react-router';
 import ProductCard from '../components/ProductCard';
 import { useApp } from '../context/AppContext';
+import { categoryStructure, allCategories } from '../constants/categories.js';
 
 export const meta = () => {
   return [
@@ -14,18 +15,7 @@ export const meta = () => {
   ];
 };
 
-const categoryStructure = {
-  'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
-  'PJU PLN': [],
-  'Pompa Air Tenaga Surya': [],
-  'Traffic Light': [],
-  'Warning Light': [],
-  'Lampu Taman': [],
-  'Solar Home System': [],
-  'Aksesori': ['Solar Panel', 'Controller', 'Inverter', 'Baterai']
-};
-
-const categories = ['Semua', ...Object.keys(categoryStructure)];
+const categories = allCategories;
 
 const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
   if (loading) {

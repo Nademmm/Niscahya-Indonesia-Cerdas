@@ -31,12 +31,20 @@ dist-ssr
 *.sln
 *.sw?
 
-# # Environment variables
-# .env
-# .env.local
-# .env.*.local
-# .env.example
+# Environment variables
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # Databases
 *.sqlite
 *.db
+ 
+# Runtime and uploads
+server/uploads/
+.react-router/
+lighthouse-*.json
+lighthouse-*.html
+build/
+public/uploads/

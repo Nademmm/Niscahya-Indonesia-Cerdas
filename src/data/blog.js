@@ -1,8 +1,4 @@
-const slugify = (text) =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+import { slugify } from '../utils/slug.js';
 
 const rawBlogPosts = [
   {

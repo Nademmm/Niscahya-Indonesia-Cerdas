@@ -4,6 +4,8 @@ import { createRequestHandler } from "@react-router/express";
 import path from "path";
 import { fileURLToPath } from "url";
 import pool, { initializeDatabase } from "./db.js";
+import { slugify } from "./utils.mjs";
+import { errorHandler, asyncHandler, ApiError } from "./errorHandler.mjs";
 import multer from "multer";
 import fs from "fs";
 import sharp from "sharp";
@@ -174,18 +176,32 @@ app.get("/api/products/:slugOrId", async (req, res) => {
 
 app.post("/api/admin-auth", (req, res) => {
   const { email, password } = req.body;
-  // Simple auth for now - should be replaced with better auth in production
-  if (email === "admin@niscahya.id" && password === "n1scahya") {
+  // Auth check against environment variables
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@niscahya.id';
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  
+  if (!adminPassword) {
+    console.error('ADMIN_PASSWORD environment variable not set!');
+    return res.status(500).json({ success: false, message: 'Server configuration error' });
+  }
+  
+  if (email === adminEmail && password === adminPassword) {
     res.json({ success: true });
   } else {
     res.status(401).json({ success: false, message: "Email atau password salah" });
   }
 });
 
-// Simple admin middleware: expect header `x-admin-auth` matching ADMIN_SECRET env or default password
+// Admin middleware: expect header `x-admin-auth` matching ADMIN_SECRET env variable
 function requireAdmin(req, res, next) {
   const provided = req.headers['x-admin-auth'] || '';
-  const secret = process.env.ADMIN_SECRET || 'n1scahya';
+  const secret = process.env.ADMIN_SECRET;
+  
+  if (!secret) {
+    console.error('ADMIN_SECRET environment variable not set!');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+  
   if (provided === secret) return next();
   return res.status(401).json({ error: 'Unauthorized' });
 }
@@ -218,7 +234,7 @@ app.post("/api/upload", upload.single("image"), (req, res) => {
 
 app.post("/api/products", async (req, res) => {
   const { name, category, image, images, description } = req.body;
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const slug = slugify(name);
   
   try {
     const [result] = await pool.query(
@@ -232,13 +248,7 @@ app.post("/api/products", async (req, res) => {
   }
 });
 
-// --- Blog CRUD endpoints ---
-function localSlugify(text) {
-  return String(text || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-}
+// Blog CRUD endpoints
 
 app.get('/api/blogs', async (req, res) => {
   try {
@@ -276,7 +286,7 @@ app.get('/api/blogs/:slugOrId', async (req, res) => {
 
 app.post('/api/blogs', requireAdmin, async (req, res) => {
   const { title, date, category, image, excerpt, content, author } = req.body;
-  const slug = localSlugify(title || '');
+  const slug = slugify(title || '');
   try {
     const [result] = await pool.query(
       'INSERT INTO blogs (title, slug, date, category, image, excerpt, content, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
@@ -292,7 +302,7 @@ app.post('/api/blogs', requireAdmin, async (req, res) => {
 app.put('/api/blogs/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
   const { title, date, category, image, excerpt, content, author } = req.body;
-  const slug = localSlugify(title || '');
+  const slug = slugify(title || '');
   try {
     const [existing] = await pool.query('SELECT * FROM blogs WHERE id = ?', [id]);
     if (existing.length === 0) return res.status(404).json({ error: 'Blog tidak ditemukan' });
@@ -440,6 +450,9 @@ async function startServer() {
       }
     }
   });
+
+  // Error handling middleware - MUST be added last
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

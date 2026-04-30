@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
+import { categoryStructure, mainCategories } from '../constants/categories.js';
+import { validateTitle, validateContent, validateCategory } from '../utils/validation.js';
 
 const Admin = () => {
   const { searchQuery } = useApp();
@@ -30,18 +32,7 @@ const Admin = () => {
   const [error, setError] = useState('');
   const [selectedMainCategory, setSelectedMainCategory] = useState('');
 
-  const categoryStructure = {
-    'PJU Tenaga Surya': ['All In One', 'Two In One', 'Konvensional'],
-    'PJU PLN': [],
-    'Pompa Air Tenaga Surya': [],
-    'Traffic Light': [],
-    'Warning Light': [],
-    'Lampu Taman': [],
-    'Solar Home System': [],
-    'Aksesori': ['Solar Panel', 'Controller', 'Inverter', 'Baterai']
-  };
-
-  const mainCategories = Object.keys(categoryStructure);
+  // categoryStructure and mainCategories imported from constants
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -172,8 +163,25 @@ const Admin = () => {
       setError('Upload gambar blog masih berjalan');
       return;
     }
-    if (!blogForm.title || !blogForm.content) {
-      setError('Judul dan konten wajib diisi');
+    
+    // Validate title
+    const titleValidation = validateTitle(blogForm.title);
+    if (!titleValidation.valid) {
+      setError(titleValidation.error);
+      return;
+    }
+    
+    // Validate content
+    const contentValidation = validateContent(blogForm.content);
+    if (!contentValidation.valid) {
+      setError(contentValidation.error);
+      return;
+    }
+    
+    // Validate category
+    const categoryValidation = validateCategory(blogForm.category, Object.keys(categoryStructure));
+    if (!categoryValidation.valid) {
+      setError(categoryValidation.error);
       return;
     }
 
@@ -255,6 +263,27 @@ const Admin = () => {
     
     if (isAnyBlob) {
       setError('Harap tunggu sampai semua proses upload selesai sebelum menyimpan.');
+      return;
+    }
+
+    // Validate title
+    const titleValidation = validateTitle(formData.name);
+    if (!titleValidation.valid) {
+      setError(titleValidation.error);
+      return;
+    }
+
+    // Validate description/content
+    const contentValidation = validateContent(formData.description);
+    if (!contentValidation.valid) {
+      setError(contentValidation.error);
+      return;
+    }
+
+    // Validate category
+    const categoryValidation = validateCategory(formData.category, mainCategories);
+    if (!categoryValidation.valid) {
+      setError(categoryValidation.error);
       return;
     }
 
