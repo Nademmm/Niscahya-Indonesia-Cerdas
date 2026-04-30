@@ -50,7 +50,8 @@ const Blog = () => {
             transition={{ delay: 0.1 }}
             className="text-3xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
           >
-            Wawasan Energi Terbarukan.
+            Wawasan Energi<br />
+            <span className='text-gradient'>Terbarukan</span>
           </motion.h1>
           <motion.p 
             initial={{ y: 20, opacity: 0 }}

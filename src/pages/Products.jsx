@@ -62,6 +62,7 @@ const ProductGrid = memo(({ products, loading, searchQuery, handleReset }) => {
   );
 });
 
+// for typo search in product name
 const normalizeText = (text) => {
   if (!text) return '';
   return text
@@ -267,7 +268,7 @@ const Products = () => {
             className="text-3xl md:text-6xl font-black tracking-tighter uppercase leading-[1.1]"
           >
             Solusi <br />
-            <span className="text-gradient">Terdepan.</span>
+            <span className="text-gradient">Terdepan</span>
           </motion.h1>
           <motion.p 
             initial={{ y: 20, opacity: 0 }}

@@ -1,5 +1,6 @@
 export default [
-  { path: "/", file: "./pages/Home.jsx" },
+  { path: "/", file: "./pages/RedirectToBeranda.jsx" },
+  { path: "/beranda", file: "./pages/Home.jsx" },
   { path: "/products", file: "./pages/Products.jsx" },
   { path: "/products/:slug", file: "./pages/ProductDetail.jsx" },
   { path: "/blog", file: "./pages/Blog.jsx" },

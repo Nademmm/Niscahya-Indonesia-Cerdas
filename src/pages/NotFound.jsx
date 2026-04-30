@@ -14,7 +14,7 @@ const NotFound = () => {
           404
         </motion.h1>
         <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">Sistem Offline.</h2>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">Page Not Found</h2>
         </div>
       </div>
       
@@ -23,11 +23,11 @@ const NotFound = () => {
       </p>
 
       <Link
-        to="/"
+        to="/beranda"
         className="px-5 py-5 bg-primary text-background font-black text-2xl rounded-2xl hover:scale-105 transition-all shadow-2xl "
       >
-        <span className="flex items-center gap-3">
-          <i className="bx bx-left-arrow-alt text-3xl group-hover:-translate-x-2 transition-transform"></i>
+        <span className="flex items-center gap-2">
+          <i className="bx bx-left-arrow-alt text-2xl group-hover:-translate-x-2 transition-transform"></i>
           Kembali ke Beranda
         </span>
       </Link>

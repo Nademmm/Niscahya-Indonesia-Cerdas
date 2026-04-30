@@ -10,14 +10,14 @@ const Admin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [adminAuth, setAdminAuth] = useState('');
-  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'blogs'
+  const [activeTab, setActiveTab] = useState('products'); 
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
     image: '',
-    images: ['', '', '', ''], // 4 slots for gallery
+    images: ['', '', '', ''],
     description: ''
   });
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,6 @@ const Admin = () => {
   const [selectedMainCategory, setSelectedMainCategory] = useState('');
 
   // categoryStructure and mainCategories imported from constants
-
   useEffect(() => {
     if (isLoggedIn) {
       fetchProducts();

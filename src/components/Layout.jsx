@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { useApp } from '../context/AppContext';
 
 const navLinks = [
-  { name: 'Beranda', path: '/' },
+  { name: 'Beranda', path: '/beranda' },
   { name: 'Produk', path: '/products' },
   { name: 'Blog', path: '/blog' },
   { name: 'Kontak', path: '/contact' },
@@ -59,7 +59,7 @@ const Navbar = () => {
         {/* Logo - hides when mobile search is open */}
         {!mobileSearchOpen ? (
           <div>
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/beranda" className="flex items-center gap-3 group">
               <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-10 h-10 object-contain" />
               <span className="text-2xl font-black tracking-tighter text-text-main uppercase">Niscahya</span>
             </Link>
@@ -197,7 +197,7 @@ const Layout = ({ children }) => {
       <footer className="py-32 px-6 lg:px-10 max-w-7xl mx-auto border-t border-black/5 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
           <div className="col-span-1 md:col-span-2 space-y-8">
-            <Link to="/" className="flex items-center gap-4 group">
+            <Link to="/beranda" className="flex items-center gap-4 group">
               <img src="/logo.png" alt="Niscahya Indonesia Cerdas Logo" className="w-14 h-14 object-contain" />
               <div className="flex flex-col">
                 <span className="text-3xl font-black tracking-tighter text-text-main uppercase leading-none">Niscahya</span>
@@ -211,7 +211,7 @@ const Layout = ({ children }) => {
           <div className="space-y-8">
             <h4 className="text-sm font-black uppercase tracking-[0.4em] text-text-main">Navigasi</h4>
             <ul className="space-y-5">
-              <li><Link to="/" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Beranda</Link></li>
+              <li><Link to="/beranda" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Beranda</Link></li>
               <li><Link to="/products" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Produk</Link></li>
               <li><Link to="/blog" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Blog & Artikel</Link></li>
               <li><Link to="/projects" className="text-base font-bold text-text-secondary hover:text-primary transition-colors">Galeri Projek</Link></li>

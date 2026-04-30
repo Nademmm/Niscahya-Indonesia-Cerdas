@@ -102,7 +102,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
         <h1 className="text-6xl font-black text-primary">Oops!</h1>
         <p className="text-2xl font-bold text-text-secondary">{errorMessage}</p>
         {errorDetails && <p className="text-text-secondary">{errorDetails}</p>}
-        <a href="/" className="inline-block px-6 py-3 bg-primary text-background rounded-xl font-bold">
+        <a href="/beranda" className="inline-block px-6 py-3 bg-primary text-background rounded-xl font-bold">
           Kembali ke Beranda
         </a>
       </div>

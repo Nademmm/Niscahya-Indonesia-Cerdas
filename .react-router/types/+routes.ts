@@ -14,6 +14,9 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/beranda": {
+    params: {};
+  };
   "/products": {
     params: {};
   };
@@ -52,11 +55,15 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/products" | "/products/:slug" | "/blog" | "/blog/:slug" | "/about" | "/projects" | "/contact" | "/nsc-admin-panel-x9k2" | "/*";
+    page: "/" | "/beranda" | "/products" | "/products/:slug" | "/blog" | "/blog/:slug" | "/about" | "/projects" | "/contact" | "/nsc-admin-panel-x9k2" | "/*";
+  };
+  "./pages/RedirectToBeranda.jsx": {
+    id: "pages/RedirectToBeranda";
+    page: "/";
   };
   "./pages/Home.jsx": {
     id: "pages/Home";
-    page: "/";
+    page: "/beranda";
   };
   "./pages/Products.jsx": {
     id: "pages/Products";
@@ -98,6 +105,7 @@ type RouteFiles = {
 
 type RouteModules = {
   "root": typeof import("./src/root.tsx");
+  "pages/RedirectToBeranda": typeof import("./src/./pages/RedirectToBeranda.jsx");
   "pages/Home": typeof import("./src/./pages/Home.jsx");
   "pages/Products": typeof import("./src/./pages/Products.jsx");
   "pages/ProductDetail": typeof import("./src/./pages/ProductDetail.jsx");
